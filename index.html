@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Prédicteur — Analyse de match</title>
+<style>
+  :root{
+    --pitch-dark:#0a2013;
+    --pitch-line:#0d2818;
+    --chalk:#f2efe4;
+    --chalk-dim:#c9c4b3;
+    --amber:#e8b23d;
+    --amber-dim:#8a6a24;
+    --board:#0c0d10;
+    --board-edge:#232630;
+    --home:#3d7ab5;
+    --away:#c0483f;
+    --option-bg:#122a22;
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:linear-gradient(160deg,var(--pitch-line),var(--pitch-dark));
+    color:var(--chalk);
+    min-height:100vh;
+    padding:14px 10px 20px;
+    font-size:14px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+
+  .masthead{text-align:center;margin-bottom:12px;}
+  .masthead .eyebrow{
+    font-size:9.5px;letter-spacing:.3em;color:var(--amber);
+    text-transform:uppercase;font-weight:700;
+  }
+  .masthead h1{font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--amber);margin:4px 0 3px;}
+  .masthead p{color:var(--chalk-dim);font-size:11px;margin-top:4px;line-height:1.4;}
+
+  .matchup{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:8px;
+    align-items:start;
+    margin-bottom:6px;
+  }
+  .team-card{
+    background:rgba(0,0,0,0.22);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;
+    padding:10px;
+  }
+  .team-card.home{border-top:3px solid var(--home);}
+  .team-card.away{border-top:3px solid var(--away);}
+  .team-card label{
+    display:block;font-size:9.5px;letter-spacing:.06em;color:var(--chalk-dim);
+    text-transform:uppercase;margin:6px 0 3px;
+  }
+  .team-card label:first-of-type{margin-top:0;}
+  .team-card select{
+    width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);
+    color:var(--chalk);font-family:"Arial Narrow",Oswald,sans-serif;font-weight:800;
+    font-size:13px;text-transform:uppercase;padding:6px 6px;border-radius:5px;outline:none;
+  }
+  .team-card select option,
+  .impact-select option{
+    background:var(--option-bg);
+    color:var(--chalk);
+  }
+  .team-card.home select:focus{border-color:var(--home);}
+  .team-card.away select:focus{border-color:var(--away);}
+  .team-card input[type=text]{
+    width:100%;background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.18);
+    color:var(--chalk);font-family:"Arial Narrow",Oswald,sans-serif;font-weight:800;
+    font-size:14px;text-transform:uppercase;padding:5px 0;outline:none;margin-top:6px;
+    display:none;
+  }
+  .team-card input[type=number]{
+    width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    color:var(--chalk);border-radius:5px;padding:5px 7px;font-size:12px;
+    font-variant-numeric:tabular-nums;outline:none;
+  }
+  .team-card input[type=number]:focus{border-color:var(--amber);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .hint{font-size:9px;color:var(--chalk-dim);opacity:.7;margin-top:6px;line-height:1.4;}
+  .stat-note{font-size:9px;color:var(--chalk-dim);opacity:.8;margin:6px 0 2px;}
+
+  .vs{
+    align-self:center;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--board);border:2px solid var(--amber);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Arial Narrow",Oswald,sans-serif;font-weight:900;
+    color:var(--amber);font-size:11px;margin-top:26px;
+  }
+
+  .source-line{
+    text-align:center;font-size:9.5px;color:var(--chalk-dim);opacity:.7;
+    margin:0 0 12px;
+  }
+  .update-info{
+    text-align:center;font-size:12.5px;font-weight:700;color:var(--amber);
+    background:rgba(232,178,61,.12);border:1px solid rgba(232,178,61,.35);
+    border-radius:8px;padding:5px 12px;margin:8px 0 0;display:inline-block;
+  }
+  .update-info.stale{color:#e08c84;background:rgba(224,140,132,.12);border-color:rgba(224,140,132,.35);}
+
+  .results-list{margin:0 0 14px;}
+  .results-title-row{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:4px 0;flex-wrap:wrap;
+  }
+  .results-title-row::before{content:"⚽";font-size:11px;}
+  .results-select{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);
+    color:var(--amber);font-weight:700;border-radius:5px;padding:3px 6px;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;outline:none;
+  }
+  .results-select option{background:var(--board);color:var(--chalk);}
+  #resultsSummary{font-size:10px;color:var(--chalk-dim);letter-spacing:.03em;}
+
+  .manual-entry{
+    background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;padding:8px 10px;margin:0 0 12px;
+  }
+  .manual-entry summary{
+    font-size:10.5px;color:var(--chalk-dim);cursor:pointer;letter-spacing:.04em;
+    text-transform:uppercase;list-style:none;
+  }
+  .manual-entry summary::-webkit-details-marker{display:none;}
+  .manual-entry label{
+    display:block;font-size:9.5px;letter-spacing:.06em;color:var(--chalk-dim);
+    text-transform:uppercase;margin:6px 0 3px;
+  }
+  .manual-entry input[type=number]{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    color:var(--chalk);border-radius:5px;padding:5px 7px;font-size:12px;outline:none;
+  }
+  .manual-row{
+    display:grid;grid-template-columns:1fr 40px 40px 1fr;gap:5px;align-items:center;
+    margin-top:6px;
+  }
+  .manual-row select{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    color:var(--chalk);border-radius:5px;padding:5px 4px;font-size:10.5px;outline:none;
+    width:100%;
+  }
+  .manual-row select option{background:var(--board);color:var(--chalk);}
+  .manual-row input[type=number]{width:100%;text-align:center;padding:5px 2px;}
+  .manual-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .results-row{
+    display:grid;grid-template-columns:1fr minmax(58px,auto) 1fr minmax(76px,auto) auto;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.03);border-radius:6px;padding:8px 8px;margin-top:10px;
+    font-size:13px;
+  }
+  .results-row .rteam{text-align:right;font-size:13px;position:relative;cursor:default;}
+  .rteam-text{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;}
+  .rteam .form-tooltip{
+    display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+    margin-bottom:6px;background:#1c2b26;border:1px solid rgba(255,255,255,0.2);
+    border-radius:7px;padding:6px 8px;z-index:30;white-space:nowrap;
+    align-items:center;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  }
+  .rteam:hover .form-tooltip{display:flex;}
+  .form-dot{
+    width:16px;height:16px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:8px;font-weight:800;font-family:"Consolas",monospace;
+  }
+  .form-dot.win{background:#1d5fd6;color:#ffffff;}
+  .form-dot.draw{background:#ffffff;color:#111;border:1px solid rgba(0,0,0,0.3);}
+  .form-dot.loss{background:#c0392b;color:#ffffff;border:1px solid #e8574a;}
+  .form-tooltip-empty{font-size:9px;color:var(--chalk-dim);white-space:nowrap;}
+  .results-row .rteam.away{text-align:left;}
+  .absence-flag{display:inline-block;margin:0 2px;cursor:help;font-size:12px;}
+  .results-row .rscore{
+    font-family:"Consolas",monospace;font-weight:800;color:var(--amber);
+    background:rgba(0,0,0,0.35);padding:5px 8px;border-radius:5px;text-align:center;
+    white-space:nowrap;font-size:18px;
+  }
+  .results-row.pending .rscore{color:var(--chalk-dim);font-weight:400;font-size:11px;background:rgba(0,0,0,0.15);}
+  .results-row .rpred{
+    font-family:"Consolas",monospace;text-align:center;white-space:nowrap;display:inline-block;
+    color:#ffffff;background:#c0392b;border:1px solid #e8574a;
+    font-weight:800;font-size:18px;border-radius:5px;padding:5px 9px;
+    text-shadow:0 1px 1px rgba(0,0,0,0.3);
+  }
+  .results-row .manual-flag{grid-column:1 / -1;text-align:center;font-size:9px;opacity:.7;margin-top:4px;}
+  .rproba-badges{display:flex;gap:4px;}
+  .rproba-badge{
+    color:#ffffff;font-weight:800;font-size:15px;font-family:"Consolas",monospace;
+    padding:5px 7px;border-radius:5px;text-align:center;min-width:38px;
+    text-shadow:0 1px 1px rgba(0,0,0,0.35);
+  }
+  .rproba-badge.home{background:#1d5fd6;}
+  .rproba-badge.draw{background:#1e8449;}
+  .rproba-badge.away{background:#161616;border:1px solid rgba(255,255,255,0.25);}
+  .update-row{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 0 12px;}
+  .update-row .source-line{margin:0;}
+  .update-btn{
+    background:rgba(232,178,61,0.14);color:var(--amber);border:1px solid rgba(232,178,61,0.4);
+    border-radius:16px;padding:6px 14px;font-size:10.5px;font-weight:700;letter-spacing:.03em;
+    cursor:pointer;text-transform:uppercase;transition:background .15s ease;
+  }
+  .update-btn:hover:not(:disabled){background:rgba(232,178,61,0.24);}
+  .update-btn:disabled{opacity:.6;cursor:wait;}
+  .update-status{font-size:10px;color:var(--chalk-dim);min-height:12px;text-align:center;max-width:400px;line-height:1.4;}
+
+  .board{
+    background:var(--board);
+    border:1px solid var(--board-edge);
+    border-radius:9px;
+    padding:9px;
+  }
+  .board.flicker{animation:flicker .4s ease;}
+  @keyframes flicker{
+    0%{opacity:.3;}30%{opacity:.9;}45%{opacity:.4;}60%{opacity:1;}
+  }
+
+  .empty-state{
+    text-align:center;color:var(--chalk-dim);padding:14px 10px;font-size:11px;
+  }
+
+  .score-hero{
+    text-align:center;padding:3px 0 7px;
+    border-bottom:1px dashed rgba(255,255,255,0.12);margin-bottom:7px;
+  }
+  .score-hero .lbl{font-size:8.5px;letter-spacing:.12em;color:var(--chalk-dim);text-transform:uppercase;}
+  .score-hero .digits{
+    font-family:"Consolas","Courier New",monospace;
+    font-size:clamp(16px,4vw,22px);font-weight:700;letter-spacing:.02em;
+    color:var(--amber);text-shadow:0 0 10px rgba(232,178,61,0.4);
+    margin:2px 0;
+  }
+  .score-hero .prob{font-size:9.5px;color:var(--chalk-dim);}
+
+  .probs{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:7px;
+  }
+  .prob-cell{text-align:center;background:rgba(255,255,255,0.03);border-radius:5px;padding:5px 3px;}
+  .prob-cell .name{font-size:8px;letter-spacing:.04em;color:var(--chalk-dim);text-transform:uppercase;margin-bottom:3px;}
+  .prob-cell .val{font-family:"Consolas",monospace;font-size:14px;font-weight:700;}
+  .bar{height:3px;border-radius:2px;background:rgba(255,255,255,0.08);margin-top:4px;overflow:hidden;}
+  .bar > div{height:100%;border-radius:2px;}
+
+  .extra{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;}
+  .extra-cell{background:rgba(255,255,255,0.03);border-radius:5px;padding:5px 8px;display:flex;justify-content:space-between;align-items:center;}
+  .extra-cell .k{font-size:9.5px;color:var(--chalk-dim);}
+  .extra-cell .v{font-family:"Consolas",monospace;font-weight:700;color:var(--amber);font-size:11px;}
+
+  .grid-title{font-size:8.5px;letter-spacing:.08em;color:var(--chalk-dim);text-transform:uppercase;margin:0 0 4px;text-align:center;}
+  .score-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:240px;margin:0 auto;
+  }
+  .score-grid .cell{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    border-radius:4px;background:rgba(255,255,255,0.04);font-family:"Consolas",monospace;
+  }
+  .score-grid .cell .sc{font-size:9px;color:var(--chalk-dim);}
+  .score-grid .cell .pc{font-size:9px;font-weight:700;}
+  .score-grid .cell.top{background:var(--amber);color:#1a1200;}
+  .score-grid .cell.top .sc{color:#1a1200;opacity:.7;}
+
+  details{margin-top:5px;}
+  details summary{
+    font-size:9.5px;color:var(--chalk-dim);cursor:pointer;letter-spacing:.04em;
+    text-transform:uppercase;list-style:none;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:"⚙ ";}
+  details .row2{margin-top:6px;}
+  details + details{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);}
+
+  .impact-select{
+    width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    color:var(--chalk);border-radius:5px;padding:5px 6px;font-size:11px;
+    text-transform:none;font-family:inherit;font-weight:500;outline:none;
+  }
+  .impact-select:focus{border-color:var(--amber);}
+  .check-row{
+    display:flex;align-items:center;gap:6px;margin-top:8px;font-size:9.5px;
+    color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.04em;cursor:pointer;
+  }
+  .check-row input{width:auto;}
+  .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+  .tag{
+    font-size:9px;background:rgba(232,178,61,0.12);color:var(--amber);
+    border:1px solid rgba(232,178,61,0.35);padding:2px 7px;border-radius:16px;
+  }
+  .tag.neg{background:rgba(192,72,63,0.14);color:#e08c84;border-color:rgba(192,72,63,0.4);}
+
+  @media (max-width:600px){
+    .matchup{grid-template-columns:1fr;}
+    .vs{margin:0 auto;}
+    .extra{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>⚽ PRÉDICTEUR LIGUE 1</h1>
+    <p class="subtitle">Saison 2026-2027 — modèle basé sur la loi de Poisson et la correction Dixon-Coles</p>
+    <div class="update-info" id="updateInfo">Chargement...</div>
+  </div>
+
+  <div class="matchup">
+    <div class="team-card home">
+      <label>Équipe à domicile</label>
+      <select id="homeSelect" onchange="onTeamChange('home')"></select>
+      <input type="text" id="homeName" placeholder="Nom de l'équipe">
+      <details>
+        <summary>Ajuster les statistiques</summary>
+        <div class="row2">
+          <div>
+            <label>Buts marqués / match</label>
+            <input type="number" id="homeScored" step="0.05" min="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Buts encaissés / match</label>
+            <input type="number" id="homeConceded" step="0.05" min="0" oninput="predict()">
+          </div>
+        </div>
+        <label>Indice de forme (0 à 5)</label>
+        <input type="number" id="homeForm" step="0.1" min="0" max="5" oninput="predict()">
+        <div class="hint">Par défaut : calculé à partir du taux de victoires de la saison 2026-2027.</div>
+      </details>
+
+      <details>
+        <summary>Facteurs d'impact (forme, blessures, discipline)</summary>
+        <label>Série en cours</label>
+        <select class="impact-select" id="homeStreakType" onchange="predict()">
+          <option value="none">Neutre / pas de série</option>
+          <option value="win">Série de victoires</option>
+          <option value="unbeaten">Invincibilité (victoires + nuls)</option>
+          <option value="lose">Série de défaites</option>
+        </select>
+        <div class="row2">
+          <div>
+            <label>Nb. de matchs</label>
+            <input type="number" id="homeStreakLen" step="1" min="0" max="10" value="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Cartons rouges (saison)</label>
+            <input type="number" id="homeRedCards" step="1" min="0" max="10" value="0" oninput="predict()">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Attaquants clés absents</label>
+            <input type="number" id="homeAttOut" step="1" min="0" max="3" value="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Défenseurs clés absents</label>
+            <input type="number" id="homeDefOut" step="1" min="0" max="3" value="0" oninput="predict()">
+          </div>
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="homeGkOut" onchange="predict()"> Gardien titulaire absent
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="homeKeyPlayerOut" onchange="predict()"> ⭐ Un absent est un joueur vraiment clé (meilleur buteur/leader)
+        </label>
+        <label>Raison principale de l'absence</label>
+        <select class="impact-select" id="homeAbsenceReason" onchange="predict()">
+          <option value="blessure">Blessure</option>
+          <option value="international">Sélection internationale (CAN, autre)</option>
+          <option value="suspension">Carton rouge / suspension</option>
+        </select>
+        <div class="hint">Blessures, suspensions et série ne sont pas connues automatiquement : renseigne-les selon l'actualité du club.</div>
+      </details>
+      <div class="tags" id="homeTags"></div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="team-card away">
+      <label>Équipe visiteuse</label>
+      <select id="awaySelect" onchange="onTeamChange('away')"></select>
+      <input type="text" id="awayName" placeholder="Nom de l'équipe">
+      <details>
+        <summary>Ajuster les statistiques</summary>
+        <div class="row2">
+          <div>
+            <label>Buts marqués / match</label>
+            <input type="number" id="awayScored" step="0.05" min="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Buts encaissés / match</label>
+            <input type="number" id="awayConceded" step="0.05" min="0" oninput="predict()">
+          </div>
+        </div>
+        <label>Indice de forme (0 à 5)</label>
+        <input type="number" id="awayForm" step="0.1" min="0" max="5" oninput="predict()">
+        <div class="hint">Par défaut : calculé à partir du taux de victoires de la saison 2026-2027.</div>
+      </details>
+
+      <details>
+        <summary>Facteurs d'impact (forme, blessures, discipline)</summary>
+        <label>Série en cours</label>
+        <select class="impact-select" id="awayStreakType" onchange="predict()">
+          <option value="none">Neutre / pas de série</option>
+          <option value="win">Série de victoires</option>
+          <option value="unbeaten">Invincibilité (victoires + nuls)</option>
+          <option value="lose">Série de défaites</option>
+        </select>
+        <div class="row2">
+          <div>
+            <label>Nb. de matchs</label>
+            <input type="number" id="awayStreakLen" step="1" min="0" max="10" value="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Cartons rouges (saison)</label>
+            <input type="number" id="awayRedCards" step="1" min="0" max="10" value="0" oninput="predict()">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Attaquants clés absents</label>
+            <input type="number" id="awayAttOut" step="1" min="0" max="3" value="0" oninput="predict()">
+          </div>
+          <div>
+            <label>Défenseurs clés absents</label>
+            <input type="number" id="awayDefOut" step="1" min="0" max="3" value="0" oninput="predict()">
+          </div>
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="awayGkOut" onchange="predict()"> Gardien titulaire absent
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="awayKeyPlayerOut" onchange="predict()"> ⭐ Un absent est un joueur vraiment clé (meilleur buteur/leader)
+        </label>
+        <label>Raison principale de l'absence</label>
+        <select class="impact-select" id="awayAbsenceReason" onchange="predict()">
+          <option value="blessure">Blessure</option>
+          <option value="international">Sélection internationale (CAN, autre)</option>
+          <option value="suspension">Carton rouge / suspension</option>
+        </select>
+        <div class="hint">Blessures, suspensions et série ne sont pas connues automatiquement : renseigne-les selon l'actualité du club.</div>
+      </details>
+      <div class="tags" id="awayTags"></div>
+    </div>
+  </div>
+
+  <div class="results-list">
+    <div class="results-title-row">
+      <select class="results-select" id="matchdaySelect" onchange="renderResultsForMatchday(this.value)"></select>
+      <span id="resultsSummary"></span>
+    </div>
+    <div id="resultsRows"></div>
+  </div>
+
+  <details class="manual-entry">
+    <summary>✏️ Saisir une journée manuellement</summary>
+    <div class="hint" style="margin:6px 0 8px;">
+      Utile si la journée n'est pas encore disponible via <code>update_stats.py</code>.
+      Reste actif tant que cette page est ouverte — utilise "Copier le code" pour
+      l'ajouter de façon permanente au fichier.
+    </div>
+    <label>Numéro de journée</label>
+    <input type="number" id="manualMatchday" min="1" max="34" step="1" value="2" style="max-width:100px;" oninput="loadManualMatchday(this.value)">
+    <div id="manualRows"></div>
+    <div class="manual-actions">
+      <button class="update-btn" type="button" id="connectFileBtn" onclick="connectFile()">🔗 Connecter ce fichier (sauvegarde auto)</button>
+      <button class="update-btn" type="button" onclick="saveManualMatchday()">💾 Enregistrer</button>
+      <button class="update-btn" type="button" onclick="copyManualMatchdayCode()">📋 Copier le code à coller</button>
+    </div>
+    <div class="update-status" id="fileConnectStatus"></div>
+    <div class="update-status" id="manualStatus"></div>
+  </details>
+
+  <div class="update-row">
+    <div class="source-line">Statistiques Ligue 1 — buts marqués / encaissés par match, forme récente et séries, calculés via <code>update_stats.py</code>.</div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="empty-state" id="emptyState">Choisis deux équipes ci-dessus pour voir le pronostic.</div>
+    <div id="results" style="display:none">
+      <div class="score-hero">
+        <div class="lbl">Score le plus probable</div>
+        <div class="digits" id="heroScore">0 – 0</div>
+        <div class="prob" id="heroProb">probabilité —</div>
+      </div>
+
+      <div class="probs">
+        <div class="prob-cell">
+          <div class="name" id="homeLbl">Victoire dom.</div>
+          <div class="val" id="pHome" style="color:var(--home)">0%</div>
+          <div class="bar"><div id="barHome" style="background:var(--home);width:0%"></div></div>
+        </div>
+        <div class="prob-cell">
+          <div class="name">Match nul</div>
+          <div class="val" id="pDraw" style="color:var(--chalk)">0%</div>
+          <div class="bar"><div id="barDraw" style="background:var(--chalk);width:0%"></div></div>
+        </div>
+        <div class="prob-cell">
+          <div class="name" id="awayLbl">Victoire ext.</div>
+          <div class="val" id="pAway" style="color:var(--away)">0%</div>
+          <div class="bar"><div id="barAway" style="background:var(--away);width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="extra">
+        <div class="extra-cell"><span class="k">Plus de 2,5 buts</span><span class="v" id="over25">—</span></div>
+        <div class="extra-cell"><span class="k">Les deux équipes marquent</span><span class="v" id="btts">—</span></div>
+        <div class="extra-cell"><span class="k">Buts attendus (dom.)</span><span class="v" id="xgHome">—</span></div>
+        <div class="extra-cell"><span class="k">Buts attendus (ext.)</span><span class="v" id="xgAway">—</span></div>
+      </div>
+
+      <div class="grid-title">Top 5 des scores les plus probables</div>
+      <div class="score-grid" id="scoreGrid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Dernière mise à jour des données : à quelle journée elles correspondent et quand.
+// Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
+let LAST_UPDATE = { matchday: 5, updatedAt: "2026-10-10T15:42:43", note: "" };
+
+// Historique des résultats, par journée (clé = numéro de journée en texte).
+// Format JSON simple pour que update_stats.py puisse le relire et y ajouter
+// une nouvelle journée sans écraser les précédentes.
+let MATCHDAY_HISTORY = {
+  "1": [
+    { "home": "Angers SCO", "away": "LOSC Lille", "homeScore": 0, "awayScore": 2, "played": true },
+    { "home": "Le Havre AC", "away": "AS Monaco", "homeScore": 0, "awayScore": 1, "played": true },
+    { "home": "Le Mans FC", "away": "Stade Brestois", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "RC Lens", "away": "AJ Auxerre", "homeScore": 5, "awayScore": 2, "played": true },
+    { "home": "Olympique de Marseille", "away": "RC Strasbourg", "homeScore": 4, "awayScore": 0, "played": true },
+    { "home": "OGC Nice", "away": "FC Lorient", "homeScore": 0, "awayScore": 0, "played": true },
+    { "home": "Paris Saint-Germain", "away": "Stade Rennais", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "Toulouse FC", "away": "Olympique Lyonnais", "homeScore": 0, "awayScore": 2, "played": true },
+    { "home": "ES Troyes AC", "away": "Paris FC", "homeScore": 0, "awayScore": 0, "played": true }
+  ],
+  "2": [
+    { "home": "AJ Auxerre", "away": "Angers SCO", "homeScore": 1, "awayScore": 3, "played": true },
+    { "home": "Stade Brestois", "away": "Toulouse FC", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "LOSC Lille", "away": "Paris Saint-Germain", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "FC Lorient", "away": "ES Troyes AC", "homeScore": 1, "awayScore": 2, "played": true },
+    { "home": "Olympique Lyonnais", "away": "Le Havre AC", "homeScore": 1, "awayScore": 1, "played": true },
+    { "home": "AS Monaco", "away": "Olympique de Marseille", "homeScore": 2, "awayScore": 0, "played": true },
+    { "home": "Paris FC", "away": "OGC Nice", "homeScore": 3, "awayScore": 0, "played": true },
+    { "home": "Stade Rennais", "away": "Le Mans FC", "homeScore": 3, "awayScore": 2, "played": true },
+    { "home": "RC Strasbourg", "away": "RC Lens", "homeScore": 2, "awayScore": 1, "played": true }
+  ],
+  "3": [
+    { "home": "Angers SCO", "away": "Stade Rennais", "homeScore": 1, "awayScore": 2, "played": true },
+    { "home": "Le Havre AC", "away": "Stade Brestois", "homeScore": 1, "awayScore": 2, "played": true },
+    { "home": "RC Lens", "away": "FC Lorient", "homeScore": 0, "awayScore": 1, "played": true },
+    { "home": "Olympique Lyonnais", "away": "AJ Auxerre", "homeScore": 3, "awayScore": 1, "played": true },
+    { "home": "Olympique de Marseille", "away": "Paris FC", "homeScore": 2, "awayScore": 3, "played": true },
+    { "home": "OGC Nice", "away": "Le Mans FC", "homeScore": 1, "awayScore": 1, "played": true },
+    { "home": "Paris Saint-Germain", "away": "AS Monaco", "homeScore": 1, "awayScore": 2, "played": true },
+    { "home": "Toulouse FC", "away": "LOSC Lille", "homeScore": 0, "awayScore": 1, "played": true },
+    { "home": "ES Troyes AC", "away": "RC Strasbourg", "homeScore": 2, "awayScore": 6, "played": true }
+  ],
+  "4": [
+    { "home": "AJ Auxerre", "away": "OGC Nice", "homeScore": 1, "awayScore": 0, "played": true },
+    { "home": "Stade Brestois", "away": "Paris Saint-Germain", "homeScore": 0, "awayScore": 1, "played": true },
+    { "home": "Le Havre AC", "away": "Angers SCO", "homeScore": 0, "awayScore": 0, "played": true },
+    { "home": "Le Mans FC", "away": "RC Lens", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "LOSC Lille", "away": "ES Troyes AC", "homeScore": 2, "awayScore": 0, "played": true },
+    { "home": "FC Lorient", "away": "Toulouse FC", "homeScore": 2, "awayScore": 2, "played": true },
+    { "home": "Paris FC", "away": "Olympique Lyonnais", "homeScore": 0, "awayScore": 0, "played": true },
+    { "home": "Stade Rennais", "away": "Olympique de Marseille", "homeScore": 1, "awayScore": 0, "played": true },
+    { "home": "RC Strasbourg", "away": "AS Monaco", "homeScore": 1, "awayScore": 1, "played": true }
+  ],
+  "5": [
+    { "home": "Angers SCO", "away": "ES Troyes AC", "homeScore": 2, "awayScore": 0, "played": true },
+    { "home": "AJ Auxerre", "away": "Stade Brestois", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "Le Mans FC", "away": "FC Lorient", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "Olympique Lyonnais", "away": "Stade Rennais", "homeScore": 4, "awayScore": 0, "played": true },
+    { "home": "Olympique de Marseille", "away": "Paris Saint-Germain", "homeScore": 1, "awayScore": 2, "played": true },
+    { "home": "AS Monaco", "away": "RC Lens", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "OGC Nice", "away": "LOSC Lille", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "Paris FC", "away": "RC Strasbourg", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "Toulouse FC", "away": "Le Havre AC", "homeScore": 3, "awayScore": 2, "played": true }
+  ],
+  "6": [
+    { "home": "Stade Brestois", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Olympique Lyonnais", "homeScore": 2, "awayScore": 1, "played": true },
+    { "home": "LOSC Lille", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "7": [
+    { "home": "Angers SCO", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "8": [
+    { "home": "Angers SCO", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "9": [
+    { "home": "Le Havre AC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "10": [
+    { "home": "Angers SCO", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "11": [
+    { "home": "RC Lens", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "12": [
+    { "home": "Angers SCO", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "13": [
+    { "home": "RC Lens", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "14": [
+    { "home": "Angers SCO", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "15": [
+    { "home": "Stade Brestois", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "16": [
+    { "home": "Angers SCO", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "17": [
+    { "home": "Le Havre AC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "18": [
+    { "home": "Angers SCO", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "19": [
+    { "home": "AJ Auxerre", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "20": [
+    { "home": "AJ Auxerre", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "21": [
+    { "home": "Angers SCO", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "22": [
+    { "home": "AJ Auxerre", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "23": [
+    { "home": "Angers SCO", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "24": [
+    { "home": "AJ Auxerre", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "25": [
+    { "home": "Angers SCO", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "26": [
+    { "home": "Angers SCO", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "27": [
+    { "home": "Le Mans FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "28": [
+    { "home": "Angers SCO", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AJ Auxerre", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "29": [
+    { "home": "Le Mans FC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "30": [
+    { "home": "AJ Auxerre", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "31": [
+    { "home": "Angers SCO", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "32": [
+    { "home": "AJ Auxerre", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "33": [
+    { "home": "Angers SCO", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Havre AC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Le Mans FC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Lens", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "FC Lorient", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "OGC Nice", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Toulouse FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "ES Troyes AC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false }
+  ],
+  "34": [
+    { "home": "AJ Auxerre", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Brestois", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "LOSC Lille", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique Lyonnais", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Olympique de Marseille", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "AS Monaco", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Paris Saint-Germain", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "Stade Rennais", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
+    { "home": "RC Strasbourg", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false }
+  ]
+};
+
+// Effectif Ligue 1 2026-2027 (18 clubs), classé par ordre alphabétique.
+// Mis à jour manuellement par Claude (recherche web) le 23/08/2026 : la journée 1
+// est terminée, les 18 clubs ont chacun 1 match réel (chiffres à prendre avec
+// précaution vu le petit échantillon — normal en tout début de saison).
+let TEAMS = [
+  { name:"Angers SCO", scored:1.2, conceded:1.0, form:2.0, played:5, wins:2, draws:1, goalsFor:6, goalsAgainst:5, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Courcoul (déf. titulaire habituel, 16 tit./20) blessé long terme ; Peter (att.) blessé depuis mai ; Belkhdim et Mouton aussi à l'infirmerie (postes non confirmés, non comptés)", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { name:"AJ Auxerre", scored:1.4, conceded:2.4, form:2.0, played:5, wins:2, draws:0, goalsFor:7, goalsAgainst:12, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée (4 absents dont 1 suspendu)", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Stade Brestois", scored:1.4, conceded:1.6, form:1.0, played:5, wins:1, draws:2, goalsFor:7, goalsAgainst:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Baldé (ailier clé) et Coulibaly (déf.) blessés ; Chardonnet (capitaine, déf.) confirmé titulaire ce match malgré une 1ère info le donnant absent", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { name:"Le Havre AC", scored:0.8, conceded:1.4, form:0.0, played:5, wins:0, draws:2, goalsFor:4, goalsAgainst:7, absentAttackers:1, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"blessures multiples", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Le Mans FC", scored:1.8, conceded:1.8, form:1.0, played:5, wins:1, draws:3, goalsFor:9, goalsAgainst:9, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"RC Lens", scored:1.833, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:10, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-05T20:33:00", newCoachBoostFrom:6 },
+  { name:"LOSC Lille", scored:1.6, conceded:0.8, form:3.0, played:5, wins:3, draws:1, goalsFor:8, goalsAgainst:4, worldCupPlayers:7, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"FC Lorient", scored:1.0, conceded:1.2, form:1.0, played:5, wins:1, draws:2, goalsFor:5, goalsAgainst:6, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Olympique Lyonnais", scored:1.833, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:4, restDays:3, playedEurope:true, europeLevel:"EL" },
+  { name:"Olympique de Marseille", scored:1.4, conceded:1.6, form:1.0, played:5, wins:1, draws:0, goalsFor:7, goalsAgainst:8, worldCupPlayers:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"suspension (carton rouge) + blessure", absenceUpdatedAt:"2026-10-10T04:52:00", restDays:3, playedEurope:true, europeLevel:"EL" },
+  { name:"AS Monaco", scored:1.6, conceded:0.6, form:4.0, played:5, wins:4, draws:1, goalsFor:8, goalsAgainst:3, worldCupPlayers:6, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"OGC Nice", scored:0.6, conceded:1.2, form:1.0, played:5, wins:1, draws:2, goalsFor:3, goalsAgainst:6, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Paris FC", scored:1.6, conceded:0.6, form:3.0, played:5, wins:3, draws:2, goalsFor:8, goalsAgainst:3, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Paris Saint-Germain", scored:1.6, conceded:1.4, form:2.0, played:5, wins:2, draws:2, goalsFor:8, goalsAgainst:7, worldCupPlayers:16, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"rotation + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Stade Rennais", scored:1.6, conceded:1.8, form:3.0, played:5, wins:3, draws:1, goalsFor:8, goalsAgainst:9, restDays:3, playedEurope:true, europeLevel:"EL" },
+  { name:"RC Strasbourg", scored:2.0, conceded:2.0, form:2.0, played:5, wins:2, draws:1, goalsFor:10, goalsAgainst:10, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"Toulouse FC", scored:1.4, conceded:1.8, form:1.0, played:5, wins:1, draws:2, goalsFor:7, goalsAgainst:9, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { name:"ES Troyes AC", scored:0.8, conceded:2.2, form:1.0, played:5, wins:1, draws:1, goalsFor:4, goalsAgainst:11, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+];
+
+// Photo des stats "officielles" telles qu'écrites par update_stats.py, AVANT toute
+// saisie manuelle. Sert de base propre pour recalculer sans jamais compter un match
+// deux fois, même si on resaisit/corrige une journée plusieurs fois dans la session.
+const BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
+
+const LEAGUE_AVG = 1.41;   // moyenne de buts marqués/équipe/match, calculée sur la saison Ligue 1 2025-2026
+// Lissage début de saison : poids de la moyenne ligue, en "matchs virtuels".
+// Double dégressivité, validée par test rétrospectif sur les journées 2 à 5 (36 matchs) :
+//  1) le poids de la moyenne ligue décroît déjà avec le nombre de matchs JOUÉS PAR L'ÉQUIPE
+//     (k/(joués+k) : 43% à 4 matchs, 23% à 10, 8% en fin de saison) ;
+//  2) k lui-même décroît avec le numéro de JOURNÉE de la saison (8 en J1, 3 dès J9 environ),
+//     même principe que le contrecoup Coupe du Monde plus bas. Sans ce 2e niveau, le score de
+//     Brier du backtest (36 matchs) était de 0,678 ; avec, il tombe à 0,657 — un k fixe encore
+//     plus élevé faisait mieux sur cet échantillon (jusqu'à 0,652 à k=12) mais on s'en est
+//     délibérément tenus à l'écart : sur seulement 36 matchs, pousser le lissage aussi loin
+//     risque fort d'être du surapprentissage plutôt qu'un vrai signal. À revalider avec le même
+//     test une fois qu'on aura 10-15 journées jouées.
+function currentShrinkageGames(){
+  const md = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday) ? LAST_UPDATE.matchday : 1;
+  return Math.max(3, 8 - (md-1)*0.5);
+}
+function shrinkToLeagueAverage(rawValue, played){
+  const k = currentShrinkageGames();
+  return (rawValue*played + LEAGUE_AVG*k) / (played + k);
+}
+const HOME_ADV   = 1.15;   // bonus domicile appliqué UNIQUEMENT si on n'a pas de vraies stats domicile/extérieur
+const AWAY_ADJ   = 0.92;
+const DC_RHO     = -0.08;  // corrélation Dixon-Coles : corrige la sous-estimation des scores serrés (0-0, 1-0, 0-1, 1-1)
+const MAXG = 6;
+
+// ============================================================
+// Mise à jour en direct depuis football-data.org
+// Colle ta clé API gratuite ici (compte sur https://www.football-data.org/client/register)
+// La clé reste visible dans ce fichier : ok pour un usage perso en local,
+// à ne jamais faire si ce fichier est un jour hébergé publiquement.
+// ============================================================
+function poissonP(lambda, k){
+  return Math.exp(-lambda) * Math.pow(lambda, k) / factorial(k);
+}
+function factorial(n){ let f=1; for(let i=2;i<=n;i++) f*=i; return f; }
+
+// Ajustement Dixon-Coles : le modèle de Poisson simple sous-estime légèrement
+// la fréquence réelle des scores serrés (0-0, 1-0, 0-1, 1-1). Ce facteur
+// correctif (tau) resserre les probabilités sur ces 4 cases uniquement.
+function dixonColesTau(x, y, lambda, mu, rho){
+  if(x===0 && y===0) return 1 - (lambda*mu*rho);
+  if(x===0 && y===1) return 1 + (lambda*rho);
+  if(x===1 && y===0) return 1 + (mu*rho);
+  if(x===1 && y===1) return 1 - rho;
+  return 1;
+}
+
+// Fatigue : malus léger si peu de repos depuis le dernier match (toutes compétitions),
+// avec un malus supplémentaire si ce dernier match était une coupe d'Europe — la C1
+// pèse plus lourd que l'Europa League, elle-même plus lourde que la Conference League
+// (adversaires plus costauds, trajets plus longs, enjeu plus grand).
+const EUROPE_LEVEL_MALUS = { CL: 0.06, EL: 0.04, UECL: 0.025 };
+function fatigueImpact(teamObj){
+  if(!teamObj || teamObj.restDays == null) return { mult:1, tag:null };
+  let malus = 0;
+  if(teamObj.restDays <= 3) malus += 0.06;
+  else if(teamObj.restDays <= 4) malus += 0.03;
+  const europeMalus = teamObj.europeLevel ? (EUROPE_LEVEL_MALUS[teamObj.europeLevel] || 0.04) : 0;
+  malus += europeMalus;
+  if(malus <= 0) return { mult:1, tag:null };
+  const europeLabel = { CL:'Ligue des Champions', EL:'Europa League', UECL:'Conference League' }[teamObj.europeLevel];
+  const tagText = '😴 ' + teamObj.restDays + ' j. de repos' + (europeLabel ? ' (' + europeLabel + ')' : '');
+  return { mult: 1 - malus, tag: { t: tagText, neg: true } };
+}
+
+// Enjeu sportif : les équipes en lutte pour le maintien haussent généralement leur
+// niveau (défense plus solide, engagement supérieur). N'a de sens statistique que
+// tard dans la saison — un classement après 2-3 journées ne reflète rien de réel,
+// donc ce facteur reste neutre avant la journée 25 (dernier tiers du championnat).
+const STAKES_ACTIVATION_MATCHDAY = 25;
+
+function computeLeagueStandings(){
+  return TEAMS.map(function(t){
+    const points = (t.wins||0)*3 + (t.draws||0);
+    const gd = (t.goalsFor||0) - (t.goalsAgainst||0);
+    return { name:t.name, points:points, gd:gd };
+  }).sort(function(a,b){
+    if(b.points !== a.points) return b.points - a.points;
+    return b.gd - a.gd;
+  });
+}
+
+function stakesImpact(teamObj){
+  const neutral = { attackMult:1, defenseMult:1, tag:null };
+  if(!teamObj) return neutral;
+  const matchday = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday) ? LAST_UPDATE.matchday : 0;
+  if(matchday < STAKES_ACTIVATION_MATCHDAY) return neutral;
+
+  const standings = computeLeagueStandings();
+  const rank = standings.findIndex(function(s){ return s.name === teamObj.name; }) + 1;
+  if(rank === 0) return neutral;
+
+  const total = standings.length;
+  if(rank > total - 3){ // 3 dernières places : zone de relégation directe/barrage
+    return {
+      attackMult: 1.04,
+      defenseMult: 0.97,
+      tag: { t: '🔥 Bataille pour le maintien (' + rank + 'e)', neg:false }
+    };
+  }
+  return neutral;
+}
+
+// Contrecoup Coupe du Monde : un club ayant envoyé beaucoup de joueurs à une Coupe
+// du Monde l'été précédent démarre souvent la saison fatigué (préparation estivale
+// tronquée, corps sollicités). Magnitude proportionnelle au nombre de joueurs
+// réellement appelés (worldCupPlayers), avec un plafond à -6%. Effet marqué au
+// coup d'envoi puis qui s'estompe linéairement jusqu'à la journée 10.
+const WORLD_CUP_HANGOVER_END_MATCHDAY = 10;
+const WORLD_CUP_MALUS_PER_PLAYER = 0.004;
+const WORLD_CUP_MALUS_CAP = 0.06;
+function worldCupHangoverImpact(teamObj){
+  const neutral = { mult:1, tag:null };
+  const count = teamObj && teamObj.worldCupPlayers;
+  if(!count) return neutral;
+  const matchday = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday) ? LAST_UPDATE.matchday : 1;
+  if(matchday > WORLD_CUP_HANGOVER_END_MATCHDAY) return neutral;
+  const fade = 1 - (matchday-1)/(WORLD_CUP_HANGOVER_END_MATCHDAY-1);
+  const maxMalus = Math.min(WORLD_CUP_MALUS_CAP, count * WORLD_CUP_MALUS_PER_PLAYER);
+  const malus = maxMalus * Math.max(0, fade);
+  if(malus <= 0.005) return neutral;
+  return { mult: 1-malus, tag: { t:'🌍 Contrecoup Coupe du Monde ('+count+' joueurs, -'+Math.round(malus*100)+'%)', neg:true } };
+}
+
+// Bonus "nouveau coach avec vrai temps de préparation" : la littérature sur le
+// "new manager bounce" (Analytics FC, Neil Paine/FiveThirtyEight) montre un effet
+// globalement modeste et débattu, SURTOUT positif quand le changement a lieu à
+// l'intersaison (temps de travail avec l'effectif) plutôt qu'en plein calendrier —
+// jusqu'à ~0,13 pt/match après une vingtaine de matchs dans ce cas-là, contre un
+// effet plutôt négatif pour un changement sans vraie pause. On ne déclenche donc
+// JAMAIS ce bonus automatiquement : c'est un champ saisi à la main (newCoachBoostFrom
+// = numéro de la journée à partir de laquelle l'équipe a repris après un vrai bloc
+// d'entraînement avec le nouveau coach — trêve internationale longue ou intersaison),
+// pour ne jamais le déclencher sur un simple changement d'entraîneur sans pause.
+// Magnitude volontairement basse et plafonnée : la preuve statistique est mince,
+// pas de quoi faire basculer un favori à elle seule. Dégressif (même principe que
+// worldCupHangoverImpact) : plein effet au match de reprise, qui s'estompe ensuite
+// linéairement jusqu'à épuisement — l'effet s'absorbe progressivement dans les
+// stats de forme classiques plutôt que de tomber d'un coup à zéro.
+const NEW_COACH_BONUS_DURATION = 15;     // matchs, cohérent avec l'étude ("jusqu'à ~20 matchs")
+const NEW_COACH_ATTACK_BONUS = 0.03;     // +3% attaque au maximum (match de reprise)
+const NEW_COACH_DEFENSE_BONUS = 0.02;    // +2% défense au maximum (= malus sur les buts encaissés)
+function newCoachImpact(teamObj){
+  const neutral = { attackMult:1, defenseMult:1, tag:null };
+  const startMd = teamObj && teamObj.newCoachBoostFrom;
+  if(!startMd) return neutral;
+  const matchday = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday) ? LAST_UPDATE.matchday : 1;
+  const gamesSince = matchday - startMd;
+  if(gamesSince < 0 || gamesSince >= NEW_COACH_BONUS_DURATION) return neutral;
+  const fade = 1 - gamesSince/NEW_COACH_BONUS_DURATION;
+  const attackBonus = NEW_COACH_ATTACK_BONUS * fade;
+  const defenseBonus = NEW_COACH_DEFENSE_BONUS * fade;
+  if(attackBonus <= 0.002) return neutral;
+  return {
+    attackMult: 1 + attackBonus,
+    defenseMult: 1 - defenseBonus,
+    tag: { t:'🆕 Nouveau coach avec vrai temps de préparation (+'+Math.round(attackBonus*100)+'%, dégressif, preuve mince)', neg:false }
+  };
+}
+
+// Équivalent de computeAdjusted() mais lu directement dans les données de l'équipe
+// (série, absences, gardien, joueur clé) au lieu des champs du formulaire : c'est ce
+// qui permet au tableau des résultats d'appliquer les MÊMES ajustements que le
+// prédicteur principal (qui préremplit ces champs depuis TEAMS via onTeamChange).
+function adjustedFromTeam(t, baseScored, baseConceded){
+  const streakType = t.streakType || 'none';
+  const streakLen = clamp(parseFloat(t.streakLen)||0, 0, 10);
+  const attOut = clamp(parseFloat(t.absentAttackers)||0, 0, 3);
+  const defOut = clamp(parseFloat(t.absentDefenders)||0, 0, 3);
+  const gkOut = !!t.gkOut;
+  const keyPlayerOut = !!t.keyPlayerOut;
+
+  let moraleAdj = 0;
+  if(streakType==='win') moraleAdj = Math.min(0.10, streakLen*0.02);
+  else if(streakType==='unbeaten') moraleAdj = Math.min(0.06, streakLen*0.012);
+  else if(streakType==='lose') moraleAdj = -Math.min(0.10, streakLen*0.02);
+
+  const anyAbsence = (attOut>0 || defOut>0 || gkOut);
+  const keyPlayerAttackMalus = (keyPlayerOut && anyAbsence) ? 0.08 : 0;
+  const keyPlayerDefenseMalus = (keyPlayerOut && anyAbsence) ? 0.05 : 0;
+  const attackMalus = attOut*0.08 + keyPlayerAttackMalus;
+  const defenseMalus = defOut*0.08 + (gkOut?0.10:0) + keyPlayerDefenseMalus;
+
+  const attackMult = (1+moraleAdj) * (1-attackMalus);
+  const defenseMult = (1-moraleAdj*0.5) * (1+defenseMalus);
+  return { scored: baseScored*attackMult, conceded: baseConceded*Math.max(0.1, defenseMult) };
+}
+
+// Pronostic rapide pour n'importe quelle paire d'équipes (utilisé dans la liste
+// des résultats). Même calcul que le prédicteur principal : stats domicile/extérieur
+// (ou moyenne), série, absences, joueur clé, fatigue, enjeu, contrecoup Coupe du
+// Monde et forme. Seuls les cartons rouges saisis à la main restent propres au
+// prédicteur principal.
+function predictScoreQuick(homeName, awayName){
+  const h = TEAMS.find(function(t){ return t.name === homeName; });
+  const a = TEAMS.find(function(t){ return t.name === awayName; });
+  if(!h || !a) return null;
+
+  // le prédicteur principal lit ces valeurs dans des champs arrondis (2 décimales, forme à 1) :
+  // on reproduit le même arrondi pour que les deux donnent exactement les mêmes chiffres
+  const r2 = function(v){ return parseFloat(Number(v).toFixed(2)); };
+  const r1 = function(v){ return parseFloat(Number(v).toFixed(1)); };
+  const hSplitUsed = h.homeScored != null && h.homeConceded != null;
+  const aSplitUsed = a.awayScored != null && a.awayConceded != null;
+  let hBaseScored = hSplitUsed ? h.homeScored : r2(h.scored);
+  let hBaseConceded = hSplitUsed ? h.homeConceded : r2(h.conceded);
+  let aBaseScored = aSplitUsed ? a.awayScored : r2(a.scored);
+  let aBaseConceded = aSplitUsed ? a.awayConceded : r2(a.conceded);
+  hBaseScored = shrinkToLeagueAverage(hBaseScored, h.played);
+  hBaseConceded = shrinkToLeagueAverage(hBaseConceded, h.played);
+  aBaseScored = shrinkToLeagueAverage(aBaseScored, a.played);
+  aBaseConceded = shrinkToLeagueAverage(aBaseConceded, a.played);
+
+  const hAdj = adjustedFromTeam(h, hBaseScored, hBaseConceded);
+  const aAdj = adjustedFromTeam(a, aBaseScored, aBaseConceded);
+
+  hAdj.scored *= fatigueImpact(h).mult;
+  aAdj.scored *= fatigueImpact(a).mult;
+  const hStakes = stakesImpact(h);
+  const aStakes = stakesImpact(a);
+  hAdj.scored *= hStakes.attackMult; hAdj.conceded *= hStakes.defenseMult;
+  aAdj.scored *= aStakes.attackMult; aAdj.conceded *= aStakes.defenseMult;
+  hAdj.scored *= worldCupHangoverImpact(h).mult;
+  aAdj.scored *= worldCupHangoverImpact(a).mult;
+  const hNewCoach = newCoachImpact(h);
+  const aNewCoach = newCoachImpact(a);
+  hAdj.scored *= hNewCoach.attackMult; hAdj.conceded *= hNewCoach.defenseMult;
+  aAdj.scored *= aNewCoach.attackMult; aAdj.conceded *= aNewCoach.defenseMult;
+
+  const hAttack = hAdj.scored / LEAGUE_AVG;
+  const hDefense = hAdj.conceded / LEAGUE_AVG;
+  const aAttack = aAdj.scored / LEAGUE_AVG;
+  const aDefense = aAdj.conceded / LEAGUE_AVG;
+
+  const homeAdvMult = hSplitUsed ? 1 : HOME_ADV;
+  const awayAdvMult = aSplitUsed ? 1 : AWAY_ADJ;
+
+  const hForm = r1(h.recentForm != null ? h.recentForm : h.form);
+  const aForm = r1(a.recentForm != null ? a.recentForm : a.form);
+  const hFormFactor = 0.9 + (hForm/5)*0.2;
+  const aFormFactor = 0.9 + (aForm/5)*0.2;
+
+  let lambdaHome = Math.max(0.05, hAttack * aDefense * LEAGUE_AVG * homeAdvMult * hFormFactor);
+  let lambdaAway = Math.max(0.05, aAttack * hDefense * LEAGUE_AVG * awayAdvMult * aFormFactor);
+
+  let best = {i:0, j:0, p:-1};
+  let pHomeWin=0, pDraw=0, pAwayWin=0, grandTotal=0;
+  for(let i=0;i<=MAXG;i++){
+    for(let j=0;j<=MAXG;j++){
+      let p = poissonP(lambdaHome,i) * poissonP(lambdaAway,j);
+      p *= dixonColesTau(i,j,lambdaHome,lambdaAway,DC_RHO);
+      if(p<0) p=0;
+      grandTotal += p;
+      if(i>j) pHomeWin+=p; else if(i===j) pDraw+=p; else pAwayWin+=p;
+      if(p>best.p) best={i,j,p};
+    }
+  }
+  if(grandTotal>0){ pHomeWin/=grandTotal; pDraw/=grandTotal; pAwayWin/=grandTotal; }
+  best.pHomeWin = pHomeWin; best.pDraw = pDraw; best.pAwayWin = pAwayWin;
+  return best;
+}
+
+function buildSelect(id, defaultIndex){
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="custom">Autre équipe (saisie manuelle)</option>';
+  TEAMS.forEach((t,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = t.name;
+    sel.appendChild(opt);
+  });
+  sel.value = defaultIndex;
+}
+
+function onTeamChange(side){
+  const sel = document.getElementById(side+'Select');
+  const nameInput = document.getElementById(side+'Name');
+  const scoredInput = document.getElementById(side+'Scored');
+  const concededInput = document.getElementById(side+'Conceded');
+  const formInput = document.getElementById(side+'Form');
+
+  if(sel.value === 'custom'){
+    nameInput.style.display = 'block';
+    if(!nameInput.value) nameInput.value = '';
+    scoredInput.value = 1.4;
+    concededInput.value = 1.4;
+    formInput.value = 2.5;
+  } else {
+    const t = TEAMS[parseInt(sel.value)];
+    nameInput.style.display = 'none';
+    nameInput.value = t.name;
+    scoredInput.value = t.scored.toFixed(2);
+    concededInput.value = t.conceded.toFixed(2);
+    // la forme sur les 5 derniers matchs (calculée par update_stats.py) prime sur la moyenne saison
+    formInput.value = (t.recentForm != null ? t.recentForm : t.form).toFixed(1);
+  }
+
+  // les facteurs d'impact (situationnels) : on reprend la série détectée par
+  // update_stats.py, et les absences renseignées manuellement (via le chat),
+  // si elles existent ; sinon on repart à neutre.
+  const t = (sel.value !== 'custom') ? TEAMS[parseInt(sel.value)] : null;
+  document.getElementById(side+'StreakType').value = (t && t.streakType) ? t.streakType : 'none';
+  document.getElementById(side+'StreakLen').value = (t && t.streakLen != null) ? t.streakLen : 0;
+  document.getElementById(side+'RedCards').value = 0;
+  document.getElementById(side+'AttOut').value = (t && t.absentAttackers != null) ? t.absentAttackers : 0;
+  document.getElementById(side+'DefOut').value = (t && t.absentDefenders != null) ? t.absentDefenders : 0;
+  document.getElementById(side+'GkOut').checked = !!(t && t.gkOut);
+  document.getElementById(side+'KeyPlayerOut').checked = !!(t && t.keyPlayerOut);
+  document.getElementById(side+'AbsenceReason').value = (t && t.absenceReason) ? t.absenceReason : 'blessure';
+
+  predict();
+}
+
+function clamp(v,min,max){ return Math.min(max,Math.max(min,v)); }
+
+function computeAdjusted(side, baseScored, baseConceded){
+  const streakType = document.getElementById(side+'StreakType').value;
+  const streakLen = clamp(parseFloat(document.getElementById(side+'StreakLen').value)||0, 0, 10);
+  const redCards = clamp(parseFloat(document.getElementById(side+'RedCards').value)||0, 0, 10);
+  const attOut = clamp(parseFloat(document.getElementById(side+'AttOut').value)||0, 0, 3);
+  const defOut = clamp(parseFloat(document.getElementById(side+'DefOut').value)||0, 0, 3);
+  const gkOut = document.getElementById(side+'GkOut').checked;
+  const keyPlayerOut = document.getElementById(side+'KeyPlayerOut').checked;
+  const absenceReason = document.getElementById(side+'AbsenceReason').value;
+
+  let moraleAdj = 0;
+  if(streakType==='win') moraleAdj = Math.min(0.10, streakLen*0.02);
+  else if(streakType==='unbeaten') moraleAdj = Math.min(0.06, streakLen*0.012);
+  else if(streakType==='lose') moraleAdj = -Math.min(0.10, streakLen*0.02);
+
+  const disciplinePenalty = Math.min(0.08, redCards*0.01);
+  const anyAbsence = (attOut>0 || defOut>0 || gkOut);
+  // un joueur "vraiment clé" (meilleur buteur/leader) pèse nettement plus qu'un
+  // remplaçant de rotation : bonus de malus réparti sur l'attaque et la défense.
+  const keyPlayerAttackMalus = (keyPlayerOut && anyAbsence) ? 0.08 : 0;
+  const keyPlayerDefenseMalus = (keyPlayerOut && anyAbsence) ? 0.05 : 0;
+  const attackMalus = attOut*0.08 + keyPlayerAttackMalus;
+  const defenseMalus = defOut*0.08 + (gkOut?0.10:0) + keyPlayerDefenseMalus;
+
+  const attackMult = (1+moraleAdj) * (1-disciplinePenalty) * (1-attackMalus);
+  const defenseMult = (1-moraleAdj*0.5) * (1+disciplinePenalty) * (1+defenseMalus);
+
+  const reasonLabel = { blessure:'blessure', international:'sélection internationale', suspension:'suspension' }[absenceReason] || '';
+  const keySuffix = keyPlayerOut ? ' ⭐ dont un titulaire clé' : '';
+  const reasonSuffix = (anyAbsence && reasonLabel) ? ' (' + reasonLabel + ')' : '';
+
+  const tags = [];
+  if(streakType==='win' && streakLen>0) tags.push({t:'🔥 '+streakLen+' victoire(s) de suite', neg:false});
+  if(streakType==='unbeaten' && streakLen>0) tags.push({t:'🛡️ Invaincu depuis '+streakLen+' match(s)', neg:false});
+  if(streakType==='lose' && streakLen>0) tags.push({t:'📉 '+streakLen+' défaite(s) de suite', neg:true});
+  if(redCards>0) tags.push({t:'🟥 '+redCards+' carton(s) rouge(s) (saison)', neg:true});
+  if(attOut>0) tags.push({t:'🤕 '+attOut+' attaquant(s) absent(s)'+keySuffix+reasonSuffix, neg:true});
+  if(defOut>0) tags.push({t:'🤕 '+defOut+' défenseur(s) absent(s)'+keySuffix+reasonSuffix, neg:true});
+  if(gkOut) tags.push({t:'🧤 Gardien titulaire absent'+reasonSuffix, neg:true});
+
+  return {
+    scored: baseScored*attackMult,
+    conceded: baseConceded*Math.max(0.1, defenseMult),
+    tags: tags
+  };
+}
+
+function renderTags(id, tags){
+  const el = document.getElementById(id);
+  el.innerHTML = tags.map(function(tg){
+    return '<span class="tag'+(tg.neg?' neg':'')+'">'+tg.t+'</span>';
+  }).join('');
+}
+
+function predict(){
+  const hSel = document.getElementById('homeSelect').value;
+  const aSel = document.getElementById('awaySelect').value;
+
+  let hName = document.getElementById('homeName').value.trim();
+  let aName = document.getElementById('awayName').value.trim();
+  const hTeamObj = (hSel !== 'custom') ? TEAMS[parseInt(hSel)] : null;
+  const aTeamObj = (aSel !== 'custom') ? TEAMS[parseInt(aSel)] : null;
+  if(hTeamObj) hName = hTeamObj.name;
+  if(aTeamObj) aName = aTeamObj.name;
+  if(!hName) hName = 'Domicile';
+  if(!aName) aName = 'Extérieur';
+
+  const hScored = parseFloat(document.getElementById('homeScored').value) || 0;
+  const hConceded = parseFloat(document.getElementById('homeConceded').value) || 0;
+  const hForm = parseFloat(document.getElementById('homeForm').value) || 0;
+  const aScored = parseFloat(document.getElementById('awayScored').value) || 0;
+  const aConceded = parseFloat(document.getElementById('awayConceded').value) || 0;
+  const aForm = parseFloat(document.getElementById('awayForm').value) || 0;
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  // On préfère les vraies stats "à domicile" / "à l'extérieur" quand elles existent
+  // (après une mise à jour incluant les tableaux HOME/AWAY de l'API) plutôt que
+  // la moyenne générale + un bonus forfaitaire.
+  let hBaseScored = hScored, hBaseConceded = hConceded, hSplitUsed = false;
+  if(hTeamObj && hTeamObj.homeScored != null && hTeamObj.homeConceded != null){
+    hBaseScored = hTeamObj.homeScored; hBaseConceded = hTeamObj.homeConceded; hSplitUsed = true;
+  }
+  let aBaseScored = aScored, aBaseConceded = aConceded, aSplitUsed = false;
+  if(aTeamObj && aTeamObj.awayScored != null && aTeamObj.awayConceded != null){
+    aBaseScored = aTeamObj.awayScored; aBaseConceded = aTeamObj.awayConceded; aSplitUsed = true;
+  }
+
+  // Le lissage a besoin d'un nombre de matchs joués : uniquement disponible si
+  // l'équipe vient de TEAMS (pas en mode "équipe personnalisée", saisie libre).
+  if(hTeamObj){
+    hBaseScored = shrinkToLeagueAverage(hBaseScored, hTeamObj.played);
+    hBaseConceded = shrinkToLeagueAverage(hBaseConceded, hTeamObj.played);
+  }
+  if(aTeamObj){
+    aBaseScored = shrinkToLeagueAverage(aBaseScored, aTeamObj.played);
+    aBaseConceded = shrinkToLeagueAverage(aBaseConceded, aTeamObj.played);
+  }
+
+  const hAdj = computeAdjusted('home', hBaseScored, hBaseConceded);
+  const aAdj = computeAdjusted('away', aBaseScored, aBaseConceded);
+
+  if(hTeamObj){
+    const hShrinkPct = Math.round((currentShrinkageGames()/(hTeamObj.played+currentShrinkageGames()))*100);
+    if(hShrinkPct >= 15) hAdj.tags.push({t:'📊 '+hName+' : stats lissées ('+hShrinkPct+'%, '+hTeamObj.played+' matchs joués)', neg:false});
+  }
+  if(aTeamObj){
+    const aShrinkPct = Math.round((currentShrinkageGames()/(aTeamObj.played+currentShrinkageGames()))*100);
+    if(aShrinkPct >= 15) aAdj.tags.push({t:'📊 '+aName+' : stats lissées ('+aShrinkPct+'%, '+aTeamObj.played+' matchs joués)', neg:false});
+  }
+
+  const hFatigue = fatigueImpact(hTeamObj);
+  const aFatigue = fatigueImpact(aTeamObj);
+  hAdj.scored *= hFatigue.mult;
+  aAdj.scored *= aFatigue.mult;
+  if(hFatigue.tag) hAdj.tags.push(hFatigue.tag);
+  if(aFatigue.tag) aAdj.tags.push(aFatigue.tag);
+
+  const hStakes = stakesImpact(hTeamObj);
+  const aStakes = stakesImpact(aTeamObj);
+  hAdj.scored *= hStakes.attackMult; hAdj.conceded *= hStakes.defenseMult;
+  aAdj.scored *= aStakes.attackMult; aAdj.conceded *= aStakes.defenseMult;
+  if(hStakes.tag) hAdj.tags.push(hStakes.tag);
+  if(aStakes.tag) aAdj.tags.push(aStakes.tag);
+
+  const hWC = worldCupHangoverImpact(hTeamObj);
+  const aWC = worldCupHangoverImpact(aTeamObj);
+  hAdj.scored *= hWC.mult;
+  aAdj.scored *= aWC.mult;
+  if(hWC.tag) hAdj.tags.push(hWC.tag);
+  if(aWC.tag) aAdj.tags.push(aWC.tag);
+
+  const hNewCoach = newCoachImpact(hTeamObj);
+  const aNewCoach = newCoachImpact(aTeamObj);
+  hAdj.scored *= hNewCoach.attackMult; hAdj.conceded *= hNewCoach.defenseMult;
+  aAdj.scored *= aNewCoach.attackMult; aAdj.conceded *= aNewCoach.defenseMult;
+  if(hNewCoach.tag) hAdj.tags.push(hNewCoach.tag);
+  if(aNewCoach.tag) aAdj.tags.push(aNewCoach.tag);
+
+  if(hSplitUsed) hAdj.tags.unshift({t:'📊 Stats réelles à domicile', neg:false});
+  if(aSplitUsed) aAdj.tags.unshift({t:'📊 Stats réelles à l\'extérieur', neg:false});
+
+  const hAttack = hAdj.scored / LEAGUE_AVG;
+  const hDefense = hAdj.conceded / LEAGUE_AVG;
+  const aAttack = aAdj.scored / LEAGUE_AVG;
+  const aDefense = aAdj.conceded / LEAGUE_AVG;
+
+  renderTags('homeTags', hAdj.tags);
+  renderTags('awayTags', aAdj.tags);
+
+  // Le bonus/malus domicile-extérieur forfaitaire ne s'applique que si on n'a
+  // pas de vraies stats splitées (sinon l'avantage du terrain est déjà dans les chiffres).
+  const homeAdvMult = hSplitUsed ? 1 : HOME_ADV;
+  const awayAdvMult = aSplitUsed ? 1 : AWAY_ADJ;
+
+  const hFormFactor = 0.9 + (hForm/5)*0.2;
+  const aFormFactor = 0.9 + (aForm/5)*0.2;
+
+  let lambdaHome = hAttack * aDefense * LEAGUE_AVG * homeAdvMult * hFormFactor;
+  let lambdaAway = aAttack * hDefense * LEAGUE_AVG * awayAdvMult * aFormFactor;
+  lambdaHome = Math.max(0.05, lambdaHome);
+  lambdaAway = Math.max(0.05, lambdaAway);
+
+  const matrix = [];
+  let pHomeWin=0, pDraw=0, pAwayWin=0, over25=0, btts=0, grandTotal=0;
+  let best = {i:0,j:0,p:-1};
+
+  for(let i=0;i<=MAXG;i++){
+    matrix[i]=[];
+    for(let j=0;j<=MAXG;j++){
+      let p = poissonP(lambdaHome,i) * poissonP(lambdaAway,j);
+      p *= dixonColesTau(i,j,lambdaHome,lambdaAway,DC_RHO);
+      if(p<0) p=0;
+      matrix[i][j]=p;
+      grandTotal += p;
+      if(i>j) pHomeWin+=p; else if(i===j) pDraw+=p; else pAwayWin+=p;
+      if(i+j>=3) over25+=p;
+      if(i>=1 && j>=1) btts+=p;
+      if(p>best.p) best={i,j,p};
+    }
+  }
+  pHomeWin/=grandTotal; pDraw/=grandTotal; pAwayWin/=grandTotal;
+  over25/=grandTotal; btts/=grandTotal;
+  best.p/=grandTotal;
+
+  document.getElementById('homeLbl').textContent = 'Victoire ' + hName;
+  document.getElementById('awayLbl').textContent = 'Victoire ' + aName;
+  document.getElementById('heroScore').textContent = hName + '  ' + best.i + ' – ' + best.j + '  ' + aName;
+  document.getElementById('heroProb').textContent = 'probabilité ' + (best.p*100).toFixed(1) + '%';
+
+  document.getElementById('pHome').textContent = (pHomeWin*100).toFixed(0)+'%';
+  document.getElementById('pDraw').textContent = (pDraw*100).toFixed(0)+'%';
+  document.getElementById('pAway').textContent = (pAwayWin*100).toFixed(0)+'%';
+  document.getElementById('barHome').style.width = (pHomeWin*100)+'%';
+  document.getElementById('barDraw').style.width = (pDraw*100)+'%';
+  document.getElementById('barAway').style.width = (pAwayWin*100)+'%';
+
+  document.getElementById('over25').textContent = (over25*100).toFixed(0)+'%';
+  document.getElementById('btts').textContent = (btts*100).toFixed(0)+'%';
+  document.getElementById('xgHome').textContent = lambdaHome.toFixed(2);
+  document.getElementById('xgAway').textContent = lambdaAway.toFixed(2);
+
+  const allScores = [];
+  for(let i=0;i<=MAXG;i++){
+    for(let j=0;j<=MAXG;j++){
+      allScores.push({ i:i, j:j, p:(matrix[i][j]/grandTotal)*100 });
+    }
+  }
+  allScores.sort(function(a,b){ return b.p - a.p; });
+  const top5 = allScores.slice(0,5);
+
+  const gridEl = document.getElementById('scoreGrid');
+  gridEl.innerHTML='';
+  top5.forEach(function(s, idx){
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (idx===0 ? ' top' : '');
+    cell.innerHTML = '<div class="sc">'+s.i+'-'+s.j+'</div><div class="pc">'+s.p.toFixed(1)+'%</div>';
+    gridEl.appendChild(cell);
+  });
+
+  const board = document.getElementById('board');
+  board.classList.remove('flicker'); void board.offsetWidth; board.classList.add('flicker');
+}
+
+// ============================================================
+// Sauvegarde directe dans le fichier local (API File System Access,
+// Chrome/Edge uniquement). Pas de stockage navigateur ici : on demande
+// juste la permission d'écrire dans LE fichier que l'utilisateur choisit,
+// avec son geste explicite (obligatoire par sécurité, une fois par session).
+// ============================================================
+let fileHandle = null;
+const FS_ACCESS_SUPPORTED = typeof window.showOpenFilePicker === 'function';
+
+// Recalcule TEAMS = photo officielle (BASE_TEAMS) + journées saisies manuellement
+// qui ne sont PAS ENCORE couvertes par une vraie mise à jour (matchday > LAST_UPDATE.matchday).
+// Dès que update_stats.py rattrape une journée, elle sort automatiquement de ce calcul
+// (ses vrais chiffres sont alors déjà dans BASE_TEAMS) — donc jamais de double comptage.
+function recomputeTeamsWithManualData(){
+  const officialMatchday = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday) ? LAST_UPDATE.matchday : 0;
+  const fresh = JSON.parse(JSON.stringify(BASE_TEAMS));
+  const byName = {};
+  fresh.forEach(function(t){ byName[t.name] = t; });
+
+  if(typeof MATCHDAY_HISTORY !== 'undefined'){
+    Object.keys(MATCHDAY_HISTORY).forEach(function(mdKey){
+      const mdNum = parseInt(mdKey, 10);
+      if(!(mdNum > officialMatchday)) return; // déjà couvert officiellement, on ne replie pas
+      const matches = MATCHDAY_HISTORY[mdKey];
+      matches.forEach(function(m){
+        if(!m.played || m.source !== 'manual') return;
+        const h = byName[m.home], a = byName[m.away];
+        if(h){
+          h.played = (h.played||0) + 1;
+          h.goalsFor = (h.goalsFor||0) + m.homeScore;
+          h.goalsAgainst = (h.goalsAgainst||0) + m.awayScore;
+          if(m.homeScore > m.awayScore) h.wins = (h.wins||0) + 1;
+        }
+        if(a){
+          a.played = (a.played||0) + 1;
+          a.goalsFor = (a.goalsFor||0) + m.awayScore;
+          a.goalsAgainst = (a.goalsAgainst||0) + m.homeScore;
+          if(m.awayScore > m.homeScore) a.wins = (a.wins||0) + 1;
+        }
+      });
+    });
+  }
+
+  fresh.forEach(function(t){
+    if(t.played > 0){
+      t.scored = Math.round((t.goalsFor / t.played) * 1000) / 1000;
+      t.conceded = Math.round((t.goalsAgainst / t.played) * 1000) / 1000;
+      t.form = Math.round((t.wins / t.played) * 5 * 100) / 100;
+    }
+  });
+
+  TEAMS = fresh;
+}
+
+function serializeHistoryBlock(){
+  return 'let MATCHDAY_HISTORY = ' + JSON.stringify(MATCHDAY_HISTORY, null, 2) + ';';
+}
+
+async function connectFile(){
+  const statusEl = document.getElementById('fileConnectStatus');
+  if(!FS_ACCESS_SUPPORTED){
+    statusEl.style.color = '#e08c84';
+    statusEl.textContent = '❌ Ton navigateur ne supporte pas la sauvegarde directe (utilise Chrome ou Edge), ou passe par "Copier le code" à la place.';
+    return;
+  }
+  try{
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Fichier HTML', accept: { 'text/html': ['.html'] } }],
+      multiple: false
+    });
+    fileHandle = handle;
+    statusEl.style.color = '';
+    statusEl.textContent = '🔗 Fichier connecté (' + handle.name + '). "Enregistrer" écrira directement dedans.';
+  }catch(err){
+    // l'utilisateur a annulé la sélection, ou permission refusée : rien à signaler comme une erreur
+    if(err && err.name !== 'AbortError'){
+      statusEl.style.color = '#e08c84';
+      statusEl.textContent = '❌ Connexion annulée ou refusée.';
+    }
+  }
+}
+
+async function writeHistoryToConnectedFile(){
+  if(!fileHandle) return { ok:false, reason:'not-connected' };
+  try{
+    const file = await fileHandle.getFile();
+    let text = await file.text();
+    const pattern = /let MATCHDAY_HISTORY = \{[\s\S]*?\};/;
+    const newBlock = serializeHistoryBlock();
+    text = pattern.test(text) ? text.replace(pattern, newBlock) : text.replace('let TEAMS = [', newBlock + '\n\nlet TEAMS = [');
+    const writable = await fileHandle.createWritable();
+    await writable.write(text);
+    await writable.close();
+    return { ok:true };
+  }catch(err){
+    return { ok:false, reason: (err && err.message) || String(err) };
+  }
+}
+
+function buildManualRows(){
+  const container = document.getElementById('manualRows');
+  if(!container) return;
+  const teamOptions = '<option value="">—</option>' + TEAMS.map(function(t){
+    return '<option value="'+t.name+'">'+t.name+'</option>';
+  }).join('');
+
+  let html = '';
+  for(let i=0;i<9;i++){
+    html += '<div class="manual-row">'
+      + '<select id="manualHome'+i+'">'+teamOptions+'</select>'
+      + '<input type="number" id="manualHomeScore'+i+'" min="0" max="20">'
+      + '<input type="number" id="manualAwayScore'+i+'" min="0" max="20">'
+      + '<select id="manualAway'+i+'">'+teamOptions+'</select>'
+      + '</div>';
+  }
+  container.innerHTML = html;
+}
+
+// Pré-remplit le formulaire avec ce qui est déjà enregistré pour cette journée
+// (sauvegarde précédente), pour ne JAMAIS perdre un match déjà saisi quand on
+// en ajoute d'autres plus tard — "Enregistrer" réécrit tout ce que montre le
+// formulaire, donc il doit d'abord montrer l'existant.
+function loadManualMatchday(md){
+  const statusEl = document.getElementById('manualStatus');
+  const existing = (typeof MATCHDAY_HISTORY !== 'undefined' && md && MATCHDAY_HISTORY[md]) ? MATCHDAY_HISTORY[md] : [];
+
+  for(let i=0;i<9;i++){
+    const homeSel = document.getElementById('manualHome'+i);
+    const awaySel = document.getElementById('manualAway'+i);
+    const hsInput = document.getElementById('manualHomeScore'+i);
+    const asInput = document.getElementById('manualAwayScore'+i);
+    if(!homeSel) continue;
+    const m = existing[i];
+    if(m){
+      homeSel.value = m.home || '';
+      awaySel.value = m.away || '';
+      hsInput.value = (m.played && m.homeScore != null) ? m.homeScore : '';
+      asInput.value = (m.played && m.awayScore != null) ? m.awayScore : '';
+    }else{
+      homeSel.value = '';
+      awaySel.value = '';
+      hsInput.value = '';
+      asInput.value = '';
+    }
+  }
+
+  if(statusEl){
+    statusEl.style.color = '';
+    statusEl.textContent = existing.length
+      ? 'Journée ' + md + ' : ' + existing.length + ' match(s) déjà enregistré(s), rechargé(s) ci-dessus.'
+      : '';
+  }
+}
+
+function collectManualResults(){
+  const results = [];
+  for(let i=0;i<9;i++){
+    const home = document.getElementById('manualHome'+i).value;
+    const away = document.getElementById('manualAway'+i).value;
+    const hs = document.getElementById('manualHomeScore'+i).value;
+    const as = document.getElementById('manualAwayScore'+i).value;
+    if(!home || !away) continue;
+    const played = hs !== '' && as !== '';
+    results.push({
+      home: home, away: away,
+      homeScore: played ? parseInt(hs,10) : null,
+      awayScore: played ? parseInt(as,10) : null,
+      played: played,
+      source: 'manual'
+    });
+  }
+  return results;
+}
+
+async function saveManualMatchday(){
+  const md = document.getElementById('manualMatchday').value;
+  const statusEl = document.getElementById('manualStatus');
+  if(!md){ statusEl.style.color='#e08c84'; statusEl.textContent='Indique un numéro de journée.'; return; }
+
+  const results = collectManualResults();
+  if(!results.length){
+    statusEl.style.color='#e08c84';
+    statusEl.textContent = 'Aucun match rempli (choisis au moins domicile + extérieur pour une ligne).';
+    return;
+  }
+
+  if(typeof MATCHDAY_HISTORY === 'undefined') window.MATCHDAY_HISTORY = {};
+  MATCHDAY_HISTORY[md] = results;
+
+  recomputeTeamsWithManualData();
+  populateMatchdaySelect();
+  document.getElementById('matchdaySelect').value = String(md);
+  renderResultsForMatchday(md);
+  predict(); // rafraîchit le pronostic affiché avec les stats mises à jour
+
+  if(fileHandle){
+    statusEl.style.color = '';
+    statusEl.textContent = '💾 Écriture dans le fichier...';
+    const result = await writeHistoryToConnectedFile();
+    if(result.ok){
+      statusEl.style.color = '';
+      statusEl.textContent = '✅ Journée ' + md + ' enregistrée ET sauvegardée directement dans le fichier (' + fileHandle.name + ').';
+    }else{
+      statusEl.style.color = '#e08c84';
+      statusEl.textContent = '⚠️ Enregistré pour cette session, mais l\'écriture dans le fichier a échoué (' + result.reason + ').';
+    }
+  }else{
+    statusEl.style.color = '';
+    statusEl.textContent = '✅ Journée ' + md + ' enregistrée pour cette session (' + results.length + ' match(s)). '
+      + 'Clique "🔗 Connecter ce fichier" pour une sauvegarde automatique et permanente la prochaine fois.';
+  }
+}
+
+function copyManualMatchdayCode(){
+  const md = document.getElementById('manualMatchday').value;
+  const statusEl = document.getElementById('manualStatus');
+  if(!md){ statusEl.style.color='#e08c84'; statusEl.textContent='Indique un numéro de journée.'; return; }
+
+  const results = collectManualResults();
+  if(!results.length){
+    statusEl.style.color='#e08c84';
+    statusEl.textContent = 'Aucun match rempli — rien à copier.';
+    return;
+  }
+
+  const code = '"' + md + '": ' + JSON.stringify(results, null, 2);
+  const fullInstructions = 'Colle ceci dans predicteur-foot.html, à l\'intérieur de MATCHDAY_HISTORY (ajoute une virgule après l\'entrée précédente) :\n\n' + code;
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(function(){
+      statusEl.style.color = '';
+      statusEl.textContent = '📋 Code copié ! Colle-le dans MATCHDAY_HISTORY (fichier .html), ou envoie-le moi dans le chat pour que je l\'ajoute.';
+    }).catch(function(){
+      statusEl.style.color = '#e08c84';
+      statusEl.textContent = 'Impossible de copier automatiquement. Code : ' + code;
+    });
+  } else {
+    statusEl.style.color = '#e08c84';
+    statusEl.textContent = 'Copie manuelle nécessaire : ' + code;
+  }
+}
+
+// Historique chronologique (du plus ancien au plus récent) des résultats d'une
+// équipe, toutes journées confondues — pour l'info-bulle au survol du nom.
+// Chaque entrée précise aussi si le match était à domicile (D) ou à l'extérieur (E).
+function getTeamFormHistory(teamName){
+  const results = [];
+  if(typeof MATCHDAY_HISTORY === 'undefined') return results;
+  const mdKeys = Object.keys(MATCHDAY_HISTORY).map(Number).sort(function(a,b){ return a-b; });
+  mdKeys.forEach(function(md){
+    MATCHDAY_HISTORY[md].forEach(function(m){
+      if(!m.played) return;
+      if(m.home === teamName){
+        results.push({
+          r: m.homeScore > m.awayScore ? 'W' : (m.homeScore === m.awayScore ? 'D' : 'L'),
+          venue: 'D'
+        });
+      } else if(m.away === teamName){
+        results.push({
+          r: m.awayScore > m.homeScore ? 'W' : (m.homeScore === m.awayScore ? 'D' : 'L'),
+          venue: 'E'
+        });
+      }
+    });
+  });
+  return results;
+}
+
+function buildFormTooltipHtml(teamName){
+  const history = getTeamFormHistory(teamName);
+  if(!history.length) return '<span class="form-tooltip-empty">Aucun match joué</span>';
+  return history.map(function(h){
+    const cls = h.r === 'W' ? 'win' : (h.r === 'D' ? 'draw' : 'loss');
+    const resultLabel = h.r === 'W' ? 'Victoire' : (h.r === 'D' ? 'Nul' : 'Défaite');
+    const venueLabel = h.venue === 'D' ? 'domicile' : 'extérieur';
+    return '<span class="form-dot ' + cls + '" title="' + resultLabel + ' (' + venueLabel + ')">' + h.venue + '</span>';
+  }).join('');
+}
+
+// Équipe a-t-elle un facteur d'absence actif (attaquant/défenseur/gardien/joueur clé) ?
+// Même principe que le 🩹 du prédicteur NFL sur les badges rapides.
+function hasActiveAbsence(t){
+  if(!t) return false;
+  const att = parseFloat(t.absentAttackers) || 0;
+  const def = parseFloat(t.absentDefenders) || 0;
+  return att > 0 || def > 0 || !!t.gkOut || !!t.keyPlayerOut;
+}
+
+// Texte de l'infobulle du pansement : détail des absences + fraîcheur de la donnée
+function buildAbsenceTooltipText(teamName){
+  const t = TEAMS.find(function(x){ return x.name === teamName; });
+  if(!t || !hasActiveAbsence(t)) return '';
+  const parts = [];
+  const att = parseFloat(t.absentAttackers) || 0;
+  const def = parseFloat(t.absentDefenders) || 0;
+  if(att > 0) parts.push(att + ' attaquant' + (att > 1 ? 's' : '') + ' absent' + (att > 1 ? 's' : ''));
+  if(def > 0) parts.push(def + ' défenseur' + (def > 1 ? 's' : '') + ' absent' + (def > 1 ? 's' : ''));
+  if(t.gkOut) parts.push('gardien titulaire absent');
+  if(t.keyPlayerOut) parts.push('dont un joueur clé ⭐');
+  let text = parts.join(', ');
+  if(t.absenceUpdatedAt){
+    const days = Math.max(0, Math.floor((Date.now() - new Date(t.absenceUpdatedAt).getTime()) / 86400000));
+    text += ' — maj ' + (days === 0 ? 'aujourd\'hui' : 'il y a ' + days + ' j' + (days !== 1 ? 's' : ''));
+    if(days > 7) text += ' ⚠️ à revérifier';
+  }
+  return text;
+}
+
+// 🩹 avec infobulle, ou chaîne vide si l'équipe n'a aucune absence active
+function buildAbsenceBadgeHtml(teamName){
+  const tooltip = buildAbsenceTooltipText(teamName);
+  if(!tooltip) return '';
+  return '<span class="absence-flag" title="' + tooltip.replace(/"/g, '&quot;') + '">🩹</span>';
+}
+
+function populateMatchdaySelect(){
+  const sel = document.getElementById('matchdaySelect');
+  if(!sel) return;
+  if(typeof MATCHDAY_HISTORY === 'undefined' || !Object.keys(MATCHDAY_HISTORY).length){
+    sel.innerHTML = '<option value="">Aucune donnée</option>';
+    return;
+  }
+  const days = Object.keys(MATCHDAY_HISTORY).map(Number).sort(function(a,b){ return b-a; });
+  sel.innerHTML = days.map(function(d){ return '<option value="'+d+'">Journée '+d+'</option>'; }).join('');
+  const current = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday && MATCHDAY_HISTORY[LAST_UPDATE.matchday])
+    ? LAST_UPDATE.matchday : days[0];
+  sel.value = String(current);
+}
+
+function renderResultsForMatchday(matchday){
+  const rowsEl = document.getElementById('resultsRows');
+  const summaryEl = document.getElementById('resultsSummary');
+  if(!rowsEl || !summaryEl) return;
+
+  const results = (typeof MATCHDAY_HISTORY !== 'undefined' && MATCHDAY_HISTORY[matchday]) ? MATCHDAY_HISTORY[matchday] : [];
+  if(!results.length){
+    summaryEl.textContent = 'Aucun résultat pour cette journée';
+    rowsEl.innerHTML = '';
+    return;
+  }
+
+  const playedCount = results.filter(function(m){ return m.played; }).length;
+  summaryEl.textContent = '(' + playedCount + '/' + results.length + ' joués)';
+
+  rowsEl.innerHTML = results.map(function(m){
+    const centerHtml = m.played
+      ? '<span class="rscore">' + m.homeScore + ' - ' + m.awayScore + '</span>'
+      : '<span class="rscore">à venir</span>';
+    const pred = predictScoreQuick(m.home, m.away);
+    const predHtml = pred
+      ? '<span class="rpred" title="Pronostic du modèle">🔮 ' + pred.i + '-' + pred.j + '</span>'
+      : '<span class="rpred">—</span>';
+    const probaHtml = pred
+      ? '<div class="rproba-badges">'
+        + '<span class="rproba-badge home" title="Victoire domicile">' + Math.round(pred.pHomeWin*100) + '%</span>'
+        + '<span class="rproba-badge draw" title="Match nul">' + Math.round(pred.pDraw*100) + '%</span>'
+        + '<span class="rproba-badge away" title="Victoire extérieur">' + Math.round(pred.pAwayWin*100) + '%</span>'
+        + '</div>'
+      : '<span></span>';
+    const manualBadge = m.source === 'manual' ? '<div class="manual-flag">✏️ saisi manuellement</div>' : '';
+    return '<div class="results-row' + (m.played ? '' : ' pending') + '">'
+      + '<span class="rteam home"><span class="rteam-text">' + m.home + '</span>' + buildAbsenceBadgeHtml(m.home) + '<div class="form-tooltip">' + buildFormTooltipHtml(m.home) + '</div></span>'
+      + centerHtml
+      + '<span class="rteam away"><span class="rteam-text">' + m.away + '</span>' + buildAbsenceBadgeHtml(m.away) + '<div class="form-tooltip">' + buildFormTooltipHtml(m.away) + '</div></span>'
+      + predHtml
+      + probaHtml
+      + manualBadge
+      + '</div>';
+  }).join('');
+}
+
+function renderUpdateInfo(){
+  const el = document.getElementById('updateInfo');
+  if(!el) return;
+
+  if(typeof LAST_UPDATE === 'undefined' || !LAST_UPDATE.updatedAt){
+    el.textContent = 'Date de mise à jour inconnue — lance update_stats.py pour la renseigner.';
+    return;
+  }
+
+  const updatedDate = new Date(LAST_UPDATE.updatedAt);
+  const dayName = updatedDate.toLocaleDateString('fr-FR', {weekday:'long'});
+  const dayCap = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+  const dateStr = updatedDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const timeStr = updatedDate.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+
+  const daysSince = (Date.now() - updatedDate.getTime()) / (1000*60*60*24);
+  const isStale = daysSince > 9; // plus d'une semaine et demie : probablement une journée de retard
+
+  const shortTxt = '🕒 Mis à jour : '+dayCap+' '+dateStr+' à '+timeStr+' (heure de Paris) — Journée '+LAST_UPDATE.matchday;
+  el.textContent = shortTxt;
+  el.classList.toggle('stale', isStale);
+}
+
+recomputeTeamsWithManualData();
+buildSelect('homeSelect', 13);   // Paris Saint-Germain par défaut
+buildSelect('awaySelect', 5);    // RC Lens par défaut
+onTeamChange('home');
+onTeamChange('away');
+renderUpdateInfo();
+populateMatchdaySelect();
+renderResultsForMatchday(document.getElementById('matchdaySelect').value);
+buildManualRows();
+loadManualMatchday(document.getElementById('manualMatchday').value);
+if(!FS_ACCESS_SUPPORTED){
+  const btn = document.getElementById('connectFileBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '🔗 Sauvegarde auto indisponible (Chrome/Edge requis)'; }
+}
+
+</script>
+</body>
+</html>
