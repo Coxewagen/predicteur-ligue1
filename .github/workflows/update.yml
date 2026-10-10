@@ -1,0 +1,38 @@
+name: Update Ligue 1 stats
+
+on:
+  schedule:
+    - cron: '7 */3 * * *'   # toutes les 3h — ne fait rien (--si-pret) tant que la journée en cours n'est pas finie
+  workflow_dispatch:         # bouton "Run workflow" manuel sur GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run update script (si la journée est terminée)
+        env:
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+        run: python update_stats.py --si-pret index.html
+
+      - name: Commit and push si changement
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "Auto-update stats Ligue 1"
+          git pull --rebase
+          git push
