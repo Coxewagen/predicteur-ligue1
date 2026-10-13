@@ -3715,5 +3715,19 @@ if(!FS_ACCESS_SUPPORTED){
 }
 
 </script>
+<script>
+// Rafraîchissement auto : si on revient sur la page après plus de 5 min
+// (ex: on rouvre l'onglet sur le téléphone), on force un rechargement
+// depuis le serveur (pas depuis le cache) pour avoir les dernières stats.
+(function(){
+  var lastSeen = Date.now();
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && Date.now() - lastSeen > 5*60*1000) {
+      location.href = location.pathname + '?t=' + Date.now();
+    }
+    lastSeen = Date.now();
+  });
+})();
+</script>
 </body>
 </html>
