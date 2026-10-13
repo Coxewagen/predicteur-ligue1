@@ -517,385 +517,2221 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 5, updatedAt: "2026-10-10T15:42:43", note: "" };
+let LAST_UPDATE = { matchday: 6, updatedAt: "2026-10-13T13:20:57", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
 // une nouvelle journée sans écraser les précédentes.
 let MATCHDAY_HISTORY = {
   "1": [
-    { "home": "Angers SCO", "away": "LOSC Lille", "homeScore": 0, "awayScore": 2, "played": true },
-    { "home": "Le Havre AC", "away": "AS Monaco", "homeScore": 0, "awayScore": 1, "played": true },
-    { "home": "Le Mans FC", "away": "Stade Brestois", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "RC Lens", "away": "AJ Auxerre", "homeScore": 5, "awayScore": 2, "played": true },
-    { "home": "Olympique de Marseille", "away": "RC Strasbourg", "homeScore": 4, "awayScore": 0, "played": true },
-    { "home": "OGC Nice", "away": "FC Lorient", "homeScore": 0, "awayScore": 0, "played": true },
-    { "home": "Paris Saint-Germain", "away": "Stade Rennais", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "Toulouse FC", "away": "Olympique Lyonnais", "homeScore": 0, "awayScore": 2, "played": true },
-    { "home": "ES Troyes AC", "away": "Paris FC", "homeScore": 0, "awayScore": 0, "played": true }
+    {
+      "home": "Angers SCO",
+      "away": "LOSC Lille",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "AS Monaco",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Stade Brestois",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "RC Lens",
+      "away": "AJ Auxerre",
+      "homeScore": 5,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "RC Strasbourg",
+      "homeScore": 4,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "OGC Nice",
+      "away": "FC Lorient",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Stade Rennais",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Olympique Lyonnais",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Paris FC",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    }
   ],
   "2": [
-    { "home": "AJ Auxerre", "away": "Angers SCO", "homeScore": 1, "awayScore": 3, "played": true },
-    { "home": "Stade Brestois", "away": "Toulouse FC", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "LOSC Lille", "away": "Paris Saint-Germain", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "FC Lorient", "away": "ES Troyes AC", "homeScore": 1, "awayScore": 2, "played": true },
-    { "home": "Olympique Lyonnais", "away": "Le Havre AC", "homeScore": 1, "awayScore": 1, "played": true },
-    { "home": "AS Monaco", "away": "Olympique de Marseille", "homeScore": 2, "awayScore": 0, "played": true },
-    { "home": "Paris FC", "away": "OGC Nice", "homeScore": 3, "awayScore": 0, "played": true },
-    { "home": "Stade Rennais", "away": "Le Mans FC", "homeScore": 3, "awayScore": 2, "played": true },
-    { "home": "RC Strasbourg", "away": "RC Lens", "homeScore": 2, "awayScore": 1, "played": true }
+    {
+      "home": "AJ Auxerre",
+      "away": "Angers SCO",
+      "homeScore": 1,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Toulouse FC",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Paris Saint-Germain",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "FC Lorient",
+      "away": "ES Troyes AC",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Le Havre AC",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Olympique de Marseille",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Paris FC",
+      "away": "OGC Nice",
+      "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Le Mans FC",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "RC Lens",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    }
   ],
   "3": [
-    { "home": "Angers SCO", "away": "Stade Rennais", "homeScore": 1, "awayScore": 2, "played": true },
-    { "home": "Le Havre AC", "away": "Stade Brestois", "homeScore": 1, "awayScore": 2, "played": true },
-    { "home": "RC Lens", "away": "FC Lorient", "homeScore": 0, "awayScore": 1, "played": true },
-    { "home": "Olympique Lyonnais", "away": "AJ Auxerre", "homeScore": 3, "awayScore": 1, "played": true },
-    { "home": "Olympique de Marseille", "away": "Paris FC", "homeScore": 2, "awayScore": 3, "played": true },
-    { "home": "OGC Nice", "away": "Le Mans FC", "homeScore": 1, "awayScore": 1, "played": true },
-    { "home": "Paris Saint-Germain", "away": "AS Monaco", "homeScore": 1, "awayScore": 2, "played": true },
-    { "home": "Toulouse FC", "away": "LOSC Lille", "homeScore": 0, "awayScore": 1, "played": true },
-    { "home": "ES Troyes AC", "away": "RC Strasbourg", "homeScore": 2, "awayScore": 6, "played": true }
+    {
+      "home": "Angers SCO",
+      "away": "Stade Rennais",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Stade Brestois",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "RC Lens",
+      "away": "FC Lorient",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "AJ Auxerre",
+      "homeScore": 3,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Paris FC",
+      "homeScore": 2,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Le Mans FC",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "AS Monaco",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "LOSC Lille",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "RC Strasbourg",
+      "homeScore": 2,
+      "awayScore": 6,
+      "played": true
+    }
   ],
   "4": [
-    { "home": "AJ Auxerre", "away": "OGC Nice", "homeScore": 1, "awayScore": 0, "played": true },
-    { "home": "Stade Brestois", "away": "Paris Saint-Germain", "homeScore": 0, "awayScore": 1, "played": true },
-    { "home": "Le Havre AC", "away": "Angers SCO", "homeScore": 0, "awayScore": 0, "played": true },
-    { "home": "Le Mans FC", "away": "RC Lens", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "LOSC Lille", "away": "ES Troyes AC", "homeScore": 2, "awayScore": 0, "played": true },
-    { "home": "FC Lorient", "away": "Toulouse FC", "homeScore": 2, "awayScore": 2, "played": true },
-    { "home": "Paris FC", "away": "Olympique Lyonnais", "homeScore": 0, "awayScore": 0, "played": true },
-    { "home": "Stade Rennais", "away": "Olympique de Marseille", "homeScore": 1, "awayScore": 0, "played": true },
-    { "home": "RC Strasbourg", "away": "AS Monaco", "homeScore": 1, "awayScore": 1, "played": true }
+    {
+      "home": "AJ Auxerre",
+      "away": "OGC Nice",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Paris Saint-Germain",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Angers SCO",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "RC Lens",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "ES Troyes AC",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Toulouse FC",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "Paris FC",
+      "away": "Olympique Lyonnais",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Olympique de Marseille",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "AS Monaco",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    }
   ],
   "5": [
-    { "home": "Angers SCO", "away": "ES Troyes AC", "homeScore": 2, "awayScore": 0, "played": true },
-    { "home": "AJ Auxerre", "away": "Stade Brestois", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "Le Mans FC", "away": "FC Lorient", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "Olympique Lyonnais", "away": "Stade Rennais", "homeScore": 4, "awayScore": 0, "played": true },
-    { "home": "Olympique de Marseille", "away": "Paris Saint-Germain", "homeScore": 1, "awayScore": 2, "played": true },
-    { "home": "AS Monaco", "away": "RC Lens", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "OGC Nice", "away": "LOSC Lille", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "Paris FC", "away": "RC Strasbourg", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "Toulouse FC", "away": "Le Havre AC", "homeScore": 3, "awayScore": 2, "played": true }
+    {
+      "home": "Angers SCO",
+      "away": "ES Troyes AC",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "Stade Brestois",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "FC Lorient",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Stade Rennais",
+      "homeScore": 4,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Paris Saint-Germain",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "AS Monaco",
+      "away": "RC Lens",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "OGC Nice",
+      "away": "LOSC Lille",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Paris FC",
+      "away": "RC Strasbourg",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Le Havre AC",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    }
   ],
   "6": [
-    { "home": "Stade Brestois", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Olympique Lyonnais", "homeScore": 2, "awayScore": 1, "played": true },
-    { "home": "LOSC Lille", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "RC Lens",
+      "away": "Olympique Lyonnais",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Le Havre AC",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Angers SCO",
+      "homeScore": 5,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Paris FC",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Le Mans FC",
+      "homeScore": 3,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Toulouse FC",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "home": "OGC Nice",
+      "away": "RC Strasbourg",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "AJ Auxerre",
+      "homeScore": 4,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Olympique de Marseille",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    }
   ],
   "7": [
-    { "home": "Angers SCO", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "8": [
-    { "home": "Angers SCO", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "9": [
-    { "home": "Le Havre AC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Le Havre AC",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "10": [
-    { "home": "Angers SCO", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "11": [
-    { "home": "RC Lens", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "RC Lens",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "12": [
-    { "home": "Angers SCO", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "13": [
-    { "home": "RC Lens", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "RC Lens",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "14": [
-    { "home": "Angers SCO", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "15": [
-    { "home": "Stade Brestois", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Stade Brestois",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "16": [
-    { "home": "Angers SCO", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "17": [
-    { "home": "Le Havre AC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Le Havre AC",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "18": [
-    { "home": "Angers SCO", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "19": [
-    { "home": "AJ Auxerre", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "20": [
-    { "home": "AJ Auxerre", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "21": [
-    { "home": "Angers SCO", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "22": [
-    { "home": "AJ Auxerre", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "23": [
-    { "home": "Angers SCO", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "24": [
-    { "home": "AJ Auxerre", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "25": [
-    { "home": "Angers SCO", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "26": [
-    { "home": "Angers SCO", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "27": [
-    { "home": "Le Mans FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Le Mans FC",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "28": [
-    { "home": "Angers SCO", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AJ Auxerre", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AJ Auxerre",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "29": [
-    { "home": "Le Mans FC", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Le Mans FC",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "30": [
-    { "home": "AJ Auxerre", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "31": [
-    { "home": "Angers SCO", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "32": [
-    { "home": "AJ Auxerre", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "33": [
-    { "home": "Angers SCO", "away": "Stade Brestois", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Havre AC", "away": "LOSC Lille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Le Mans FC", "away": "RC Strasbourg", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Lens", "away": "Stade Rennais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "FC Lorient", "away": "Olympique Lyonnais", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "OGC Nice", "away": "AS Monaco", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris FC", "away": "Olympique de Marseille", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Toulouse FC", "away": "AJ Auxerre", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "ES Troyes AC", "away": "Paris Saint-Germain", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "Angers SCO",
+      "away": "Stade Brestois",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Havre AC",
+      "away": "LOSC Lille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Le Mans FC",
+      "away": "RC Strasbourg",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Lens",
+      "away": "Stade Rennais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "FC Lorient",
+      "away": "Olympique Lyonnais",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "OGC Nice",
+      "away": "AS Monaco",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris FC",
+      "away": "Olympique de Marseille",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Toulouse FC",
+      "away": "AJ Auxerre",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "ES Troyes AC",
+      "away": "Paris Saint-Germain",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ],
   "34": [
-    { "home": "AJ Auxerre", "away": "Le Havre AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Brestois", "away": "RC Lens", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "LOSC Lille", "away": "Le Mans FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique Lyonnais", "away": "Paris FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Olympique de Marseille", "away": "FC Lorient", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "AS Monaco", "away": "ES Troyes AC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Paris Saint-Germain", "away": "Toulouse FC", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "Stade Rennais", "away": "Angers SCO", "homeScore": null, "awayScore": null, "played": false },
-    { "home": "RC Strasbourg", "away": "OGC Nice", "homeScore": null, "awayScore": null, "played": false }
+    {
+      "home": "AJ Auxerre",
+      "away": "Le Havre AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Brestois",
+      "away": "RC Lens",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "LOSC Lille",
+      "away": "Le Mans FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique Lyonnais",
+      "away": "Paris FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Olympique de Marseille",
+      "away": "FC Lorient",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "AS Monaco",
+      "away": "ES Troyes AC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Toulouse FC",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "Stade Rennais",
+      "away": "Angers SCO",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    },
+    {
+      "home": "RC Strasbourg",
+      "away": "OGC Nice",
+      "homeScore": null,
+      "awayScore": null,
+      "played": false
+    }
   ]
 };
 
@@ -904,24 +2740,24 @@ let MATCHDAY_HISTORY = {
 // est terminée, les 18 clubs ont chacun 1 match réel (chiffres à prendre avec
 // précaution vu le petit échantillon — normal en tout début de saison).
 let TEAMS = [
-  { name:"Angers SCO", scored:1.2, conceded:1.0, form:2.0, played:5, wins:2, draws:1, goalsFor:6, goalsAgainst:5, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Courcoul (déf. titulaire habituel, 16 tit./20) blessé long terme ; Peter (att.) blessé depuis mai ; Belkhdim et Mouton aussi à l'infirmerie (postes non confirmés, non comptés)", absenceUpdatedAt:"2026-10-10T15:42:43" },
-  { name:"AJ Auxerre", scored:1.4, conceded:2.4, form:2.0, played:5, wins:2, draws:0, goalsFor:7, goalsAgainst:12, absentAttackers:1, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée (5 défenseurs indispo dont Makosso suspendu : Okoh, Senaya, Fofana, Siwe) ; Mandengue (att.) blessure musculaire confirmée depuis le 03/10, retour non daté", absenceUpdatedAt:"2026-10-11T16:16:38" },
-  { name:"Stade Brestois", scored:1.4, conceded:1.6, form:1.0, played:5, wins:1, draws:2, goalsFor:7, goalsAgainst:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Baldé (ailier clé) et Coulibaly (déf.) blessés ; Chardonnet (capitaine, déf.) confirmé titulaire ce match malgré une 1ère info le donnant absent", absenceUpdatedAt:"2026-10-10T15:42:43" },
-  { name:"Le Havre AC", scored:0.8, conceded:1.4, form:0.0, played:5, wins:0, draws:2, goalsFor:4, goalsAgainst:7, absentAttackers:1, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"blessures multiples", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Le Mans FC", scored:1.8, conceded:1.8, form:1.0, played:5, wins:1, draws:3, goalsFor:9, goalsAgainst:9, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"RC Lens", scored:1.833, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:10, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-05T20:33:00", newCoachBoostFrom:6 },
-  { name:"LOSC Lille", scored:1.6, conceded:0.8, form:3.0, played:5, wins:3, draws:1, goalsFor:8, goalsAgainst:4, worldCupPlayers:7, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"FC Lorient", scored:1.0, conceded:1.2, form:1.0, played:5, wins:1, draws:2, goalsFor:5, goalsAgainst:6, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Olympique Lyonnais", scored:1.833, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:4, restDays:3, playedEurope:true, europeLevel:"EL" },
-  { name:"Olympique de Marseille", scored:1.4, conceded:1.6, form:1.0, played:5, wins:1, draws:0, goalsFor:7, goalsAgainst:8, worldCupPlayers:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"suspension (carton rouge) + blessure", absenceUpdatedAt:"2026-10-10T04:52:00", restDays:3, playedEurope:true, europeLevel:"EL" },
-  { name:"AS Monaco", scored:1.6, conceded:0.6, form:4.0, played:5, wins:4, draws:1, goalsFor:8, goalsAgainst:3, worldCupPlayers:6, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"OGC Nice", scored:0.6, conceded:1.2, form:1.0, played:5, wins:1, draws:2, goalsFor:3, goalsAgainst:6, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Paris FC", scored:1.6, conceded:0.6, form:3.0, played:5, wins:3, draws:2, goalsFor:8, goalsAgainst:3, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Paris Saint-Germain", scored:1.6, conceded:1.4, form:2.0, played:5, wins:2, draws:2, goalsFor:8, goalsAgainst:7, worldCupPlayers:16, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"rotation + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Stade Rennais", scored:1.6, conceded:1.8, form:3.0, played:5, wins:3, draws:1, goalsFor:8, goalsAgainst:9, restDays:3, playedEurope:true, europeLevel:"EL" },
-  { name:"RC Strasbourg", scored:2.0, conceded:2.0, form:2.0, played:5, wins:2, draws:1, goalsFor:10, goalsAgainst:10, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"Toulouse FC", scored:1.4, conceded:1.8, form:1.0, played:5, wins:1, draws:2, goalsFor:7, goalsAgainst:9, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { name:"ES Troyes AC", scored:0.8, conceded:2.2, form:1.0, played:5, wins:1, draws:1, goalsFor:4, goalsAgainst:11, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée : Titi (quadriceps depuis fin août, retour visé 31/10) et Boura (hanche depuis la préparation, retour espéré autour du 10/11) confirmés absents longue durée, Ouzenadji aussi signalé absent", absenceUpdatedAt:"2026-10-11T19:46:56" },
+  { id:532, name:"Angers SCO", scored:1.167, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:7, goalsAgainst:10, recentForm:2, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Courcoul (déf. titulaire habituel, 16 tit./20) blessé long terme ; Peter (att.) blessé depuis mai ; Belkhdim et Mouton aussi à l'infirmerie (postes non confirmés, non comptés)", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { id:519, name:"AJ Auxerre", scored:1.333, conceded:2.667, form:1.67, played:6, wins:2, draws:0, goalsFor:8, goalsAgainst:16, recentForm:2, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée (5 défenseurs indispo dont Makosso suspendu : Okoh, Senaya, Fofana, Siwe) ; Mandengue (att.) blessure musculaire confirmée depuis le 03/10, retour non daté", absenceUpdatedAt:"2026-10-11T16:16:38" },
+  { id:512, name:"Stade Brestois", scored:2.0, conceded:1.5, form:1.67, played:6, wins:2, draws:2, goalsFor:12, goalsAgainst:9, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Baldé (ailier clé) et Coulibaly (déf.) blessés ; Chardonnet (capitaine, déf.) confirmé titulaire ce match malgré une 1ère info le donnant absent", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { id:533, name:"Le Havre AC", scored:0.667, conceded:1.333, form:0.0, played:6, wins:0, draws:2, goalsFor:4, goalsAgainst:8, recentForm:0, streakType:"lose", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"blessures multiples", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:535, name:"Le Mans FC", scored:1.667, conceded:2.0, form:0.83, played:6, wins:1, draws:3, goalsFor:10, goalsAgainst:12, recentForm:1, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:546, name:"RC Lens", scored:1.833, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:10, recentForm:1, streakType:"win", streakLen:1, restDays:3, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-05T20:33:00", newCoachBoostFrom:6 },
+  { id:521, name:"LOSC Lille", scored:1.5, conceded:0.667, form:3.33, played:6, wins:4, draws:1, goalsFor:9, goalsAgainst:4, recentForm:3, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:525, name:"FC Lorient", scored:1.0, conceded:1.0, form:1.67, played:6, wins:2, draws:2, goalsFor:6, goalsAgainst:6, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:523, name:"Olympique Lyonnais", scored:1.833, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:4, recentForm:2, streakType:"lose", streakLen:1, restDays:3, playedEurope:false, europeLevel:null },
+  { id:516, name:"Olympique de Marseille", scored:1.5, conceded:1.333, form:1.67, played:6, wins:2, draws:0, goalsFor:9, goalsAgainst:8, recentForm:1, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"suspension (carton rouge) + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:548, name:"AS Monaco", scored:1.667, conceded:0.833, form:3.33, played:6, wins:4, draws:2, goalsFor:10, goalsAgainst:5, recentForm:3, streakType:"unbeaten", streakLen:6, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:6, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:522, name:"OGC Nice", scored:0.833, conceded:1.167, form:1.67, played:6, wins:2, draws:2, goalsFor:5, goalsAgainst:7, recentForm:2, streakType:"win", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:1045, name:"Paris FC", scored:1.333, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:8, goalsAgainst:4, recentForm:3, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:524, name:"Paris Saint-Germain", scored:1.833, conceded:1.333, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:8, recentForm:3, streakType:"win", streakLen:3, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:16, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"rotation + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:529, name:"Stade Rennais", scored:2.0, conceded:1.667, form:3.33, played:6, wins:4, draws:1, goalsFor:12, goalsAgainst:10, recentForm:4, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null },
+  { id:576, name:"RC Strasbourg", scored:1.833, conceded:2.0, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:12, recentForm:2, streakType:"lose", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:511, name:"Toulouse FC", scored:1.5, conceded:1.833, form:0.83, played:6, wins:1, draws:3, goalsFor:9, goalsAgainst:11, recentForm:1, streakType:"unbeaten", streakLen:3, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:531, name:"ES Troyes AC", scored:0.667, conceded:2.167, form:0.83, played:6, wins:1, draws:1, goalsFor:4, goalsAgainst:13, recentForm:1, streakType:"lose", streakLen:4, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée : Titi (quadriceps depuis fin août, retour visé 31/10) et Boura (hanche depuis la préparation, retour espéré autour du 10/11) confirmés absents longue durée, Ouzenadji aussi signalé absent", absenceUpdatedAt:"2026-10-11T19:46:56" },
 ];
 
 // Photo des stats "officielles" telles qu'écrites par update_stats.py, AVANT toute
