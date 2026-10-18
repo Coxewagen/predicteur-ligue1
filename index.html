@@ -378,21 +378,33 @@
     #resultsSummary{font-size:13px;}
     .manual-entry summary{font-size:14px;}
 
+    /* Un encart par match, les uns sous les autres :
+       ligne 1 = les deux équipes, ligne 2 = le score réel,
+       ligne 3 = pronostic du modèle (à gauche) + pourcentages (à droite).
+       Toucher l'encart ouvre la fenêtre de détail. */
     .results-row{
-      grid-template-columns:1fr auto 1fr;
-      gap:8px 6px;padding:12px 8px;font-size:16px;
+      grid-template-columns:1fr 1fr;
+      gap:10px 8px;padding:14px 12px;margin-top:12px;font-size:16px;
+      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+      border-radius:12px;
     }
-    .results-row .rteam{font-size:16px;line-height:1.25;}
+    .results-row .rteam,
+    .results-row .rteam.away{font-size:17px;font-weight:600;line-height:1.25;text-align:center;}
+    .results-row .rteam.home{grid-row:1;grid-column:1;}
+    .results-row .rteam.away{grid-row:1;grid-column:2;}
     .rteam-text{white-space:normal;overflow:visible;}
-    .results-row .rscore{font-size:22px;padding:5px 9px;}
-    .results-row.pending .rscore{font-size:14px;}
-    .results-row .rpred{
-      grid-column:1;justify-self:end;font-size:19px;padding:5px 9px;
+    .results-row .rscore{
+      grid-row:2;grid-column:1 / -1;justify-self:center;
+      font-size:26px;padding:6px 22px;
     }
-    .results-row .rproba-badges{grid-column:2 / 4;justify-self:start;gap:5px;}
-    .rproba-badge{font-size:16px;padding:5px 7px;min-width:44px;}
+    .results-row.pending .rscore{font-size:15px;}
+    .results-row .rpred{
+      grid-row:3;grid-column:1;justify-self:start;font-size:19px;padding:6px 10px;
+    }
+    .results-row .rproba-badges{grid-row:3;grid-column:2;justify-self:end;gap:5px;}
+    .rproba-badge{font-size:16px;padding:6px 7px;min-width:44px;}
     .absence-flag{font-size:15px;}
-    .results-row .manual-flag{font-size:11px;}
+    .results-row .manual-flag{grid-row:4;font-size:11px;}
   }
 </style>
 </head>
