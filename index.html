@@ -215,6 +215,7 @@
   .update-btn:hover:not(:disabled){background:rgba(232,178,61,0.24);}
   .update-btn:disabled{opacity:.6;cursor:wait;}
   .update-status{font-size:10px;color:var(--chalk-dim);min-height:12px;text-align:center;max-width:400px;line-height:1.4;}
+  .update-status.err{color:#e08c84;}
 
   .board{
     background:var(--board);
@@ -375,6 +376,8 @@
     <h1>⚽ PRÉDICTEUR LIGUE 1</h1>
     <p class="subtitle">Saison 2026-2027 — modèle basé sur la loi de Poisson et la correction Dixon-Coles</p>
     <div class="update-info" id="updateInfo">Chargement...</div>
+    <button type="button" class="update-btn" id="updateStatsBtn" onclick="updateStatsFromLive()" style="margin-top:8px;">🔄 Mettre à jour les stats</button>
+    <div class="update-status" id="updateStatsStatus" style="margin:4px auto 0;"></div>
   </div>
 
   <div class="matchup">
@@ -2845,7 +2848,24 @@ let TEAMS = [
 // Photo des stats "officielles" telles qu'écrites par update_stats.py, AVANT toute
 // saisie manuelle. Sert de base propre pour recalculer sans jamais compter un match
 // deux fois, même si on resaisit/corrige une journée plusieurs fois dans la session.
-const BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
+let BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
+
+// L'appli embarque ces données telles qu'elles étaient au moment de la
+// génération de l'APK. Si des données plus récentes ont été récupérées
+// depuis via le bouton "Mettre à jour les stats" (voir updateStatsFromLive
+// plus bas), on les réutilise ici tant qu'elles sont plus fraîches.
+(function(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('predicteurL1_liveData') || 'null');
+    if (saved && saved.LAST_UPDATE && saved.LAST_UPDATE.updatedAt &&
+        new Date(saved.LAST_UPDATE.updatedAt) > new Date(LAST_UPDATE.updatedAt)) {
+      TEAMS = saved.TEAMS;
+      LAST_UPDATE = saved.LAST_UPDATE;
+      MATCHDAY_HISTORY = saved.MATCHDAY_HISTORY;
+      BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
+    }
+  } catch (e) { /* localStorage indisponible ou données corrompues : on garde les données embarquées */ }
+})();
 
 const LEAGUE_AVG = 1.41;   // moyenne de buts marqués/équipe/match, calculée sur la saison Ligue 1 2025-2026
 // Lissage début de saison : poids de la moyenne ligue, en "matchs virtuels".
@@ -3976,6 +3996,60 @@ function renderUpdateInfo(){
   const shortTxt = '🕒 Mis à jour : '+dayCap+' '+dateStr+' à '+timeStr+' (heure de Paris) — Journée '+LAST_UPDATE.matchday;
   el.textContent = shortTxt;
   el.classList.toggle('stale', isStale);
+}
+
+// Appli autonome : les données sont embarquées dans l'APK, donc toujours
+// disponibles hors-ligne. Ce bouton va chercher la dernière version sur le
+// site en ligne uniquement quand on le demande (pas de rechargement auto).
+const LIVE_DATA_URL = 'https://coxewagen.github.io/predicteur-ligue1/index.html';
+async function updateStatsFromLive(){
+  const btn = document.getElementById('updateStatsBtn');
+  const statusEl = document.getElementById('updateStatsStatus');
+  if (btn) btn.disabled = true;
+  if (statusEl) { statusEl.textContent = 'Récupération des dernières stats…'; statusEl.classList.remove('err'); }
+  try {
+    const resp = await fetch(LIVE_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const text = await resp.text();
+
+    const teamsMatch = text.match(/let TEAMS = \[[\s\S]*?\n\];/);
+    const lastUpdateMatch = text.match(/let LAST_UPDATE = \{[\s\S]*?\};/);
+    const historyMatch = text.match(/let MATCHDAY_HISTORY = \{[\s\S]*?\n\};/);
+    if (!teamsMatch || !lastUpdateMatch || !historyMatch) {
+      throw new Error('Format de la page en ligne non reconnu');
+    }
+
+    // On exécute les 3 blocs extraits (syntaxe JS valide telle quelle, donc
+    // sans réinterpréter/retraduire les données à la main) dans une portée
+    // isolée, puis on ne récupère que les valeurs obtenues.
+    const fresh = new Function(
+      teamsMatch[0] + '\n' + lastUpdateMatch[0] + '\n' + historyMatch[0] +
+      '\nreturn { TEAMS: TEAMS, LAST_UPDATE: LAST_UPDATE, MATCHDAY_HISTORY: MATCHDAY_HISTORY };'
+    )();
+
+    TEAMS = fresh.TEAMS;
+    LAST_UPDATE = fresh.LAST_UPDATE;
+    MATCHDAY_HISTORY = fresh.MATCHDAY_HISTORY;
+    BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
+
+    try {
+      localStorage.setItem('predicteurL1_liveData', JSON.stringify(fresh));
+    } catch (e) { /* stockage plein ou indisponible : la mise à jour reste active pour cette session */ }
+
+    recomputeTeamsWithManualData();
+    onTeamChange('home');
+    onTeamChange('away');
+    renderUpdateInfo();
+    populateMatchdaySelect();
+    renderResultsForMatchday(document.getElementById('matchdaySelect').value);
+    buildManualRows();
+
+    if (statusEl) statusEl.textContent = '✅ Stats à jour (journée ' + LAST_UPDATE.matchday + ')';
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = '⚠️ Échec (vérifie ta connexion) : ' + err.message; statusEl.classList.add('err'); }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 recomputeTeamsWithManualData();
