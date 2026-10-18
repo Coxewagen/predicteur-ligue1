@@ -49,7 +49,28 @@ jobs:
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: predicteurL1store
           BUBBLEWRAP_KEY_PASSWORD: predicteurL1key
-        run: node_modules/.bin/bubblewrap build --skipPwaValidation
+          CI: 'true'
+        run: |
+          set -o pipefail
+          node_modules/.bin/bubblewrap build --skipPwaValidation 2>&1 | tee build-apk-debug.log < /dev/null
+
+      - name: Save debug log on failure
+        if: always()
+        run: |
+          mkdir -p debug
+          { echo "== node/npm/java versions =="; node -v; npm -v; java -version 2>&1; echo; \
+            echo "== bubblewrap version =="; node_modules/.bin/bubblewrap --version 2>&1 || true; echo; \
+            echo "== répertoire =="; ls -la; echo; \
+            echo "== twa-manifest.json =="; cat twa-manifest.json 2>&1 || true; echo; \
+            echo "== manifest-checksum.txt =="; cat manifest-checksum.txt 2>&1 || true; echo; \
+            echo "== build-apk-debug.log =="; cat build-apk-debug.log 2>&1 || true; } > debug/build-apk-debug.log
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git fetch origin debug-logs 2>/dev/null || true
+          git checkout -B debug-logs
+          git add -f debug/build-apk-debug.log
+          git commit -m "debug: log du build APK (run ${{ github.run_id }}) [skip ci]" || echo "rien à committer"
+          git push -f origin debug-logs
 
       - name: Upload APK as build artifact
         uses: actions/upload-artifact@v4
