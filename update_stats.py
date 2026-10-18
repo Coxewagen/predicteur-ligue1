@@ -581,6 +581,37 @@ def last_update_to_js(matchday, updated_at_iso, note=""):
             f'updatedAt: "{updated_at_iso}", note: {note_js} }};')
 
 
+def update_history_only(html_path: Path, matchday, results):
+    """Écrit uniquement les résultats connus dans MATCHDAY_HISTORY, SANS toucher
+    TEAMS ni LAST_UPDATE. Utilisé quand la journée n'est pas encore terminée,
+    pour afficher les scores des matchs déjà joués sans fausser le classement/
+    la forme (qui, eux, attendent la fin complète de la journée)."""
+    content = html_path.read_text(encoding="utf-8")
+    history_pattern = re.compile(r"let MATCHDAY_HISTORY = \{.*?\};", re.DOTALL)
+
+    history = read_matchday_history(html_path)
+    existing = history.get(str(matchday))
+    existing_is_manual = bool(existing) and any(r.get("source") == "manual" for r in existing)
+    if existing_is_manual:
+        print(f"⚠️  Journée {matchday} avait été saisie manuellement — résultats partiels NON écrasés.")
+        return
+
+    history[str(matchday)] = results
+    new_history_block = history_to_js(history)
+    if history_pattern.search(content):
+        new_content = history_pattern.sub(new_history_block, content, count=1)
+    else:
+        new_content = content.replace("let TEAMS = [", new_history_block + "\n\nlet TEAMS = [", 1)
+
+    backup_path = html_path.with_suffix(html_path.suffix + ".bak")
+    shutil.copy2(html_path, backup_path)
+    html_path.write_text(new_content, encoding="utf-8")
+    played_count = sum(1 for r in results if r["played"])
+    print(f"✅ Résultats partiels de la journée {matchday} enregistrés "
+          f"({played_count}/{len(results)} joués) — classement/forme pas encore "
+          f"recalculés (journée pas terminée).")
+
+
 def update_html_file(html_path: Path, teams, matchday, updated_at_iso, note="", results=None, force=False):
     content = html_path.read_text(encoding="utf-8")
 
@@ -725,7 +756,9 @@ def run_if_ready(html_path: Path, quick: bool, force_matchday=None):
     print(f"Journée {matchday} : {played_count}/{total} match(s) joués côté API.")
 
     if played_count < total:
-        print("La journée n'est pas encore terminée — on ne touche à rien pour l'instant.")
+        print("La journée n'est pas encore terminée — mise à jour des résultats connus "
+              "uniquement (classement/forme pas recalculés avant la fin de la journée).")
+        update_history_only(html_path, matchday, results)
         return
 
     forcing_this_matchday = (force_matchday is not None and force_matchday == matchday)
