@@ -51,6 +51,9 @@ jobs:
           rm -rf www android
           mkdir -p www
           cp index.html www/index.html
+          # Numéro de version affiché dans l'appli = numéro de build (= versionCode Android)
+          sed -i "s/__APP_VERSION__/${{ github.run_number }}/" www/index.html
+          grep -q "const APP_VERSION = '${{ github.run_number }}'" www/index.html || { echo "Numéro de version non injecté"; exit 1; }
           cp -r icons www/icons
 
           node_modules/.bin/cap init "Predicteur Foot" com.coxewagen.predicteurligue1 --web-dir=www
@@ -169,8 +172,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: "Predicteur Foot — appli Android (.apk)"
+          name: "Predicteur Foot — version ${{ github.run_number }} (appli Android)"
           body: |
+            Version ${{ github.run_number }} — le même numéro s'affiche dans l'appli
+            (en haut, à côté de « Saison 2026-2027 ») et dans Paramètres Android > Applications.
+
             APK généré automatiquement. Le site est embarqué directement
             dans l'appli (plus besoin d'internet pour l'ouvrir) — utilise
             le bouton "Mettre à jour les stats" dans l'appli pour récupérer

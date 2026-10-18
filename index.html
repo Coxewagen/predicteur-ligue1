@@ -423,7 +423,7 @@
 
   <div class="masthead">
     <h1>⚽ PRÉDICTEUR LIGUE 1</h1>
-    <p class="subtitle">Saison 2026-2027</p>
+    <p class="subtitle">Saison 2026-2027 · <span id="appVersion" style="font-weight:700;color:#ffffff;"></span></p>
     <div class="update-info" id="updateInfo">Chargement...</div>
     <button type="button" class="update-btn" id="updateStatsBtn" onclick="updateStatsFromLive()" style="margin-top:8px;">🔄 Mettre à jour les stats</button>
     <div class="update-status" id="updateStatsStatus" style="margin:4px auto 0;"></div>
@@ -4183,6 +4183,15 @@ async function updateStatsFromLive(){
 // Affichage seulement : ne touche ni au modèle ni aux données officielles
 // (classement, résultats finaux), qui continuent de venir de football-data.org.
 // ============================================================
+// Numéro de version de l'appli : remplacé par le numéro de build au moment de la
+// génération de l'APK (même numéro que sur la page de téléchargement et dans les
+// paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
+const APP_VERSION = '__APP_VERSION__';
+(function(){
+  const el = document.getElementById('appVersion');
+  if (el) el.textContent = /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web';
+})();
+
 const LIVE_SCORES_URL = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard';
 // Noms ESPN -> noms utilisés dans l'appli
 const ESPN_TEAM_MAP = {
