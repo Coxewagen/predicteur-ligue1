@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'icons/**'
+      - 'android-icons/**'
       - 'index.html'
       - 'android.keystore'
       - '.github/workflows/build-apk.yml'
@@ -52,7 +53,7 @@ jobs:
           cp index.html www/index.html
           cp -r icons www/icons
 
-          node_modules/.bin/cap init "Prédicteur Ligue 1" com.coxewagen.predicteurligue1 --web-dir=www
+          node_modules/.bin/cap init "Predicteur Foot" com.coxewagen.predicteurligue1 --web-dir=www
 
           # Le bouton "Mettre à jour les stats" (dans index.html) va chercher les
           # dernières données sur coxewagen.github.io — une origine DIFFÉRENTE de
@@ -70,6 +71,21 @@ jobs:
 
           node_modules/.bin/cap add android
           node_modules/.bin/cap sync android
+
+          # Icône ballon de foot + écran de démarrage assorti (fichiers déjà
+          # générés et committés dans android-icons/, voir scripts/make_icons.py) :
+          # ils remplacent l'icône et le logo Capacitor par défaut.
+          cp -r android-icons/. android/app/src/main/res/
+          python3 - << 'PY'
+          p = 'android/app/src/main/res/values/styles.xml'
+          s = open(p, encoding='utf-8').read()
+          old = '<item name="android:background">@drawable/splash</item>'
+          assert s.count(old) == 1, 'styles.xml : modèle Capacitor inattendu'
+          s = s.replace(old, old + '\n        <item name="windowSplashScreenBackground">@color/splash_background</item>')
+          open(p, 'w', encoding='utf-8').write(s)
+          PY
+          cat android/app/src/main/res/values/styles.xml
+          cat android/app/src/main/res/values/strings.xml
 
       - name: Configurer la signature et le numéro de version Android
         # On réutilise la clé de signature persistée dans le dépôt (android.keystore)
@@ -153,7 +169,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: "Prédicteur Ligue 1 — appli Android (.apk)"
+          name: "Predicteur Foot — appli Android (.apk)"
           body: |
             APK généré automatiquement. Le site est embarqué directement
             dans l'appli (plus besoin d'internet pour l'ouvrir) — utilise
