@@ -31,6 +31,9 @@ async function main() {
   twaManifest.signingKey.alias = 'android';
   twaManifest.appVersionCode = parseInt(process.env.TWA_VERSION_CODE || '1', 10);
   twaManifest.appVersionName = twaManifest.appVersionCode.toString();
+  // androidbrowserhelper (lib TWA utilisée par bubblewrap) exige minSdk >= 24 ;
+  // la valeur par défaut de bubblewrap (21) fait échouer le merge du manifeste.
+  twaManifest.minSdkVersion = 24;
 
   const manifestFile = path.join(TARGET_DIR, 'twa-manifest.json');
   await twaManifest.saveToFile(manifestFile);
