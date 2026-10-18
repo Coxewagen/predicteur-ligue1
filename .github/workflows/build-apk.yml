@@ -53,6 +53,21 @@ jobs:
           cp -r icons www/icons
 
           node_modules/.bin/cap init "Prédicteur Ligue 1" com.coxewagen.predicteurligue1 --web-dir=www
+
+          # Le bouton "Mettre à jour les stats" (dans index.html) va chercher les
+          # dernières données sur coxewagen.github.io — une origine DIFFÉRENTE de
+          # celle de l'appli (https://localhost), donc soumise au CORS par défaut.
+          # GitHub Pages n'envoie pas d'en-tête CORS autorisant ça. CapacitorHttp
+          # fait passer fetch()/XHR par du code natif Android (pas par le
+          # navigateur embarqué), qui n'est lui pas soumis au CORS.
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
+            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true } });
+            fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));
+          "
+          cat capacitor.config.json
+
           node_modules/.bin/cap add android
           node_modules/.bin/cap sync android
 
