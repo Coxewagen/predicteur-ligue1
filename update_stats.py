@@ -764,7 +764,23 @@ def run_if_ready(html_path: Path, quick: bool, force_matchday=None):
     forcing_this_matchday = (force_matchday is not None and force_matchday == matchday)
     already_done = read_current_matchday(html_path)
     if already_done == matchday and not forcing_this_matchday:
-        print(f"Journée {matchday} déjà enregistrée dans le fichier — rien à refaire, on économise des requêtes.")
+        print(f"Journée {matchday} déjà enregistrée dans le fichier.")
+        # L'API peut garder "journée en cours = N" alors que la journée N+1 a déjà
+        # commencé (matchs du vendredi/samedi) : on regarde si elle a déjà des scores
+        # pour ne pas rater ses résultats (1 requête de plus, seulement dans ce cas).
+        nxt = matchday + 1
+        if nxt <= 34:
+            next_results, next_raw = fetch_matchday_results(nxt)
+            next_played = sum(1 for r in next_results if r["played"])
+            if next_played == 0:
+                print("Journée suivante pas encore commencée — rien à refaire, on économise des requêtes.")
+            elif next_played < len(next_results):
+                print(f"Journée {nxt} déjà commencée côté API ({next_played}/{len(next_results)} joués, "
+                      f"alors que 'journée en cours' = {matchday}) — enregistrement des résultats connus.")
+                update_history_only(html_path, nxt, next_results)
+            else:
+                print(f"Journée {nxt} complète côté API (alors que 'journée en cours' = {matchday}) — mise à jour complète.")
+                run_full_update(html_path, quick, prefetched=(standings_list, raw_data, nxt, next_results, next_raw))
         return
 
     print("Journée complète ✅ — lancement de la mise à jour (sans rappeler l'API pour le classement/matchs)...")

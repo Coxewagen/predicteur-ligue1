@@ -2889,11 +2889,42 @@ let BASE_TEAMS = JSON.parse(JSON.stringify(TEAMS));
 // génération de l'APK. Si des données plus récentes ont été récupérées
 // depuis via le bouton "Mettre à jour les stats" (voir updateStatsFromLive
 // plus bas), on les réutilise ici tant qu'elles sont plus fraîches.
+// Nombre total de résultats connus (matchs joués) dans un historique de journées.
+function countPlayedResults(history){
+  let n = 0;
+  try {
+    Object.keys(history || {}).forEach(function(d){
+      (history[d] || []).forEach(function(m){ if (m.played) n++; });
+    });
+  } catch (e) {}
+  return n;
+}
+// Dernière journée ayant au moins un match joué (null s'il n'y en a aucune).
+function latestPlayedMatchday(history){
+  let best = null;
+  Object.keys(history || {}).forEach(function(d){
+    if ((history[d] || []).some(function(m){ return m.played; })) {
+      const k = Number(d);
+      if (best === null || k > best) best = k;
+    }
+  });
+  return best;
+}
+// true si "cand" est plus récent que "cur" : date de mise à jour plus récente,
+// ou même date mais davantage de résultats connus (résultats partiels d'une
+// journée en cours, qui ne changent pas la date LAST_UPDATE).
+function isFresherData(cand, cur){
+  const a = new Date(cand.LAST_UPDATE.updatedAt).getTime();
+  const b = new Date(cur.LAST_UPDATE.updatedAt).getTime();
+  if (a !== b) return a > b;
+  return countPlayedResults(cand.MATCHDAY_HISTORY) > countPlayedResults(cur.MATCHDAY_HISTORY);
+}
+
 (function(){
   try {
     const saved = JSON.parse(localStorage.getItem('predicteurL1_liveData') || 'null');
-    if (saved && saved.LAST_UPDATE && saved.LAST_UPDATE.updatedAt &&
-        new Date(saved.LAST_UPDATE.updatedAt) > new Date(LAST_UPDATE.updatedAt)) {
+    if (saved && saved.LAST_UPDATE && saved.LAST_UPDATE.updatedAt && saved.TEAMS && saved.MATCHDAY_HISTORY &&
+        isFresherData(saved, { LAST_UPDATE: LAST_UPDATE, MATCHDAY_HISTORY: MATCHDAY_HISTORY })) {
       TEAMS = saved.TEAMS;
       LAST_UPDATE = saved.LAST_UPDATE;
       MATCHDAY_HISTORY = saved.MATCHDAY_HISTORY;
@@ -3959,8 +3990,14 @@ function populateMatchdaySelect(){
   }
   const days = Object.keys(MATCHDAY_HISTORY).map(Number).sort(function(a,b){ return b-a; });
   sel.innerHTML = days.map(function(d){ return '<option value="'+d+'">Journée '+d+'</option>'; }).join('');
-  const current = (typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday && MATCHDAY_HISTORY[LAST_UPDATE.matchday])
-    ? LAST_UPDATE.matchday : days[0];
+  // Par défaut : la dernière journée qui a au moins un résultat (y compris une
+  // journée encore en cours), pas seulement la dernière journée terminée —
+  // sinon les résultats récupérés en cours de journée restaient cachés.
+  const lastPlayed = latestPlayedMatchday(MATCHDAY_HISTORY);
+  const current = (lastPlayed !== null)
+    ? lastPlayed
+    : ((typeof LAST_UPDATE !== 'undefined' && LAST_UPDATE.matchday && MATCHDAY_HISTORY[LAST_UPDATE.matchday])
+        ? LAST_UPDATE.matchday : days[0]);
   sel.value = String(current);
 }
 
@@ -4028,7 +4065,14 @@ function renderUpdateInfo(){
   const daysSince = (Date.now() - updatedDate.getTime()) / (1000*60*60*24);
   const isStale = daysSince > 9; // plus d'une semaine et demie : probablement une journée de retard
 
-  const shortTxt = '🕒 Mis à jour : '+dayCap+' '+dateStr+' à '+timeStr+' (heure de Paris) — Journée '+LAST_UPDATE.matchday;
+  let shortTxt = '🕒 Mis à jour : '+dayCap+' '+dateStr+' à '+timeStr+' (heure de Paris) — Journée '+LAST_UPDATE.matchday;
+  // Résultats d'une journée plus récente, encore en cours : classement/forme
+  // ne sont recalculés qu'à la fin de la journée, mais les scores sont déjà là.
+  const lp = latestPlayedMatchday(MATCHDAY_HISTORY);
+  if (lp !== null && lp > LAST_UPDATE.matchday) {
+    const r = MATCHDAY_HISTORY[lp];
+    shortTxt += ' · Résultats J' + lp + ' : ' + r.filter(function(m){ return m.played; }).length + '/' + r.length;
+  }
   el.textContent = shortTxt;
   el.classList.toggle('stale', isStale);
 }
@@ -4062,6 +4106,21 @@ async function updateStatsFromLive(){
       '\nreturn { TEAMS: TEAMS, LAST_UPDATE: LAST_UPDATE, MATCHDAY_HISTORY: MATCHDAY_HISTORY };'
     )();
 
+    // Résumé honnête de ce que contient la version en ligne : sert à dire
+    // clairement si elle apporte du nouveau ou si l'appli était déjà à jour.
+    const summarize = function(history){
+      const lp = latestPlayedMatchday(history);
+      if (lp === null) return 'aucun résultat';
+      const r = history[lp];
+      return 'journée ' + lp + ' : ' + r.filter(function(m){ return m.played; }).length + '/' + r.length + ' matchs joués';
+    };
+    const playedBefore = countPlayedResults(MATCHDAY_HISTORY);
+
+    if (!isFresherData(fresh, { LAST_UPDATE: LAST_UPDATE, MATCHDAY_HISTORY: MATCHDAY_HISTORY })) {
+      if (statusEl) statusEl.textContent = '✅ Déjà à jour — rien de plus récent en ligne (' + summarize(MATCHDAY_HISTORY) + ')';
+      return;
+    }
+
     TEAMS = fresh.TEAMS;
     LAST_UPDATE = fresh.LAST_UPDATE;
     MATCHDAY_HISTORY = fresh.MATCHDAY_HISTORY;
@@ -4079,7 +4138,12 @@ async function updateStatsFromLive(){
     renderResultsForMatchday(document.getElementById('matchdaySelect').value);
     buildManualRows();
 
-    if (statusEl) statusEl.textContent = '✅ Stats à jour (journée ' + LAST_UPDATE.matchday + ')';
+    const added = countPlayedResults(MATCHDAY_HISTORY) - playedBefore;
+    if (statusEl) {
+      statusEl.textContent = '✅ Mis à jour — ' +
+        (added > 0 ? added + ' nouveau' + (added > 1 ? 'x' : '') + ' résultat' + (added > 1 ? 's' : '') + ' · ' : '') +
+        summarize(MATCHDAY_HISTORY);
+    }
   } catch (err) {
     if (statusEl) { statusEl.textContent = '⚠️ Échec (vérifie ta connexion) : ' + err.message; statusEl.classList.add('err'); }
   } finally {
