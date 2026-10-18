@@ -57,8 +57,13 @@ jobs:
           BUBBLEWRAP_KEY_PASSWORD: predicteurL1key
           CI: 'true'
         run: |
-          set -o pipefail
-          node_modules/.bin/bubblewrap build --skipPwaValidation 2>&1 | tee build-apk-debug.log < /dev/null
+          set +e
+          echo "=== lancement de bubblewrap build ===" > build-apk-debug.log
+          node_modules/.bin/bubblewrap build --skipPwaValidation >> build-apk-debug.log 2>&1
+          code=$?
+          echo "=== fin, code de sortie: $code ===" >> build-apk-debug.log
+          cat build-apk-debug.log
+          exit $code
 
       - name: Save debug log on failure
         if: always()
