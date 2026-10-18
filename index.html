@@ -160,8 +160,9 @@
   .results-row{
     display:grid;grid-template-columns:1fr minmax(58px,auto) 1fr minmax(76px,auto) auto;align-items:center;gap:6px;
     background:rgba(255,255,255,0.03);border-radius:6px;padding:8px 8px;margin-top:10px;
-    font-size:13px;
+    font-size:13px;cursor:pointer;transition:background .12s ease;
   }
+  .results-row:hover,.results-row:active{background:rgba(255,255,255,0.08);}
   .results-row .rteam{text-align:right;font-size:13px;position:relative;cursor:default;}
   .rteam-text{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;}
   .rteam .form-tooltip{
@@ -297,6 +298,53 @@
     border:1px solid rgba(232,178,61,0.35);padding:2px 7px;border-radius:16px;
   }
   .tag.neg{background:rgba(192,72,63,0.14);color:#e08c84;border-color:rgba(192,72,63,0.4);}
+
+  /* Fenêtre détail d'un match (ouverte en cliquant sur une ligne de résultat) */
+  .match-modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);
+    z-index:1000;padding:18px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .match-modal-overlay.open{display:block;}
+  .match-modal{
+    background:var(--board);border:1px solid var(--board-edge);border-radius:12px;
+    max-width:460px;margin:0 auto;max-height:calc(100vh - 36px);overflow-y:auto;
+    -webkit-overflow-scrolling:touch;box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  }
+  .match-modal-header{
+    position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--board);border-bottom:1px solid var(--board-edge);
+    padding:10px 10px 10px 14px;border-radius:12px 12px 0 0;
+  }
+  .match-modal-title{font-weight:800;font-size:14px;color:var(--amber);text-transform:uppercase;letter-spacing:.03em;}
+  .match-modal-close{
+    flex-shrink:0;width:36px;height:36px;border-radius:50%;
+    background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);
+    color:var(--chalk);font-size:20px;font-weight:800;line-height:1;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+  .match-modal-close:hover,.match-modal-close:active{background:rgba(255,255,255,0.2);}
+  /* Texte volontairement plus grand que dans le tableau principal, pour une
+     fenêtre lisible sans avoir besoin de zoomer. */
+  .match-modal-body{padding:14px 14px 20px;font-size:15px;}
+  .match-modal-body .score-hero{border-bottom:none;margin-bottom:8px;padding-top:0;}
+  .match-modal-body .score-hero .lbl{font-size:11px;}
+  .match-modal-body .score-hero .digits{font-size:clamp(18px,5vw,24px);}
+  .match-modal-body .score-hero .prob{font-size:12px;}
+  .match-modal-body .final-score{
+    text-align:center;font-weight:700;font-size:13px;color:var(--amber);
+    background:rgba(232,178,61,.12);border:1px solid rgba(232,178,61,.35);
+    border-radius:8px;padding:6px 12px;margin:0 0 10px;
+  }
+  .match-modal-body .prob-cell .name{font-size:11px;}
+  .match-modal-body .prob-cell .val{font-size:18px;}
+  .match-modal-body .extra-cell .k{font-size:12px;}
+  .match-modal-body .extra-cell .v{font-size:14px;}
+  .match-modal-body .grid-title{font-size:11px;}
+  .match-modal-body .score-grid{max-width:300px;}
+  .match-modal-body .score-grid .cell .sc,
+  .match-modal-body .score-grid .cell .pc{font-size:12px;}
+  .match-modal-body .stat-note{font-size:12px;margin-top:12px;}
+  .match-modal-body .tag{font-size:12px;padding:4px 9px;}
 
   @media (max-width:600px){
     .matchup{grid-template-columns:1fr;}
@@ -530,6 +578,16 @@
       <div class="grid-title">Top 5 des scores les plus probables</div>
       <div class="score-grid" id="scoreGrid"></div>
     </div>
+  </div>
+</div>
+
+<div class="match-modal-overlay" id="matchModalOverlay">
+  <div class="match-modal">
+    <div class="match-modal-header">
+      <span class="match-modal-title" id="matchModalTitle">Match</span>
+      <button type="button" class="match-modal-close" id="matchModalClose" aria-label="Fermer" title="Fermer">✕</button>
+    </div>
+    <div class="match-modal-body" id="matchModalBody"></div>
   </div>
 </div>
 
@@ -2969,7 +3027,200 @@ function adjustedFromTeam(t, baseScored, baseConceded){
 
   const attackMult = (1+moraleAdj) * (1-attackMalus);
   const defenseMult = (1-moraleAdj*0.5) * (1+defenseMalus);
-  return { scored: baseScored*attackMult, conceded: baseConceded*Math.max(0.1, defenseMult) };
+
+  const reasonLabel = { blessure:'blessure', international:'sélection internationale', suspension:'suspension' }[t.absenceReason] || '';
+  const keySuffix = keyPlayerOut ? ' ⭐ dont un titulaire clé' : '';
+  const reasonSuffix = (anyAbsence && reasonLabel) ? ' (' + reasonLabel + ')' : '';
+  const tags = [];
+  if(streakType==='win' && streakLen>0) tags.push({t:'🔥 '+streakLen+' victoire(s) de suite', neg:false});
+  else if(streakType==='unbeaten' && streakLen>0) tags.push({t:'🛡️ Invaincu depuis '+streakLen+' match(s)', neg:false});
+  else if(streakType==='lose' && streakLen>0) tags.push({t:'📉 '+streakLen+' défaite(s) de suite', neg:true});
+  if(attOut>0) tags.push({t:'🤕 '+attOut+' attaquant(s) absent(s)'+keySuffix+reasonSuffix, neg:true});
+  if(defOut>0) tags.push({t:'🤕 '+defOut+' défenseur(s) absent(s)'+keySuffix+reasonSuffix, neg:true});
+  if(gkOut) tags.push({t:'🧤 Gardien titulaire absent'+reasonSuffix, neg:true});
+
+  return { scored: baseScored*attackMult, conceded: baseConceded*Math.max(0.1, defenseMult), tags: tags };
+}
+
+// Version détaillée de predictScoreQuick (utilisée par la fenêtre de détail d'un
+// match) : mêmes calculs, mais renvoie aussi les probabilités +2,5/BTTS, les buts
+// attendus (xG), le top 5 des scores probables et les facteurs expliquant le
+// pronostic (série, absences, fatigue, enjeu...), comme le prédicteur principal.
+function predictScoreDetailed(homeName, awayName){
+  const h = TEAMS.find(function(t){ return t.name === homeName; });
+  const a = TEAMS.find(function(t){ return t.name === awayName; });
+  if(!h || !a) return null;
+
+  const r2 = function(v){ return parseFloat(Number(v).toFixed(2)); };
+  const hSplitUsed = h.homeScored != null && h.homeConceded != null;
+  const aSplitUsed = a.awayScored != null && a.awayConceded != null;
+  let hBaseScored = hSplitUsed ? h.homeScored : r2(h.scored);
+  let hBaseConceded = hSplitUsed ? h.homeConceded : r2(h.conceded);
+  let aBaseScored = aSplitUsed ? a.awayScored : r2(a.scored);
+  let aBaseConceded = aSplitUsed ? a.awayConceded : r2(a.conceded);
+  hBaseScored = shrinkToLeagueAverage(hBaseScored, h.played);
+  hBaseConceded = shrinkToLeagueAverage(hBaseConceded, h.played);
+  aBaseScored = shrinkToLeagueAverage(aBaseScored, a.played);
+  aBaseConceded = shrinkToLeagueAverage(aBaseConceded, a.played);
+
+  const hAdj = adjustedFromTeam(h, hBaseScored, hBaseConceded);
+  const aAdj = adjustedFromTeam(a, aBaseScored, aBaseConceded);
+  const hTags = hAdj.tags.slice();
+  const aTags = aAdj.tags.slice();
+
+  const hFatigue = fatigueImpact(h);
+  const aFatigue = fatigueImpact(a);
+  hAdj.scored *= hFatigue.mult;
+  aAdj.scored *= aFatigue.mult;
+  if(hFatigue.tag) hTags.push(hFatigue.tag);
+  if(aFatigue.tag) aTags.push(aFatigue.tag);
+
+  const hStakes = stakesImpact(h);
+  const aStakes = stakesImpact(a);
+  hAdj.scored *= hStakes.attackMult; hAdj.conceded *= hStakes.defenseMult;
+  aAdj.scored *= aStakes.attackMult; aAdj.conceded *= aStakes.defenseMult;
+  if(hStakes.tag) hTags.push(hStakes.tag);
+  if(aStakes.tag) aTags.push(aStakes.tag);
+
+  const hWC = worldCupHangoverImpact(h);
+  const aWC = worldCupHangoverImpact(a);
+  hAdj.scored *= hWC.mult;
+  aAdj.scored *= aWC.mult;
+  if(hWC.tag) hTags.push(hWC.tag);
+  if(aWC.tag) aTags.push(aWC.tag);
+
+  const hNewCoach = newCoachImpact(h);
+  const aNewCoach = newCoachImpact(a);
+  hAdj.scored *= hNewCoach.attackMult; hAdj.conceded *= hNewCoach.defenseMult;
+  aAdj.scored *= aNewCoach.attackMult; aAdj.conceded *= aNewCoach.defenseMult;
+  if(hNewCoach.tag) hTags.push(hNewCoach.tag);
+  if(aNewCoach.tag) aTags.push(aNewCoach.tag);
+
+  if(hSplitUsed) hTags.unshift({t:'📊 Stats réelles à domicile', neg:false});
+  if(aSplitUsed) aTags.unshift({t:'📊 Stats réelles à l\'extérieur', neg:false});
+
+  const hAttack = hAdj.scored / LEAGUE_AVG;
+  const hDefense = hAdj.conceded / LEAGUE_AVG;
+  const aAttack = aAdj.scored / LEAGUE_AVG;
+  const aDefense = aAdj.conceded / LEAGUE_AVG;
+
+  const homeAdvMult = hSplitUsed ? 1 : HOME_ADV;
+  const awayAdvMult = aSplitUsed ? 1 : AWAY_ADJ;
+
+  const hForm = parseFloat((h.recentForm != null ? h.recentForm : h.form).toFixed(1));
+  const aForm = parseFloat((a.recentForm != null ? a.recentForm : a.form).toFixed(1));
+  const hFormFactor = 0.9 + (hForm/5)*0.2;
+  const aFormFactor = 0.9 + (aForm/5)*0.2;
+
+  const lambdaHome = Math.max(0.05, hAttack * aDefense * LEAGUE_AVG * homeAdvMult * hFormFactor);
+  const lambdaAway = Math.max(0.05, aAttack * hDefense * LEAGUE_AVG * awayAdvMult * aFormFactor);
+
+  const matrix = [];
+  let pHomeWin=0, pDraw=0, pAwayWin=0, over25=0, btts=0, grandTotal=0;
+  let best = {i:0, j:0, p:-1};
+  for(let i=0;i<=MAXG;i++){
+    matrix[i]=[];
+    for(let j=0;j<=MAXG;j++){
+      let p = poissonP(lambdaHome,i) * poissonP(lambdaAway,j);
+      p *= dixonColesTau(i,j,lambdaHome,lambdaAway,DC_RHO);
+      if(p<0) p=0;
+      matrix[i][j]=p;
+      grandTotal += p;
+      if(i>j) pHomeWin+=p; else if(i===j) pDraw+=p; else pAwayWin+=p;
+      if(i+j>=3) over25+=p;
+      if(i>=1 && j>=1) btts+=p;
+      if(p>best.p) best={i,j,p};
+    }
+  }
+  if(grandTotal>0){
+    pHomeWin/=grandTotal; pDraw/=grandTotal; pAwayWin/=grandTotal;
+    over25/=grandTotal; btts/=grandTotal; best.p/=grandTotal;
+  }
+
+  const allScores = [];
+  for(let i=0;i<=MAXG;i++){
+    for(let j=0;j<=MAXG;j++){
+      allScores.push({ i:i, j:j, p: grandTotal>0 ? (matrix[i][j]/grandTotal)*100 : 0 });
+    }
+  }
+  allScores.sort(function(x,y){ return y.p - x.p; });
+
+  return {
+    hName: h.name, aName: a.name,
+    best: best, pHomeWin: pHomeWin, pDraw: pDraw, pAwayWin: pAwayWin,
+    over25: over25, btts: btts,
+    lambdaHome: lambdaHome, lambdaAway: lambdaAway,
+    top5: allScores.slice(0,5),
+    hTags: hTags, aTags: aTags
+  };
+}
+
+// Ouvre la fenêtre de détail d'un match cliqué dans la liste des résultats.
+function openMatchModal(homeName, awayName, playedInfo){
+  const overlay = document.getElementById('matchModalOverlay');
+  const titleEl = document.getElementById('matchModalTitle');
+  const bodyEl = document.getElementById('matchModalBody');
+  if(!overlay || !bodyEl) return;
+
+  titleEl.textContent = homeName + ' — ' + awayName;
+
+  const info = predictScoreDetailed(homeName, awayName);
+  if(!info){
+    bodyEl.innerHTML = '<p class="empty-state">Données insuffisantes pour ce match.</p>';
+  } else {
+    const playedHtml = (playedInfo && playedInfo.played)
+      ? '<div class="final-score">Score final : ' + playedInfo.homeScore + ' - ' + playedInfo.awayScore + '</div>'
+      : '';
+
+    const barsHtml = ''
+      + '<div class="probs">'
+      + '<div class="prob-cell"><div class="name">' + homeName + '</div><div class="val">' + Math.round(info.pHomeWin*100) + '%</div><div class="bar"><div style="width:' + (info.pHomeWin*100) + '%;background:#1d5fd6;"></div></div></div>'
+      + '<div class="prob-cell"><div class="name">Match nul</div><div class="val">' + Math.round(info.pDraw*100) + '%</div><div class="bar"><div style="width:' + (info.pDraw*100) + '%;background:#1e8449;"></div></div></div>'
+      + '<div class="prob-cell"><div class="name">' + awayName + '</div><div class="val">' + Math.round(info.pAwayWin*100) + '%</div><div class="bar"><div style="width:' + (info.pAwayWin*100) + '%;background:#c0483f;"></div></div></div>'
+      + '</div>';
+
+    const extraHtml = ''
+      + '<div class="extra">'
+      + '<div class="extra-cell"><span class="k">+ de 2,5 buts</span><span class="v">' + Math.round(info.over25*100) + '%</span></div>'
+      + '<div class="extra-cell"><span class="k">Les 2 marquent</span><span class="v">' + Math.round(info.btts*100) + '%</span></div>'
+      + '<div class="extra-cell"><span class="k">Buts attendus (dom.)</span><span class="v">' + info.lambdaHome.toFixed(2) + '</span></div>'
+      + '<div class="extra-cell"><span class="k">Buts attendus (ext.)</span><span class="v">' + info.lambdaAway.toFixed(2) + '</span></div>'
+      + '</div>';
+
+    const gridHtml = '<div class="grid-title">Top 5 des scores les plus probables</div><div class="score-grid">'
+      + info.top5.map(function(s, idx){
+          return '<div class="cell' + (idx===0?' top':'') + '"><div class="sc">' + s.i + '-' + s.j + '</div><div class="pc">' + s.p.toFixed(1) + '%</div></div>';
+        }).join('')
+      + '</div>';
+
+    const tagsBlock = function(label, tags){
+      if(!tags || !tags.length) return '';
+      return '<div class="stat-note">' + label + '</div><div class="tags">' + tags.map(function(tg){
+        return '<span class="tag' + (tg.neg?' neg':'') + '">' + tg.t + '</span>';
+      }).join('') + '</div>';
+    };
+
+    bodyEl.innerHTML = playedHtml
+      + '<div class="score-hero">'
+      + '<div class="lbl">Score le plus probable</div>'
+      + '<div class="digits">' + info.best.i + ' – ' + info.best.j + '</div>'
+      + '<div class="prob">probabilité ' + (info.best.p*100).toFixed(1) + '%</div>'
+      + '</div>'
+      + barsHtml
+      + extraHtml
+      + gridHtml
+      + tagsBlock(homeName, info.hTags)
+      + tagsBlock(awayName, info.aTags);
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMatchModal(){
+  const overlay = document.getElementById('matchModalOverlay');
+  if(overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // Pronostic rapide pour n'importe quelle paire d'équipes (utilisé dans la liste
@@ -3684,7 +3935,11 @@ function renderResultsForMatchday(matchday){
         + '</div>'
       : '<span></span>';
     const manualBadge = m.source === 'manual' ? '<div class="manual-flag">✏️ saisi manuellement</div>' : '';
-    return '<div class="results-row' + (m.played ? '' : ' pending') + '">'
+    const escAttr = function(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); };
+    return '<div class="results-row' + (m.played ? '' : ' pending') + '"'
+      + ' data-home="' + escAttr(m.home) + '" data-away="' + escAttr(m.away) + '"'
+      + ' data-played="' + (m.played ? '1' : '0') + '"'
+      + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
       + '<span class="rteam home"><span class="rteam-text">' + m.home + '</span>' + buildAbsenceBadgeHtml(m.home) + '<div class="form-tooltip">' + buildFormTooltipHtml(m.home) + '</div></span>'
       + centerHtml
       + '<span class="rteam away"><span class="rteam-text">' + m.away + '</span>' + buildAbsenceBadgeHtml(m.away) + '<div class="form-tooltip">' + buildFormTooltipHtml(m.away) + '</div></span>'
@@ -3732,6 +3987,34 @@ if(!FS_ACCESS_SUPPORTED){
   const btn = document.getElementById('connectFileBtn');
   if(btn){ btn.disabled = true; btn.textContent = '🔗 Sauvegarde auto indisponible (Chrome/Edge requis)'; }
 }
+
+// Clic sur un match de la liste des résultats -> ouvre la fenêtre de détail.
+// Délégué sur le conteneur (survit aux re-rendus de renderResultsForMatchday).
+(function(){
+  const rowsEl = document.getElementById('resultsRows');
+  if(rowsEl){
+    rowsEl.addEventListener('click', function(e){
+      const row = e.target.closest('.results-row');
+      if(!row) return;
+      openMatchModal(row.getAttribute('data-home'), row.getAttribute('data-away'), {
+        played: row.getAttribute('data-played') === '1',
+        homeScore: row.getAttribute('data-hs'),
+        awayScore: row.getAttribute('data-as')
+      });
+    });
+  }
+  const overlay = document.getElementById('matchModalOverlay');
+  const closeBtn = document.getElementById('matchModalClose');
+  if(closeBtn) closeBtn.addEventListener('click', closeMatchModal);
+  if(overlay){
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeMatchModal();
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeMatchModal();
+  });
+})();
 
 </script>
 <script>
