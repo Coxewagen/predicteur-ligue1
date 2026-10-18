@@ -347,17 +347,22 @@
   .match-modal-body .tag{font-size:12px;padding:4px 9px;}
 
   @media (max-width:600px){
-    .matchup{grid-template-columns:1fr;}
     .vs{margin:0 auto;}
     .extra{grid-template-columns:1fr;}
+
+    /* Sur téléphone : on retire le sélecteur manuel "2 équipes au choix" et son
+       bloc de pronostic en bas de page — redondants maintenant que chaque match
+       de la liste des résultats ouvre sa propre fenêtre de détail au clic.
+       Les deux restent disponibles sur grand écran (ordinateur). */
+    .matchup, .board{ display:none; }
 
     /* Agrandit tout l'affichage sur téléphone (texte, boutons, cases) :
        on réduit la largeur logique du bloc puis on l'agrandit visuellement,
        ce qui grossit uniformément tout son contenu (textes, paddings,
        grilles de score...) sans toucher à chaque réglage individuellement. */
     .wrap{
-      width:calc(100% / 1.3);
-      transform:scale(1.3);
+      width:calc(100% / 1.45);
+      transform:scale(1.45);
       transform-origin:top center;
     }
   }
