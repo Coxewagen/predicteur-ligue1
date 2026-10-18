@@ -40,6 +40,12 @@ jobs:
       - name: Install Bubblewrap
         run: npm install @bubblewrap/cli@latest
 
+      - name: Pré-configurer Bubblewrap (évite les prompts JDK/SDK interactifs)
+        run: |
+          mkdir -p ~/.bubblewrap
+          node -e "require('fs').writeFileSync(require('os').homedir()+'/.bubblewrap/config.json', JSON.stringify({jdkPath: process.env.JAVA_HOME, androidSdkPath: process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT}))"
+          cat ~/.bubblewrap/config.json
+
       - name: Generate TWA project + signing key
         env:
           TWA_VERSION_CODE: ${{ github.run_number }}
