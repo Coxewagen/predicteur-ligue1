@@ -26,7 +26,11 @@ jobs:
       - name: Run update script (si la journée est terminée)
         env:
           FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
-        run: python update_stats.py --si-pret index.html
+        run: |
+          python update_stats.py --si-pret index.html > update-debug.log 2>&1
+          code=$?
+          cat update-debug.log
+          exit $code
 
       - name: Commit and push si changement
         run: |
@@ -36,3 +40,15 @@ jobs:
           git diff --staged --quiet || git commit -m "Auto-update stats Ligue 1"
           git pull --rebase
           git push
+
+      - name: Sauvegarde du journal du script (diagnostic)
+        if: always()
+        run: |
+          mkdir -p debug-update
+          cp update-debug.log debug-update/update-debug.log 2>/dev/null || echo "pas de journal" > debug-update/update-debug.log
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git checkout -B debug-update-logs
+          git add -f debug-update/update-debug.log
+          git commit -m "debug: journal du script de mise à jour (run ${{ github.run_id }}) [skip ci]" || echo "rien à committer"
+          git push -f origin debug-update-logs
