@@ -1,0 +1,215 @@
+== node/npm/java versions ==
+v22.23.3
+10.9.9
+openjdk version "17.0.20.1" 2026-08-18
+OpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)
+OpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)
+
+== cap doctor ==
+💊   Capacitor Doctor  💊 
+
+Latest Dependencies:
+
+  @capacitor/cli: 8.5.3
+  @capacitor/core: 8.5.3
+  @capacitor/android: 8.5.3
+  @capacitor/ios: 8.5.3
+
+Installed Dependencies:
+
+  @capacitor/ios: not installed
+  @capacitor/cli: 8.5.3
+  @capacitor/android: 8.5.3
+  @capacitor/core: 8.5.3
+
+[success] Android looking great! 👌
+
+== répertoire ==
+total 292
+drwxr-xr-x  9 runner runner   4096 Oct 18 13:36 .
+drwxr-xr-x  3 runner runner   4096 Oct 18 13:35 ..
+drwxr-xr-x  7 runner runner   4096 Oct 18 13:35 .git
+drwxr-xr-x  3 runner runner   4096 Oct 18 13:35 .github
+-rw-r--r--  1 runner runner    254 Oct 18 13:35 .gitignore
+-rw-r--r--  1 runner runner   1175 Oct 18 13:35 README.md
+drwxr-xr-x  7 runner runner   4096 Oct 18 13:36 android
+-rw-r--r--  1 runner runner   2682 Oct 18 13:35 android.keystore
+-rw-r--r--  1 runner runner   4296 Oct 18 13:36 build-apk-debug.log
+-rw-r--r--  1 runner runner    103 Oct 18 13:36 capacitor.config.json
+drwxr-xr-x  2 runner runner   4096 Oct 18 13:36 debug
+drwxr-xr-x  2 runner runner   4096 Oct 18 13:35 icons
+-rw-r--r--  1 runner runner 140572 Oct 18 13:35 index.html
+-rw-r--r--  1 runner runner    631 Oct 18 13:35 manifest.webmanifest
+drwxr-xr-x 86 runner runner   4096 Oct 18 13:36 node_modules
+-rw-r--r--  1 runner runner  41085 Oct 18 13:36 package-lock.json
+-rw-r--r--  1 runner runner    671 Oct 18 13:36 package.json
+-rw-r--r--  1 runner runner   1361 Oct 18 13:35 sw.js
+-rw-r--r--  1 runner runner  34102 Oct 18 13:35 update_stats.py
+drwxr-xr-x  3 runner runner   4096 Oct 18 13:36 www
+
+== android/app/build.gradle ==
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.coxewagen.predicteurligue1"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.coxewagen.predicteurligue1"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
+
+// --- Ajouté par le pipeline CI : signature + version ---
+android {
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("CI_KEYSTORE_PATH"))
+            storePassword System.getenv("CI_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("CI_KEY_ALIAS")
+            keyPassword System.getenv("CI_KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
+def ciVersionCode = (System.getenv("CI_VERSION_CODE") ?: "1") as Integer
+def ciVersionName = System.getenv("CI_VERSION_NAME") ?: "1"
+android.defaultConfig.versionCode = ciVersionCode
+android.defaultConfig.versionName = ciVersionName
+
+== sorties apk générées ==
+find: ‘android/app/build/outputs’: No such file or directory
+
+== build-apk-debug.log ==
+=== lancement de gradlew assembleRelease ===
+Downloading https://services.gradle.org/distributions/gradle-8.14.3-all.zip
+.....................10%.....................20%......................30%.....................40%......................50%.....................60%.....................70%......................80%.....................90%......................100%
+
+Welcome to Gradle 8.14.3!
+
+Here are the highlights of this release:
+ - Java 24 support
+ - GraalVM Native Image toolchain selection
+ - Enhancements to test reporting
+ - Build Authoring improvements
+
+For more details see https://docs.gradle.org/8.14.3/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:mergeReleaseJniLibFolders
+> Task :capacitor-android:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:copyReleaseJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeReleaseJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyReleaseJniLibsProjectOnly
+> Task :capacitor-android:generateReleaseResValues
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :capacitor-android:generateReleaseResources
+> Task :capacitor-android:packageReleaseResources
+> Task :capacitor-android:processReleaseNavigationResources
+> Task :capacitor-cordova-android-plugins:generateReleaseResValues
+> Task :capacitor-android:javaPreCompileRelease
+> Task :capacitor-cordova-android-plugins:generateReleaseResources
+> Task :capacitor-cordova-android-plugins:packageReleaseResources
+> Task :capacitor-cordova-android-plugins:processReleaseNavigationResources
+> Task :capacitor-cordova-android-plugins:javaPreCompileRelease
+> Task :capacitor-cordova-android-plugins:parseReleaseLocalResources
+> Task :capacitor-android:parseReleaseLocalResources
+> Task :app:javaPreCompileRelease
+> Task :capacitor-android:writeReleaseAarMetadata
+> Task :app:checkReleaseDuplicateClasses
+> Task :capacitor-cordova-android-plugins:writeReleaseAarMetadata
+> Task :capacitor-android:generateReleaseRFile
+> Task :capacitor-cordova-android-plugins:generateReleaseRFile
+> Task :app:processReleaseNavigationResources
+> Task :capacitor-android:compileReleaseJavaWithJavac FAILED
+
+[Incubating] Problems report is available at: file:///home/runner/work/predicteur-ligue1/predicteur-ligue1/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':capacitor-android:compileReleaseJavaWithJavac'.
+> Java compilation initialization error
+    error: invalid source release: 21
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 44s
+25 actionable tasks: 25 executed
+=== fin, code de sortie: 1 ===
