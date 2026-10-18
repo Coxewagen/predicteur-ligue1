@@ -1,0 +1,74 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:   # bouton "Run workflow" manuel sur GitHub
+  push:
+    branches: [main]
+    paths:
+      - 'manifest.webmanifest'
+      - 'icons/**'
+      - 'index.html'
+      - '.github/workflows/build-apk.yml'
+      - 'scripts/gen-twa.js'
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Bubblewrap
+        run: npm install @bubblewrap/cli@latest
+
+      - name: Generate TWA project + signing key
+        env:
+          TWA_VERSION_CODE: ${{ github.run_number }}
+        run: node scripts/gen-twa.js
+
+      - name: Build signed APK
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: predicteurL1store
+          BUBBLEWRAP_KEY_PASSWORD: predicteurL1key
+        run: node_modules/.bin/bubblewrap build --skipPwaValidation
+
+      - name: Upload APK as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: predicteur-ligue1-apk
+          path: app-release-signed.apk
+
+      - name: Publish APK as a stable Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: "Prédicteur Ligue 1 — appli Android (.apk)"
+          body: |
+            APK généré automatiquement à partir du site
+            (https://coxewagen.github.io/predicteur-ligue1/).
+
+            Pour l'installer : télécharge `app-release-signed.apk`
+            ci-dessous, autorise l'installation depuis une source
+            inconnue si Android le demande, puis ouvre le fichier.
+
+            Ce lien reste le même à chaque mise à jour — pas besoin
+            de le rechercher à nouveau.
+          files: app-release-signed.apk
+          make_latest: false
