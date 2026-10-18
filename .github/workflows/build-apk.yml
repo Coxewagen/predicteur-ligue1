@@ -65,6 +65,26 @@ jobs:
           TWA_VERSION_CODE: ${{ github.run_number }}
         run: node scripts/gen-twa.js
 
+      - name: Persister la clé de signature (indispensable pour les mises à jour)
+        # Chaque run GitHub Actions part d'un dépôt vierge : sans cette étape,
+        # gen-twa.js générait une NOUVELLE clé à chaque build, donc un APK signé
+        # différemment à chaque fois -> Android refuse la mise à jour par-dessus
+        # l'appli déjà installée ("App not installed") et oblige à désinstaller.
+        # On committe la clé une seule fois (la 1re fois qu'elle est créée), et
+        # tous les builds suivants la retrouvent dans le dépôt et la réutilisent.
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          if git ls-files --error-unmatch android.keystore >/dev/null 2>&1; then
+            echo "Clé de signature déjà suivie dans le dépôt, rien à faire."
+          else
+            echo "Nouvelle clé de signature détectée, sauvegarde dans le dépôt..."
+            git add -f android.keystore
+            git commit -m "Ajoute la clé de signature Android (persistée pour les mises à jour) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
       - name: Build signed APK
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: predicteurL1store
