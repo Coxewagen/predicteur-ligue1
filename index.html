@@ -362,21 +362,37 @@
        Les deux restent disponibles sur grand écran (ordinateur). */
     .matchup, .board{ display:none; }
 
-    /* Agrandit tout l'affichage sur téléphone (texte, boutons, cases) :
-       on réduit la largeur logique du bloc puis on l'agrandit visuellement,
-       ce qui grossit uniformément tout son contenu (textes, paddings,
-       grilles de score...) sans toucher à chaque réglage individuellement.
-       (Testé : augmenter chaque taille de texte séparément, sans ce
-       transform, fait déborder/se chevaucher les colonnes de la liste de
-       résultats — la mise en page n'a tout simplement pas la place à ces
-       tailles-là sur un écran de téléphone. Le transform évite ça : la
-       mise en page se calcule à la petite taille (où tout rentre), puis
-       seul le RENDU est agrandi visuellement après coup.) */
-    .wrap{
-      width:calc(100% / 1.45);
-      transform:scale(1.45);
-      transform-origin:top center;
+    /* Mise en page téléphone : textes plus grands ET qui tiennent dans la
+       largeur de l'écran. (Avant : un transform:scale() sur .wrap. La liste
+       des résultats débordait de moitié sur la droite — la page faisait 774 px
+       de large pour un écran de 390 — et ce débordement annulait l'agrandissement
+       et décalait tout le contenu. Ici chaque ligne de match passe sur 2 niveaux :
+       équipes + score en haut, pronostic + pourcentages dessous.) */
+    body{padding:12px 8px 20px;font-size:16px;}
+    .masthead h1{font-size:24px;}
+    .masthead p{font-size:15px;}
+    .update-info{font-size:15px;padding:7px 12px;}
+    .update-btn{font-size:14px;padding:9px 16px;}
+    .update-status{font-size:13px;}
+    .results-select{font-size:15px;padding:6px 8px;}
+    #resultsSummary{font-size:13px;}
+    .manual-entry summary{font-size:14px;}
+
+    .results-row{
+      grid-template-columns:1fr auto 1fr;
+      gap:8px 6px;padding:12px 8px;font-size:16px;
     }
+    .results-row .rteam{font-size:16px;line-height:1.25;}
+    .rteam-text{white-space:normal;overflow:visible;}
+    .results-row .rscore{font-size:22px;padding:5px 9px;}
+    .results-row.pending .rscore{font-size:14px;}
+    .results-row .rpred{
+      grid-column:1;justify-self:end;font-size:19px;padding:5px 9px;
+    }
+    .results-row .rproba-badges{grid-column:2 / 4;justify-self:start;gap:5px;}
+    .rproba-badge{font-size:16px;padding:5px 7px;min-width:44px;}
+    .absence-flag{font-size:15px;}
+    .results-row .manual-flag{font-size:11px;}
   }
 </style>
 </head>
