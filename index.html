@@ -189,6 +189,14 @@
     white-space:nowrap;font-size:18px;
   }
   .results-row.pending .rscore{color:var(--chalk-dim);font-weight:400;font-size:11px;background:rgba(0,0,0,0.15);}
+  /* Scores en direct (ESPN) */
+  .results-row .rscore .live-score{display:block;}
+  .results-row .rscore .live-min{display:block;font-size:11px;font-weight:700;letter-spacing:.03em;margin-top:2px;}
+  .results-row .rscore.live{background:#b3261e;color:#ffffff;border:1px solid #ff8a80;}
+  .results-row.live{box-shadow:0 0 0 1px #ff8a80;}
+  .live-status{font-size:12px;color:var(--chalk-dim);text-align:center;margin:4px auto 0;line-height:1.4;max-width:400px;}
+  .live-status.on{color:#ff8a80;font-weight:700;}
+  .live-status.err{color:#e08c84;}
   .results-row .rpred{
     font-family:"Consolas",monospace;text-align:center;white-space:nowrap;display:inline-block;
     color:#ffffff;background:#c0392b;border:1px solid #e8574a;
@@ -398,6 +406,8 @@
       font-size:26px;padding:6px 22px;
     }
     .results-row.pending .rscore{font-size:15px;}
+    .results-row .rscore .live-min{font-size:15px;}
+    .live-status{font-size:14px;}
     .results-row .rpred{
       grid-row:3;grid-column:1;justify-self:start;font-size:19px;padding:6px 10px;
     }
@@ -417,6 +427,7 @@
     <div class="update-info" id="updateInfo">Chargement...</div>
     <button type="button" class="update-btn" id="updateStatsBtn" onclick="updateStatsFromLive()" style="margin-top:8px;">🔄 Mettre à jour les stats</button>
     <div class="update-status" id="updateStatsStatus" style="margin:4px auto 0;"></div>
+    <div class="live-status" id="liveStatus"></div>
   </div>
 
   <div class="matchup">
@@ -559,7 +570,7 @@
 
   <div class="results-list">
     <div class="results-title-row">
-      <select class="results-select" id="matchdaySelect" onchange="renderResultsForMatchday(this.value)"></select>
+      <select class="results-select" id="matchdaySelect" onchange="userPickedMatchday=true;renderResultsForMatchday(this.value)"></select>
       <span id="resultsSummary"></span>
     </div>
     <div id="resultsRows"></div>
@@ -4014,12 +4025,28 @@ function renderResultsForMatchday(matchday){
   }
 
   const playedCount = results.filter(function(m){ return m.played; }).length;
-  summaryEl.textContent = '(' + playedCount + '/' + results.length + ' joués)';
+  const liveOf = function(m){ return m.played ? null : LIVE_OVERLAY[m.home + '|' + m.away]; };
+  const liveCount = results.filter(function(m){ const lv = liveOf(m); return lv && lv.state === 'in'; }).length;
+  summaryEl.textContent = '(' + playedCount + '/' + results.length + ' joués' + (liveCount ? ' · ' + liveCount + ' en direct' : '') + ')';
 
   rowsEl.innerHTML = results.map(function(m){
-    const centerHtml = m.played
-      ? '<span class="rscore">' + m.homeScore + ' - ' + m.awayScore + '</span>'
-      : '<span class="rscore">à venir</span>';
+    // Scores en direct (ESPN) : seulement pour les matchs que les données officielles
+    // ne donnent pas encore comme terminés.
+    const lv = liveOf(m);
+    const isLive = !!(lv && lv.state === 'in');
+    const provisional = !!(lv && lv.state === 'post' && lv.completed);
+    let centerHtml;
+    if (m.played) {
+      centerHtml = '<span class="rscore">' + m.homeScore + ' - ' + m.awayScore + '</span>';
+    } else if (isLive) {
+      centerHtml = '<span class="rscore live"><span class="live-score">' + lv.home + ' - ' + lv.away + '</span>'
+        + '<span class="live-min">🔴 ' + liveClockLabel(lv) + '</span></span>';
+    } else if (provisional) {
+      centerHtml = '<span class="rscore"><span class="live-score">' + lv.home + ' - ' + lv.away + '</span>'
+        + '<span class="live-min">terminé</span></span>';
+    } else {
+      centerHtml = '<span class="rscore">à venir</span>';
+    }
     const pred = predictScoreQuick(m.home, m.away);
     const predHtml = pred
       ? '<span class="rpred" title="Pronostic du modèle">🔮 ' + pred.i + '-' + pred.j + '</span>'
@@ -4033,7 +4060,7 @@ function renderResultsForMatchday(matchday){
       : '<span></span>';
     const manualBadge = m.source === 'manual' ? '<div class="manual-flag">✏️ saisi manuellement</div>' : '';
     const escAttr = function(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); };
-    return '<div class="results-row' + (m.played ? '' : ' pending') + '"'
+    return '<div class="results-row' + ((m.played || isLive || provisional) ? '' : ' pending') + (isLive ? ' live' : '') + '"'
       + ' data-home="' + escAttr(m.home) + '" data-away="' + escAttr(m.away) + '"'
       + ' data-played="' + (m.played ? '1' : '0') + '"'
       + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
@@ -4151,6 +4178,112 @@ async function updateStatsFromLive(){
   }
 }
 
+// ============================================================
+// SCORES EN DIRECT (API publique d'ESPN — gratuite, SANS garantie : non officielle)
+// Affichage seulement : ne touche ni au modèle ni aux données officielles
+// (classement, résultats finaux), qui continuent de venir de football-data.org.
+// ============================================================
+const LIVE_SCORES_URL = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard';
+// Noms ESPN -> noms utilisés dans l'appli
+const ESPN_TEAM_MAP = {
+  'AJ Auxerre': 'AJ Auxerre', 'AS Monaco': 'AS Monaco', 'Angers': 'Angers SCO', 'Brest': 'Stade Brestois',
+  'Le Havre AC': 'Le Havre AC', 'Le Mans': 'Le Mans FC', 'Lens': 'RC Lens', 'Lille': 'LOSC Lille',
+  'Lorient': 'FC Lorient', 'Lyon': 'Olympique Lyonnais', 'Marseille': 'Olympique de Marseille',
+  'Nice': 'OGC Nice', 'Paris FC': 'Paris FC', 'Paris Saint-Germain': 'Paris Saint-Germain',
+  'Stade Rennais': 'Stade Rennais', 'Strasbourg': 'RC Strasbourg', 'Toulouse': 'Toulouse FC',
+  'Troyes': 'ES Troyes AC'
+};
+let LIVE_OVERLAY = {};          // "domicile|extérieur" -> { state, name, completed, clock, home, away, kickoff }
+let liveSignature = '';
+let liveTimer = null;
+let userPickedMatchday = false; // true dès que l'utilisateur choisit lui-même une journée
+
+function parseEspnScoreboard(data){
+  const out = {};
+  ((data && data.events) || []).forEach(function(ev){
+    try {
+      const comp = ev.competitions[0];
+      const h = comp.competitors.filter(function(c){ return c.homeAway === 'home'; })[0];
+      const a = comp.competitors.filter(function(c){ return c.homeAway === 'away'; })[0];
+      const hn = ESPN_TEAM_MAP[h.team.displayName], an = ESPN_TEAM_MAP[a.team.displayName];
+      if (!hn || !an) return;                       // club inconnu : on ignore ce match
+      const st = ev.status.type;
+      out[hn + '|' + an] = {
+        state: st.state,                            // pre / in / post
+        name: st.name,                              // ex. STATUS_FIRST_HALF, STATUS_HALFTIME
+        completed: !!st.completed,
+        clock: ev.status.displayClock || '',
+        home: Number(h.score) || 0,
+        away: Number(a.score) || 0,
+        kickoff: ev.date
+      };
+    } catch (e) { /* match mal formé : ignoré */ }
+  });
+  return out;
+}
+
+function liveClockLabel(lv){
+  if (lv.name === 'STATUS_HALFTIME') return 'MI-TEMPS';
+  return lv.clock || 'EN COURS';
+}
+
+function matchdayOfFixture(home, away){
+  const days = Object.keys(MATCHDAY_HISTORY || {});
+  for (let i = 0; i < days.length; i++) {
+    if ((MATCHDAY_HISTORY[days[i]] || []).some(function(m){ return m.home === home && m.away === away; })) return Number(days[i]);
+  }
+  return null;
+}
+
+function setLiveStatus(text, cls){
+  const el = document.getElementById('liveStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'live-status' + (cls ? ' ' + cls : '');
+}
+
+async function liveTick(){
+  clearTimeout(liveTimer);
+  let nextDelay = 5 * 60 * 1000;                    // rien de spécial : on revérifie dans 5 min
+  try {
+    const resp = await fetch(LIVE_SCORES_URL, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const overlay = parseEspnScoreboard(await resp.json());
+    const keys = Object.keys(overlay);
+    const live = keys.filter(function(k){ return overlay[k].state === 'in'; });
+    const soon = keys.some(function(k){
+      return overlay[k].state === 'pre' && (new Date(overlay[k].kickoff).getTime() - Date.now()) < 20 * 60 * 1000;
+    });
+    nextDelay = live.length ? 30 * 1000 : (soon ? 60 * 1000 : 5 * 60 * 1000);
+
+    const signature = JSON.stringify(overlay);
+    const changed = signature !== liveSignature;
+    liveSignature = signature;
+    LIVE_OVERLAY = overlay;
+
+    // Un match en direct d'une journée plus récente que celle affichée : on bascule
+    // dessus, sauf si l'utilisateur a choisi lui-même une journée.
+    const sel = document.getElementById('matchdaySelect');
+    if (sel && !userPickedMatchday && live.length) {
+      const parts = live[0].split('|');
+      const md = matchdayOfFixture(parts[0], parts[1]);
+      if (md !== null && Number(sel.value) < md && MATCHDAY_HISTORY[md]) sel.value = String(md);
+    }
+    if (changed && sel) renderResultsForMatchday(sel.value);
+
+    const hhmmss = new Date().toLocaleTimeString('fr-FR');
+    if (live.length) setLiveStatus('🔴 ' + live.length + ' match' + (live.length > 1 ? 's' : '') + ' en direct · actualisé à ' + hhmmss, 'on');
+    else setLiveStatus('Aucun match en direct pour le moment · vérifié à ' + hhmmss, '');
+  } catch (err) {
+    nextDelay = 2 * 60 * 1000;
+    setLiveStatus('⚠️ Scores en direct indisponibles (' + err.message + ')', 'err');
+  }
+  if (!document.hidden) liveTimer = setTimeout(liveTick, nextDelay);
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) clearTimeout(liveTimer); else liveTick();   // reprise immédiate au retour dans l'appli
+});
+
 recomputeTeamsWithManualData();
 buildSelect('homeSelect', 13);   // Paris Saint-Germain par défaut
 buildSelect('awaySelect', 5);    // RC Lens par défaut
@@ -4159,6 +4292,7 @@ onTeamChange('away');
 renderUpdateInfo();
 populateMatchdaySelect();
 renderResultsForMatchday(document.getElementById('matchdaySelect').value);
+liveTick();   // scores en direct : première lecture tout de suite, puis rafraîchissement automatique
 buildManualRows();
 loadManualMatchday(document.getElementById('manualMatchday').value);
 if(!FS_ACCESS_SUPPORTED){
