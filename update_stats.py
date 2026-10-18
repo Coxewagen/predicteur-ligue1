@@ -41,8 +41,14 @@ import sys
 import json
 import time
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
+
+try:
+    from zoneinfo import ZoneInfo
+    PARIS_TZ = ZoneInfo("Europe/Paris")
+except Exception:  # Python < 3.9 ou base de fuseaux absente : on retombe sur l'heure locale
+    PARIS_TZ = None
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -523,6 +529,44 @@ def teams_to_js(teams, preserved=None):
     return "\n".join(lines)
 
 
+def now_paris_iso():
+    """Heure de Paris au format du fichier (ISO, sans fuseau). Le runner GitHub
+    tourne en UTC : sans ça, l'appli afficherait « heure de Paris » avec 2 h de retard."""
+    now = datetime.now(PARIS_TZ) if PARIS_TZ else datetime.now()
+    return now.replace(tzinfo=None).isoformat(timespec="seconds")
+
+
+FINISHED_STATUSES = {"FINISHED", "AWARDED"}
+# Un match de championnat (mi-temps et arrêts de jeu compris) dure au plus ~2 h 15.
+MAX_MATCH_MINUTES = 150
+
+
+def match_is_finished(m: dict, now=None) -> bool:
+    """True seulement si le match est TERMINÉ.
+
+    L'API renvoie déjà un score (0-0, puis 1-0…) pendant que le match se joue :
+    se fier à la seule présence d'un score faisait enregistrer des matchs EN COURS
+    comme des résultats finaux — et, si c'était le dernier de la journée, la journée
+    entière comme « complète » (puis figée, sans jamais corriger le score final).
+    On exige donc le statut FINISHED/AWARDED. Comme le statut peut rester en retard
+    sur l'offre gratuite, un score présent plus de MAX_MATCH_MINUTES après le coup
+    d'envoi est aussi considéré comme terminé."""
+    ft = (m.get("score") or {}).get("fullTime") or {}
+    if ft.get("home") is None or ft.get("away") is None:
+        return False
+    status = m.get("status")
+    if status in FINISHED_STATUSES:
+        return True
+    if status in ("POSTPONED", "SUSPENDED", "CANCELLED"):
+        return False
+    try:
+        kickoff = datetime.fromisoformat(str(m["utcDate"]).replace("Z", "+00:00"))
+    except (KeyError, ValueError):
+        return False
+    now = now or datetime.now(timezone.utc)
+    return (now - kickoff).total_seconds() >= MAX_MATCH_MINUTES * 60
+
+
 def fetch_matchday_results(matchday):
     """Récupère les matchs (joués ou à venir) de la journée en cours."""
     url = f"https://api.football-data.org/v4/competitions/{COMPETITION_CODE}/matches"
@@ -542,9 +586,8 @@ def fetch_matchday_results(matchday):
         home_name = resolve_team_name(m.get("homeTeam", {}).get("name", "?"))
         away_name = resolve_team_name(m.get("awayTeam", {}).get("name", "?"))
         ft = (m.get("score", {}) or {}).get("fullTime", {}) or {}
-        # on se fie à la présence d'un score plutôt qu'au champ 'status', qui peut
-        # rester en retard par rapport au classement sur certaines réponses de l'API
-        played = ft.get("home") is not None and ft.get("away") is not None
+        # voir match_is_finished : un score seul ne suffit pas (match peut-être en cours)
+        played = match_is_finished(m)
         results.append({
             "home": home_name,
             "away": away_name,
@@ -583,7 +626,7 @@ def last_update_to_js(matchday, updated_at_iso, note=""):
 
 def update_history_only(html_path: Path, matchday, results):
     """Écrit uniquement les résultats connus dans MATCHDAY_HISTORY, SANS toucher
-    TEAMS ni LAST_UPDATE. Utilisé quand la journée n'est pas encore terminée,
+    TEAMS (ni la journée de LAST_UPDATE ; seule sa date avance). Utilisé quand la journée n'est pas encore terminée,
     pour afficher les scores des matchs déjà joués sans fausser le classement/
     la forme (qui, eux, attendent la fin complète de la journée)."""
     content = html_path.read_text(encoding="utf-8")
@@ -596,12 +639,23 @@ def update_history_only(html_path: Path, matchday, results):
         print(f"⚠️  Journée {matchday} avait été saisie manuellement — résultats partiels NON écrasés.")
         return
 
+    if existing == results:
+        print(f"Journée {matchday} : rien de nouveau depuis la dernière vérification — fichier inchangé.")
+        return
+
     history[str(matchday)] = results
     new_history_block = history_to_js(history)
     if history_pattern.search(content):
         new_content = history_pattern.sub(new_history_block, content, count=1)
     else:
         new_content = content.replace("let TEAMS = [", new_history_block + "\n\nlet TEAMS = [", 1)
+
+    # La date « Mis à jour » avance à chaque modification du fichier (sinon l'appli,
+    # qui compare ces dates, ne verrait pas une correction de score) ; journée et note
+    # de LAST_UPDATE restent inchangées.
+    new_content = re.sub(r'(let LAST_UPDATE = \{[^}]*?updatedAt:\s*")[^"]*(")',
+                         lambda m: m.group(1) + now_paris_iso() + m.group(2),
+                         new_content, count=1)
 
     backup_path = html_path.with_suffix(html_path.suffix + ".bak")
     shutil.copy2(html_path, backup_path)
@@ -717,7 +771,7 @@ def run_full_update(html_path: Path, quick: bool, prefetched=None, force_matchda
     print(f"\n{played_count}/{len(results)} match(s) de la journée {matchday} marqués comme joués par l'API.")
 
     force = (force_matchday is not None and force_matchday == matchday)
-    update_html_file(html_path, teams, matchday, datetime.now().isoformat(timespec="seconds"), note, results, force=force)
+    update_html_file(html_path, teams, matchday, now_paris_iso(), note, results, force=force)
     print(f"\nTerminé — {datetime.now().strftime('%d/%m/%Y à %H:%M')}")
 
 
