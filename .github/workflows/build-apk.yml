@@ -68,7 +68,7 @@ jobs:
       - name: Build signed APK
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: predicteurL1store
-          BUBBLEWRAP_KEY_PASSWORD: predicteurL1key
+          BUBBLEWRAP_KEY_PASSWORD: predicteurL1store
           CI: 'true'
         run: |
           set +e

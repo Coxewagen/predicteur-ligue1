@@ -21,8 +21,12 @@ const TARGET_DIR = process.cwd();
 
 // Mots de passe du keystore : usage perso (pas de distribution Play Store),
 // donc pas besoin de secrets GitHub pour ça — valeurs fixes volontairement.
+// Même mot de passe pour le keystore et la clé : un keystore PKCS12 (format
+// par défaut depuis Java 8) ne gère pas vraiment deux mots de passe
+// différents (apksigner échouait avec "Wrong password?" / BadPaddingException
+// alors que les deux mots de passe étaient corrects individuellement).
 const KEYSTORE_PASSWORD = 'predicteurL1store';
-const KEY_PASSWORD = 'predicteurL1key';
+const KEY_PASSWORD = 'predicteurL1store';
 
 async function main() {
   const twaManifest = await TwaManifest.fromWebManifest(MANIFEST_URL);
