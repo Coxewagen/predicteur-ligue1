@@ -80,7 +80,7 @@ jobs:
           exit $code
 
       - name: Save debug log on failure
-        if: always()
+        if: failure()
         run: |
           mkdir -p debug
           { echo "== node/npm/java versions =="; node -v; npm -v; java -version 2>&1; echo; \
