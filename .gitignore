@@ -2,3 +2,11 @@
 debug_reponse_api.json
 debug_matches_api.json
 __pycache__/
+
+# Générés par le pipeline CI (scripts/.github/workflows/build-apk.yml) —
+# jamais committés, reconstruits à chaque build.
+node_modules/
+package.json
+package-lock.json
+www/
+android/

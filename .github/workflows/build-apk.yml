@@ -5,11 +5,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'manifest.webmanifest'
       - 'icons/**'
       - 'index.html'
+      - 'android.keystore'
       - '.github/workflows/build-apk.yml'
-      - 'scripts/gen-twa.js'
 
 permissions:
   contents: write
@@ -24,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -35,68 +34,80 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: 'platform-tools platforms;android-36'
+          packages: 'platform-tools platforms;android-36 build-tools;34.0.0'
 
-      - name: Install Bubblewrap
-        run: npm install @bubblewrap/cli@latest
-
-      - name: Pré-configurer Bubblewrap (évite les prompts JDK/SDK interactifs)
+      - name: Install Capacitor
         run: |
-          mkdir -p ~/.bubblewrap
-          node -e "require('fs').writeFileSync(require('os').homedir()+'/.bubblewrap/config.json', JSON.stringify({jdkPath: process.env.JAVA_HOME, androidSdkPath: process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT}))"
-          cat ~/.bubblewrap/config.json
-          echo
-          # Bubblewrap valide le SDK à l'ancienne (dossier tools/ ou bin/ à la
-          # racine), absent des installations modernes basées sur cmdline-tools.
-          # On fournit un lien de compatibilité vers le vrai sdkmanager.
-          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
-          mkdir -p "$SDK/tools"
-          CMDLINE_BIN=$(find "$SDK/cmdline-tools" -maxdepth 2 -type d -name bin 2>/dev/null | head -n1)
-          if [ -n "$CMDLINE_BIN" ]; then
-            ln -sfn "$CMDLINE_BIN" "$SDK/tools/bin"
-            echo "Lien tools/bin -> $CMDLINE_BIN"
-          else
-            echo "Aucun cmdline-tools/*/bin trouvé sous $SDK"
-            find "$SDK" -maxdepth 2
-          fi
+          [ -f package.json ] || npm init -y
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
 
-      - name: Generate TWA project + signing key
-        env:
-          TWA_VERSION_CODE: ${{ github.run_number }}
-        run: node scripts/gen-twa.js
-
-      - name: Persister la clé de signature (indispensable pour les mises à jour)
-        # Chaque run GitHub Actions part d'un dépôt vierge : sans cette étape,
-        # gen-twa.js générait une NOUVELLE clé à chaque build, donc un APK signé
-        # différemment à chaque fois -> Android refuse la mise à jour par-dessus
-        # l'appli déjà installée ("App not installed") et oblige à désinstaller.
-        # On committe la clé une seule fois (la 1re fois qu'elle est créée), et
-        # tous les builds suivants la retrouvent dans le dépôt et la réutilisent.
+      - name: Générer le projet Capacitor (le site est embarqué tel quel dans l'appli)
+        # Contrairement à l'ancienne appli TWA (qui ouvrait l'URL en ligne dans un
+        # onglet Chrome, avec tous les soucis de cache que ça entraînait), ici
+        # index.html est copié DANS l'appli au moment du build : plus aucune
+        # dépendance au cache du navigateur pour afficher les dernières données.
         run: |
-          git config user.email "actions@github.com"
-          git config user.name "github-actions"
-          if git ls-files --error-unmatch android.keystore >/dev/null 2>&1; then
-            echo "Clé de signature déjà suivie dans le dépôt, rien à faire."
-          else
-            echo "Nouvelle clé de signature détectée, sauvegarde dans le dépôt..."
-            git add -f android.keystore
-            git commit -m "Ajoute la clé de signature Android (persistée pour les mises à jour) [skip ci]"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+          rm -rf www android
+          mkdir -p www
+          cp index.html www/index.html
+          cp -r icons www/icons
 
-      - name: Build signed APK
+          node_modules/.bin/cap init "Prédicteur Ligue 1" com.coxewagen.predicteurligue1 --web-dir=www
+          node_modules/.bin/cap add android
+          node_modules/.bin/cap sync android
+
+      - name: Configurer la signature et le numéro de version Android
+        # On réutilise la clé de signature persistée dans le dépôt (android.keystore)
+        # plutôt que d'en générer une nouvelle à chaque build — sinon Android refuse
+        # la mise à jour par-dessus l'appli déjà installée ("App not installed") et
+        # oblige à désinstaller à chaque fois.
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          // --- Ajouté par le pipeline CI : signature + version ---
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv("CI_KEYSTORE_PATH"))
+                      storePassword System.getenv("CI_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("CI_KEY_ALIAS")
+                      keyPassword System.getenv("CI_KEY_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          def ciVersionCode = (System.getenv("CI_VERSION_CODE") ?: "1") as Integer
+          def ciVersionName = System.getenv("CI_VERSION_NAME") ?: "1"
+          android.defaultConfig.versionCode = ciVersionCode
+          android.defaultConfig.versionName = ciVersionName
+          EOF
+          cat android/app/build.gradle | tail -25
+
+      - name: Build de l'APK signé
         env:
-          BUBBLEWRAP_KEYSTORE_PASSWORD: predicteurL1store
-          BUBBLEWRAP_KEY_PASSWORD: predicteurL1store
-          CI: 'true'
+          CI_KEYSTORE_PATH: ${{ github.workspace }}/android.keystore
+          CI_KEYSTORE_PASSWORD: predicteurL1store
+          CI_KEY_ALIAS: android
+          CI_KEY_PASSWORD: predicteurL1store
+          CI_VERSION_CODE: ${{ github.run_number }}
+          CI_VERSION_NAME: ${{ github.run_number }}
         run: |
           set +e
-          echo "=== lancement de bubblewrap build ===" > build-apk-debug.log
-          node_modules/.bin/bubblewrap build --skipPwaValidation >> build-apk-debug.log 2>&1
+          echo "=== lancement de gradlew assembleRelease ===" > build-apk-debug.log
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon >> ../build-apk-debug.log 2>&1
           code=$?
+          cd ..
           echo "=== fin, code de sortie: $code ===" >> build-apk-debug.log
           cat build-apk-debug.log
+          if [ $code -eq 0 ]; then
+            cp android/app/build/outputs/apk/release/app-release.apk app-release-signed.apk
+          fi
           exit $code
 
       - name: Save debug log on failure
@@ -104,10 +115,10 @@ jobs:
         run: |
           mkdir -p debug
           { echo "== node/npm/java versions =="; node -v; npm -v; java -version 2>&1; echo; \
-            echo "== bubblewrap version =="; node_modules/.bin/bubblewrap --version 2>&1 || true; echo; \
+            echo "== cap doctor =="; node_modules/.bin/cap doctor 2>&1 || true; echo; \
             echo "== répertoire =="; ls -la; echo; \
-            echo "== twa-manifest.json =="; cat twa-manifest.json 2>&1 || true; echo; \
-            echo "== manifest-checksum.txt =="; cat manifest-checksum.txt 2>&1 || true; echo; \
+            echo "== android/app/build.gradle =="; cat android/app/build.gradle 2>&1 || true; echo; \
+            echo "== sorties apk générées =="; find android/app/build/outputs -type f 2>&1 || true; echo; \
             echo "== build-apk-debug.log =="; cat build-apk-debug.log 2>&1 || true; } > debug/build-apk-debug.log
           git config user.email "actions@github.com"
           git config user.name "github-actions"
@@ -129,8 +140,10 @@ jobs:
           tag_name: apk-latest
           name: "Prédicteur Ligue 1 — appli Android (.apk)"
           body: |
-            APK généré automatiquement à partir du site
-            (https://coxewagen.github.io/predicteur-ligue1/).
+            APK généré automatiquement. Le site est embarqué directement
+            dans l'appli (plus besoin d'internet pour l'ouvrir) — utilise
+            le bouton "Mettre à jour les stats" dans l'appli pour récupérer
+            les derniers résultats quand tu as du réseau.
 
             Pour l'installer : télécharge `app-release-signed.apk`
             ci-dessous, autorise l'installation depuis une source
