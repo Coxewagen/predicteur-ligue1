@@ -302,8 +302,13 @@
 
   /* Fenêtre détail d'un match (ouverte en cliquant sur une ligne de résultat) */
   .match-modal-overlay{
-    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);
+    /* top/right/bottom/left au lieu du raccourci "inset" : certains
+       navigateurs Android (WebView embarqué notamment) ne couvrent pas
+       tout l'écran avec "inset", d'où la fenêtre qui ne recouvrait que
+       la moitié de l'écran sur certains téléphones. */
+    display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.65);
     z-index:1000;padding:18px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    width:100%;height:100%;box-sizing:border-box;
   }
   .match-modal-overlay.open{display:block;}
   .match-modal{
@@ -360,7 +365,13 @@
     /* Agrandit tout l'affichage sur téléphone (texte, boutons, cases) :
        on réduit la largeur logique du bloc puis on l'agrandit visuellement,
        ce qui grossit uniformément tout son contenu (textes, paddings,
-       grilles de score...) sans toucher à chaque réglage individuellement. */
+       grilles de score...) sans toucher à chaque réglage individuellement.
+       (Testé : augmenter chaque taille de texte séparément, sans ce
+       transform, fait déborder/se chevaucher les colonnes de la liste de
+       résultats — la mise en page n'a tout simplement pas la place à ces
+       tailles-là sur un écran de téléphone. Le transform évite ça : la
+       mise en page se calcule à la petite taille (où tout rentre), puis
+       seul le RENDU est agrandi visuellement après coup.) */
     .wrap{
       width:calc(100% / 1.45);
       transform:scale(1.45);
