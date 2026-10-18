@@ -45,6 +45,20 @@ jobs:
           mkdir -p ~/.bubblewrap
           node -e "require('fs').writeFileSync(require('os').homedir()+'/.bubblewrap/config.json', JSON.stringify({jdkPath: process.env.JAVA_HOME, androidSdkPath: process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT}))"
           cat ~/.bubblewrap/config.json
+          echo
+          # Bubblewrap valide le SDK à l'ancienne (dossier tools/ ou bin/ à la
+          # racine), absent des installations modernes basées sur cmdline-tools.
+          # On fournit un lien de compatibilité vers le vrai sdkmanager.
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          mkdir -p "$SDK/tools"
+          CMDLINE_BIN=$(find "$SDK/cmdline-tools" -maxdepth 2 -type d -name bin 2>/dev/null | head -n1)
+          if [ -n "$CMDLINE_BIN" ]; then
+            ln -sfn "$CMDLINE_BIN" "$SDK/tools/bin"
+            echo "Lien tools/bin -> $CMDLINE_BIN"
+          else
+            echo "Aucun cmdline-tools/*/bin trouvé sous $SDK"
+            find "$SDK" -maxdepth 2
+          fi
 
       - name: Generate TWA project + signing key
         env:
