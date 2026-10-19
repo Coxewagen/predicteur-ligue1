@@ -4105,14 +4105,23 @@ function renderUpdateInfo(){
 }
 
 // Appli autonome : les données sont embarquées dans l'APK, donc toujours
-// disponibles hors-ligne. Ce bouton va chercher la dernière version sur le
-// site en ligne uniquement quand on le demande (pas de rechargement auto).
+// disponibles hors-ligne. La dernière version publiée sur le site est récupérée
+// automatiquement à l'ouverture de l'appli puis toutes les 10 min environ tant
+// qu'elle reste ouverte (mode silencieux), et à la demande avec le bouton.
 const LIVE_DATA_URL = 'https://coxewagen.github.io/predicteur-ligue1/index.html';
-async function updateStatsFromLive(){
+let updateInProgress = false;
+let lastAutoCheck = 0;
+async function updateStatsFromLive(opts){
+  const silent = !!(opts && opts.silent);
+  if (updateInProgress) return;               // évite deux récupérations en même temps
+  updateInProgress = true;
   const btn = document.getElementById('updateStatsBtn');
   const statusEl = document.getElementById('updateStatsStatus');
-  if (btn) btn.disabled = true;
-  if (statusEl) { statusEl.textContent = 'Récupération des dernières stats…'; statusEl.classList.remove('err'); }
+  const hhmm = function(){ return new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); };
+  if (!silent) {
+    if (btn) btn.disabled = true;
+    if (statusEl) { statusEl.textContent = 'Récupération des dernières stats…'; statusEl.classList.remove('err'); }
+  }
   try {
     const resp = await fetch(LIVE_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
@@ -4144,7 +4153,12 @@ async function updateStatsFromLive(){
     const playedBefore = countPlayedResults(MATCHDAY_HISTORY);
 
     if (!isFresherData(fresh, { LAST_UPDATE: LAST_UPDATE, MATCHDAY_HISTORY: MATCHDAY_HISTORY })) {
-      if (statusEl) statusEl.textContent = '✅ Déjà à jour — rien de plus récent en ligne (' + summarize(MATCHDAY_HISTORY) + ')';
+      if (statusEl) {
+        statusEl.classList.remove('err');
+        statusEl.textContent = silent
+          ? '✅ Données à jour (vérifié à ' + hhmm() + ')'
+          : '✅ Déjà à jour — rien de plus récent en ligne (' + summarize(MATCHDAY_HISTORY) + ')';
+      }
       return;
     }
 
@@ -4167,15 +4181,29 @@ async function updateStatsFromLive(){
 
     const added = countPlayedResults(MATCHDAY_HISTORY) - playedBefore;
     if (statusEl) {
-      statusEl.textContent = '✅ Mis à jour — ' +
+      statusEl.classList.remove('err');
+      statusEl.textContent = (silent ? '🔄 Mise à jour automatique à ' + hhmm() + ' — ' : '✅ Mis à jour — ') +
         (added > 0 ? added + ' nouveau' + (added > 1 ? 'x' : '') + ' résultat' + (added > 1 ? 's' : '') + ' · ' : '') +
         summarize(MATCHDAY_HISTORY);
     }
   } catch (err) {
-    if (statusEl) { statusEl.textContent = '⚠️ Échec (vérifie ta connexion) : ' + err.message; statusEl.classList.add('err'); }
+    if (statusEl) {
+      statusEl.textContent = silent
+        ? '⚠️ Mise à jour automatique impossible (' + err.message + ')'
+        : '⚠️ Échec (vérifie ta connexion) : ' + err.message;
+      statusEl.classList.add('err');
+    }
   } finally {
+    updateInProgress = false;
     if (btn) btn.disabled = false;
   }
+}
+
+// Récupération automatique des données officielles : au plus une fois toutes les 10 min.
+function autoRefreshOfficial(){
+  if (Date.now() - lastAutoCheck < 10 * 60 * 1000) return;
+  lastAutoCheck = Date.now();
+  updateStatsFromLive({ silent: true });
 }
 
 // ============================================================
@@ -4253,6 +4281,7 @@ function setLiveStatus(text, cls){
 
 async function liveTick(){
   clearTimeout(liveTimer);
+  autoRefreshOfficial();                            // résultats/classement officiels : toutes les 10 min au plus
   let nextDelay = 5 * 60 * 1000;                    // rien de spécial : on revérifie dans 5 min
   try {
     const resp = await fetch(LIVE_SCORES_URL, { cache: 'no-store' });
