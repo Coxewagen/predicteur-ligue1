@@ -648,7 +648,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 6, updatedAt: "2026-10-19T00:58:32", note: "" };
+let LAST_UPDATE = { matchday: 7, updatedAt: "2026-10-19T06:27:29", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -1083,30 +1083,30 @@ let MATCHDAY_HISTORY = {
     {
       "home": "FC Lorient",
       "away": "AS Monaco",
-      "homeScore": 0,
+      "homeScore": 1,
       "awayScore": 0,
       "played": true
     },
     {
       "home": "Paris FC",
       "away": "Stade Rennais",
-      "homeScore": 0,
-      "awayScore": 0,
+      "homeScore": 4,
+      "awayScore": 3,
       "played": true
     },
     {
       "home": "Le Havre AC",
       "away": "AJ Auxerre",
-      "homeScore": 0,
-      "awayScore": 0,
+      "homeScore": 1,
+      "awayScore": 3,
       "played": true
     },
     {
       "home": "Olympique Lyonnais",
       "away": "OGC Nice",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
     }
   ],
   "8": [
@@ -2871,24 +2871,24 @@ let MATCHDAY_HISTORY = {
 // est terminée, les 18 clubs ont chacun 1 match réel (chiffres à prendre avec
 // précaution vu le petit échantillon — normal en tout début de saison).
 let TEAMS = [
-  { id:532, name:"Angers SCO", scored:1.167, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:7, goalsAgainst:10, recentForm:2, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Courcoul (déf. titulaire habituel, 16 tit./20) blessé long terme ; Peter (att.) blessé depuis mai ; Belkhdim et Mouton aussi à l'infirmerie (postes non confirmés, non comptés)", absenceUpdatedAt:"2026-10-10T15:42:43" },
-  { id:519, name:"AJ Auxerre", scored:1.333, conceded:2.667, form:1.67, played:6, wins:2, draws:0, goalsFor:8, goalsAgainst:16, recentForm:2, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée (5 défenseurs indispo dont Makosso suspendu : Okoh, Senaya, Fofana, Siwe) ; Mandengue (att.) blessure musculaire confirmée depuis le 03/10, retour non daté", absenceUpdatedAt:"2026-10-11T16:16:38" },
-  { id:512, name:"Stade Brestois", scored:2.0, conceded:1.5, form:1.67, played:6, wins:2, draws:2, goalsFor:12, goalsAgainst:9, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Baldé (ailier clé) et Coulibaly (déf.) blessés ; Chardonnet (capitaine, déf.) confirmé titulaire ce match malgré une 1ère info le donnant absent", absenceUpdatedAt:"2026-10-10T15:42:43" },
-  { id:533, name:"Le Havre AC", scored:0.667, conceded:1.333, form:0.0, played:6, wins:0, draws:2, goalsFor:4, goalsAgainst:8, recentForm:0, streakType:"lose", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"blessures multiples", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:535, name:"Le Mans FC", scored:1.667, conceded:2.0, form:0.83, played:6, wins:1, draws:3, goalsFor:10, goalsAgainst:12, recentForm:1, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:546, name:"RC Lens", scored:1.833, conceded:1.667, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:10, recentForm:1, streakType:"win", streakLen:1, restDays:3, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-05T20:33:00", newCoachBoostFrom:6 },
-  { id:521, name:"LOSC Lille", scored:1.5, conceded:0.667, form:3.33, played:6, wins:4, draws:1, goalsFor:9, goalsAgainst:4, recentForm:3, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:525, name:"FC Lorient", scored:1.0, conceded:1.0, form:1.67, played:6, wins:2, draws:2, goalsFor:6, goalsAgainst:6, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:523, name:"Olympique Lyonnais", scored:1.833, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:4, recentForm:2, streakType:"lose", streakLen:1, restDays:3, playedEurope:false, europeLevel:null },
-  { id:516, name:"Olympique de Marseille", scored:1.5, conceded:1.333, form:1.67, played:6, wins:2, draws:0, goalsFor:9, goalsAgainst:8, recentForm:1, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"suspension (carton rouge) + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:548, name:"AS Monaco", scored:1.667, conceded:0.833, form:3.33, played:6, wins:4, draws:2, goalsFor:10, goalsAgainst:5, recentForm:3, streakType:"unbeaten", streakLen:6, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:6, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:522, name:"OGC Nice", scored:0.833, conceded:1.167, form:1.67, played:6, wins:2, draws:2, goalsFor:5, goalsAgainst:7, recentForm:2, streakType:"win", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:1045, name:"Paris FC", scored:1.333, conceded:0.667, form:2.5, played:6, wins:3, draws:2, goalsFor:8, goalsAgainst:4, recentForm:3, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:524, name:"Paris Saint-Germain", scored:1.833, conceded:1.333, form:2.5, played:6, wins:3, draws:2, goalsFor:11, goalsAgainst:8, recentForm:3, streakType:"win", streakLen:3, restDays:2, playedEurope:false, europeLevel:null, worldCupPlayers:16, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"rotation + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:529, name:"Stade Rennais", scored:2.0, conceded:1.667, form:3.33, played:6, wins:4, draws:1, goalsFor:12, goalsAgainst:10, recentForm:4, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null },
-  { id:576, name:"RC Strasbourg", scored:1.833, conceded:2.0, form:1.67, played:6, wins:2, draws:1, goalsFor:11, goalsAgainst:12, recentForm:2, streakType:"lose", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:511, name:"Toulouse FC", scored:1.5, conceded:1.833, form:0.83, played:6, wins:1, draws:3, goalsFor:9, goalsAgainst:11, recentForm:1, streakType:"unbeaten", streakLen:3, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
-  { id:531, name:"ES Troyes AC", scored:0.667, conceded:2.167, form:0.83, played:6, wins:1, draws:1, goalsFor:4, goalsAgainst:13, recentForm:1, streakType:"lose", streakLen:4, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée : Titi (quadriceps depuis fin août, retour visé 31/10) et Boura (hanche depuis la préparation, retour espéré autour du 10/11) confirmés absents longue durée, Ouzenadji aussi signalé absent", absenceUpdatedAt:"2026-10-11T19:46:56" },
+  { id:532, name:"Angers SCO", scored:1.286, conceded:2.143, form:1.43, played:7, wins:2, draws:1, goalsFor:9, goalsAgainst:15, recentForm:1, streakType:"lose", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Courcoul (déf. titulaire habituel, 16 tit./20) blessé long terme ; Peter (att.) blessé depuis mai ; Belkhdim et Mouton aussi à l'infirmerie (postes non confirmés, non comptés)", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { id:519, name:"AJ Auxerre", scored:1.571, conceded:2.429, form:2.14, played:7, wins:3, draws:0, goalsFor:11, goalsAgainst:17, recentForm:3, streakType:"win", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée (5 défenseurs indispo dont Makosso suspendu : Okoh, Senaya, Fofana, Siwe) ; Mandengue (att.) blessure musculaire confirmée depuis le 03/10, retour non daté", absenceUpdatedAt:"2026-10-11T16:16:38" },
+  { id:512, name:"Stade Brestois", scored:1.857, conceded:1.429, form:1.43, played:7, wins:2, draws:3, goalsFor:13, goalsAgainst:10, recentForm:2, streakType:"unbeaten", streakLen:2, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Baldé (ailier clé) et Coulibaly (déf.) blessés ; Chardonnet (capitaine, déf.) confirmé titulaire ce match malgré une 1ère info le donnant absent", absenceUpdatedAt:"2026-10-10T15:42:43" },
+  { id:533, name:"Le Havre AC", scored:0.714, conceded:1.571, form:0.0, played:7, wins:0, draws:2, goalsFor:5, goalsAgainst:11, recentForm:0, streakType:"lose", streakLen:3, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"blessures multiples", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:535, name:"Le Mans FC", scored:1.429, conceded:2.143, form:0.71, played:7, wins:1, draws:3, goalsFor:10, goalsAgainst:15, recentForm:1, streakType:"lose", streakLen:2, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:546, name:"RC Lens", scored:2.0, conceded:1.571, form:2.14, played:7, wins:3, draws:1, goalsFor:14, goalsAgainst:11, recentForm:2, streakType:"win", streakLen:2, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-05T20:33:00", newCoachBoostFrom:6 },
+  { id:521, name:"LOSC Lille", scored:1.429, conceded:0.714, form:2.86, played:7, wins:4, draws:2, goalsFor:10, goalsAgainst:5, recentForm:3, streakType:"unbeaten", streakLen:2, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:525, name:"FC Lorient", scored:1.0, conceded:0.857, form:2.14, played:7, wins:3, draws:2, goalsFor:7, goalsAgainst:6, recentForm:3, streakType:"win", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:523, name:"Olympique Lyonnais", scored:1.857, conceded:0.714, form:2.86, played:7, wins:4, draws:2, goalsFor:13, goalsAgainst:5, recentForm:3, streakType:"win", streakLen:1, restDays:0, playedEurope:false, europeLevel:null },
+  { id:516, name:"Olympique de Marseille", scored:2.0, conceded:1.429, form:2.14, played:7, wins:3, draws:0, goalsFor:14, goalsAgainst:10, recentForm:2, streakType:"win", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:8, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"suspension (carton rouge) + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:548, name:"AS Monaco", scored:1.429, conceded:0.857, form:2.86, played:7, wins:4, draws:2, goalsFor:10, goalsAgainst:6, recentForm:2, streakType:"lose", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:6, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"suspension + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:522, name:"OGC Nice", scored:0.857, conceded:1.286, form:1.43, played:7, wins:2, draws:2, goalsFor:6, goalsAgainst:9, recentForm:2, streakType:"lose", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:1045, name:"Paris FC", scored:1.714, conceded:1.0, form:2.86, played:7, wins:4, draws:2, goalsFor:12, goalsAgainst:7, recentForm:3, streakType:"win", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:524, name:"Paris Saint-Germain", scored:2.0, conceded:1.286, form:2.86, played:7, wins:4, draws:2, goalsFor:14, goalsAgainst:9, recentForm:4, streakType:"win", streakLen:4, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:16, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"rotation + blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:529, name:"Stade Rennais", scored:2.143, conceded:2.0, form:2.86, played:7, wins:4, draws:1, goalsFor:15, goalsAgainst:14, recentForm:3, streakType:"lose", streakLen:1, restDays:0, playedEurope:false, europeLevel:null },
+  { id:576, name:"RC Strasbourg", scored:1.714, conceded:2.143, form:1.43, played:7, wins:2, draws:1, goalsFor:12, goalsAgainst:15, recentForm:1, streakType:"lose", streakLen:3, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:0, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:511, name:"Toulouse FC", scored:1.714, conceded:1.571, form:1.43, played:7, wins:2, draws:3, goalsFor:12, goalsAgainst:11, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"blessure", absenceUpdatedAt:"2026-10-10T04:52:00" },
+  { id:531, name:"ES Troyes AC", scored:0.714, conceded:2.286, form:0.71, played:7, wins:1, draws:1, goalsFor:5, goalsAgainst:16, recentForm:0, streakType:"lose", streakLen:5, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"défense décimée : Titi (quadriceps depuis fin août, retour visé 31/10) et Boura (hanche depuis la préparation, retour espéré autour du 10/11) confirmés absents longue durée, Ouzenadji aussi signalé absent", absenceUpdatedAt:"2026-10-11T19:46:56" },
 ];
 
 // Photo des stats "officielles" telles qu'écrites par update_stats.py, AVANT toute
