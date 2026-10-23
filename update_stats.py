@@ -639,6 +639,27 @@ def update_history_only(html_path: Path, matchday, results):
         print(f"⚠️  Journée {matchday} avait été saisie manuellement — résultats partiels NON écrasés.")
         return
 
+    # Garde-fou : l'API gratuite peut parfois renvoyer, pour des matchs déjà joués depuis
+    # plusieurs jours, un statut/score vide (constaté le 20/10 : 5 résultats de la J7
+    # effacés d'un coup). Un résultat déjà enregistré ne doit JAMAIS repasser à « non joué »
+    # à cause d'une réponse incomplète : on conserve l'ancien si l'API n'a plus de score.
+    # (Un score différent mais présent reste accepté : c'est une vraie correction.)
+    if existing:
+        old_by_fixture = {(r.get("home"), r.get("away")): r for r in existing if r.get("played")}
+        kept = 0
+        merged = []
+        for r in results:
+            old = old_by_fixture.get((r.get("home"), r.get("away")))
+            if old is not None and not r.get("played"):
+                merged.append(old)
+                kept += 1
+            else:
+                merged.append(r)
+        if kept:
+            print(f"⚠️  {kept} résultat(s) déjà enregistré(s) de la journée {matchday} absent(s) de la "
+                  f"réponse de l'API — conservés (pas d'écrasement par un match « non joué »).")
+        results = merged
+
     if existing == results:
         print(f"Journée {matchday} : rien de nouveau depuis la dernière vérification — fichier inchangé.")
         return
