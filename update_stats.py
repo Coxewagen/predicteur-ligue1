@@ -567,6 +567,59 @@ def match_is_finished(m: dict, now=None) -> bool:
     return (now - kickoff).total_seconds() >= MAX_MATCH_MINUTES * 60
 
 
+# Statuts pour lesquels l'API donne une heure de coup d'envoi CONFIRMÉE (SCHEDULED = jour connu,
+# heure pas encore fixée : on ne l'affiche pas comme si elle l'était).
+TIME_CONFIRMED_STATUSES = {"TIMED", "IN_PLAY", "PAUSED", "EXTRA_TIME", "PENALTY_SHOOTOUT",
+                           "FINISHED", "SUSPENDED", "AWARDED"}
+
+
+def _api_datetime(m: dict):
+    try:
+        return datetime.fromisoformat(str(m["utcDate"]).replace("Z", "+00:00"))
+    except (KeyError, ValueError):
+        return None
+
+
+def apply_api_schedule(entry: dict, m: dict) -> None:
+    """Renseigne jour/heure prévus d'un match (entry = ligne de MATCHDAY_HISTORY, m = match API) :
+      kickoff   = date+heure exactes, en UTC (seulement si l'API les confirme) ;
+      date      = jour à Paris, quand l'heure n'est pas encore fixée ;
+      postponed = True si le match est reporté (ancienne date effacée)."""
+    if m.get("status") == "POSTPONED":
+        entry.pop("kickoff", None)
+        entry.pop("date", None)
+        entry["postponed"] = True
+        return
+    entry.pop("postponed", None)
+    dt = _api_datetime(m)
+    if dt is None:
+        return
+    if m.get("status") in TIME_CONFIRMED_STATUSES:
+        entry["kickoff"] = dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        entry.pop("date", None)
+    elif not entry.get("kickoff") and not entry.get("date"):
+        local = dt.astimezone(PARIS_TZ) if PARIS_TZ else dt
+        entry["date"] = local.strftime("%Y-%m-%d")
+
+
+def carry_schedule(results, existing):
+    """Un résultat venant de l'API ne doit pas faire perdre le jour/l'heure déjà enregistrés
+    quand l'API n'a pas (encore) d'heure confirmée : on garde l'existant."""
+    if not existing:
+        return results
+    old_by = {(r.get("home"), r.get("away")): r for r in existing}
+    for r in results:
+        old = old_by.get((r.get("home"), r.get("away")))
+        if not old or r.get("postponed") or r.get("kickoff"):
+            continue
+        if old.get("kickoff"):
+            r["kickoff"] = old["kickoff"]
+            r.pop("date", None)
+        elif old.get("date"):
+            r["date"] = old["date"]
+    return results
+
+
 def fetch_matchday_results(matchday):
     """Récupère les matchs (joués ou à venir) de la journée en cours."""
     url = f"https://api.football-data.org/v4/competitions/{COMPETITION_CODE}/matches"
@@ -588,13 +641,15 @@ def fetch_matchday_results(matchday):
         ft = (m.get("score", {}) or {}).get("fullTime", {}) or {}
         # voir match_is_finished : un score seul ne suffit pas (match peut-être en cours)
         played = match_is_finished(m)
-        results.append({
+        entry = {
             "home": home_name,
             "away": away_name,
             "homeScore": ft.get("home") if played else None,
             "awayScore": ft.get("away") if played else None,
             "played": played,
-        })
+        }
+        apply_api_schedule(entry, m)   # jour + heure prévus (kickoff / date / postponed)
+        results.append(entry)
     return results, raw
 
 
@@ -659,6 +714,7 @@ def update_history_only(html_path: Path, matchday, results):
             print(f"⚠️  {kept} résultat(s) déjà enregistré(s) de la journée {matchday} absent(s) de la "
                   f"réponse de l'API — conservés (pas d'écrasement par un match « non joué »).")
         results = merged
+    carry_schedule(results, existing)   # garde jour/heure déjà connus si l'API n'a pas d'heure confirmée
 
     if existing == results:
         print(f"Journée {matchday} : rien de nouveau depuis la dernière vérification — fichier inchangé.")
@@ -685,6 +741,57 @@ def update_history_only(html_path: Path, matchday, results):
     print(f"✅ Résultats partiels de la journée {matchday} enregistrés "
           f"({played_count}/{len(results)} joués) — classement/forme pas encore "
           f"recalculés (journée pas terminée).")
+
+
+def refresh_schedule(html_path: Path):
+    """Met à jour le jour/l'heure prévus des matchs À VENIR de toutes les journées (1 seule requête API) :
+    horaires confirmés par la LFP, matchs déplacés ou reportés. Ne bloque jamais le reste de la mise à jour."""
+    try:
+        url = f"https://api.football-data.org/v4/competitions/{COMPETITION_CODE}/matches"
+        resp = requests.get(url, headers={"X-Auth-Token": API_KEY},
+                            params={"status": "SCHEDULED,TIMED,POSTPONED"}, timeout=15)
+        if resp.status_code != 200:
+            print(f"Horaires : réponse API {resp.status_code} — ignoré.")
+            return
+        matches = resp.json().get("matches", []) or []
+        history = read_matchday_history(html_path)
+        if not history:
+            return
+
+        changes = []
+        for m in matches:
+            md = str(m.get("matchday"))
+            home = resolve_team_name((m.get("homeTeam") or {}).get("name", "?"))
+            away = resolve_team_name((m.get("awayTeam") or {}).get("name", "?"))
+            for r in history.get(md, []):
+                if r.get("home") == home and r.get("away") == away and not r.get("played"):
+                    before = (r.get("kickoff"), r.get("date"), r.get("postponed"))
+                    apply_api_schedule(r, m)
+                    after = (r.get("kickoff"), r.get("date"), r.get("postponed"))
+                    if after != before:
+                        changes.append(f"  J{md} {home} - {away} : {before} -> {after}")
+        if not changes:
+            print(f"Horaires : {len(matches)} match(s) à venir vérifiés, rien de nouveau.")
+            return
+
+        print(f"Horaires : {len(changes)} changement(s) :")
+        for line in changes[:15]:
+            print(line)
+        if len(changes) > 15:
+            print(f"  … et {len(changes) - 15} autre(s)")
+
+        content = html_path.read_text(encoding="utf-8")
+        new_content = re.sub(r"let MATCHDAY_HISTORY = \{.*?\};", lambda _: history_to_js(history),
+                             content, count=1, flags=re.DOTALL)
+        new_content = re.sub(r'(let LAST_UPDATE = \{[^}]*?updatedAt:\s*")[^"]*(")',
+                             lambda mm: mm.group(1) + now_paris_iso() + mm.group(2),
+                             new_content, count=1)
+        if new_content != content:
+            shutil.copy2(html_path, html_path.with_suffix(html_path.suffix + ".bak"))
+            html_path.write_text(new_content, encoding="utf-8")
+            print("✅ Horaires des matchs à venir mis à jour.")
+    except Exception as e:  # les horaires sont un plus : jamais bloquant
+        print(f"⚠️  Horaires : mise à jour ignorée ({type(e).__name__}: {e})")
 
 
 def update_html_file(html_path: Path, teams, matchday, updated_at_iso, note="", results=None, force=False):
@@ -722,6 +829,7 @@ def update_html_file(html_path: Path, teams, matchday, updated_at_iso, note="", 
             print(f"   pour ne pas perdre ta saisie. Si l'API a maintenant raison et que tu veux la")
             print(f"   remplacer, relance avec : python update_stats.py --forcer-journee {matchday}")
         else:
+            carry_schedule(results, existing)  # garde jour/heure déjà connus
             history[str(matchday)] = results  # écrase seulement l'entrée de CETTE journée, garde les autres
             new_history_block = history_to_js(history)
             if history_pattern.search(new_content):
@@ -833,6 +941,9 @@ def run_if_ready(html_path: Path, quick: bool, force_matchday=None):
     if played_count < total:
         print("La journée n'est pas encore terminée — mise à jour des résultats connus "
               "uniquement (classement/forme pas recalculés avant la fin de la journée).")
+        # Horaires des matchs à venir (1 requête de plus ; pas dans le cas « mise à jour complète »,
+        # qui enchaîne déjà ~20 requêtes et frôle la limite de 10 par minute).
+        refresh_schedule(html_path)
         update_history_only(html_path, matchday, results)
         return
 
@@ -840,6 +951,7 @@ def run_if_ready(html_path: Path, quick: bool, force_matchday=None):
     already_done = read_current_matchday(html_path)
     if already_done == matchday and not forcing_this_matchday:
         print(f"Journée {matchday} déjà enregistrée dans le fichier.")
+        refresh_schedule(html_path)   # horaires des matchs à venir (jamais bloquant)
         # L'API peut garder "journée en cours = N" alors que la journée N+1 a déjà
         # commencé (matchs du vendredi/samedi) : on regarde si elle a déjà des scores
         # pour ne pas rater ses résultats (1 requête de plus, seulement dans ce cas).

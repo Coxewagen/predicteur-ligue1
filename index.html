@@ -189,6 +189,16 @@
     white-space:nowrap;font-size:18px;
   }
   .results-row.pending .rscore{color:var(--chalk-dim);font-weight:400;font-size:11px;background:rgba(0,0,0,0.15);}
+  /* Jour et heure prévus : un bandeau par jour, puis l'heure (Paris) dans la pastille de chaque match */
+  .results-day{
+    margin:18px 0 0;padding:7px 12px;font-size:15px;font-weight:800;letter-spacing:.03em;
+    color:var(--amber);background:rgba(0,0,0,0.30);border-left:4px solid var(--amber);border-radius:4px;
+  }
+  .results-day:first-child{margin-top:8px;}
+  .results-day small{font-weight:700;color:var(--chalk);margin-left:8px;font-size:12.5px;letter-spacing:.02em;}
+  .results-day small::before{content:"· ";}
+  .results-row.pending .rscore.has-time{color:var(--chalk);font-weight:800;font-size:16px;background:rgba(0,0,0,0.38);}
+  .match-when{text-align:center;font-weight:800;font-size:15px;color:var(--amber);margin-bottom:10px;}
   /* Scores en direct (ESPN) */
   .results-row .rscore .live-score{display:block;}
   .results-row .rscore .live-min{display:block;font-size:11px;font-weight:700;letter-spacing:.03em;margin-top:2px;}
@@ -406,6 +416,11 @@
       font-size:26px;padding:6px 22px;
     }
     .results-row.pending .rscore{font-size:15px;}
+    .results-row.pending .rscore.has-time{font-size:24px;padding:6px 26px;}
+    .results-day{font-size:19px;padding:10px 14px;margin:20px 0 0;}
+    .results-day small{font-size:15px;display:block;margin:3px 0 0;}
+    .results-day small::before{content:"";}
+    .match-when{font-size:18px;}
     .results-row .rscore .live-min{font-size:15px;}
     .live-status{font-size:14px;}
     .results-row .rpred{
@@ -648,7 +663,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 7, updatedAt: "2026-10-23T16:54:21", note: "" };
+let LAST_UPDATE = { matchday: 7, updatedAt: "2026-10-23T20:17:39", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -1115,63 +1130,72 @@ let MATCHDAY_HISTORY = {
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-23T18:45:00Z"
     },
     {
       "home": "RC Lens",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-24T18:45:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T14:00:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T16:15:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T16:15:00Z"
     },
     {
       "home": "Angers SCO",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T16:15:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T16:15:00Z"
     },
     {
       "home": "AJ Auxerre",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-25T16:15:00Z"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-26T19:30:00Z"
     }
   ],
   "9": [
@@ -1180,63 +1204,72 @@ let MATCHDAY_HISTORY = {
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-30T18:00:00Z"
     },
     {
       "home": "LOSC Lille",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-30T20:05:00Z"
     },
     {
       "home": "FC Lorient",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-31T19:45:00Z"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-31T19:45:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-01T19:45:00Z"
     },
     {
       "home": "OGC Nice",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-31T16:15:00Z"
     },
     {
       "home": "Paris FC",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-01T16:15:00Z"
     },
     {
       "home": "RC Strasbourg",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-01T14:00:00Z"
     },
     {
       "home": "ES Troyes AC",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-10-31T19:45:00Z"
     }
   ],
   "10": [
@@ -1245,63 +1278,72 @@ let MATCHDAY_HISTORY = {
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "AJ Auxerre",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-07T16:15:00Z"
     },
     {
       "home": "Stade Brestois",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "Le Havre AC",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "Le Mans FC",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "RC Lens",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T19:45:00Z"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-07T19:45:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-08T14:00:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-06T19:45:00Z"
     }
   ],
   "11": [
@@ -1310,63 +1352,72 @@ let MATCHDAY_HISTORY = {
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-21T19:45:00Z"
     },
     {
       "home": "LOSC Lille",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-21T19:45:00Z"
     },
     {
       "home": "FC Lorient",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-22T16:15:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-22T19:45:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-21T19:45:00Z"
     },
     {
       "home": "OGC Nice",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-21T16:15:00Z"
     },
     {
       "home": "Paris FC",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-22T14:00:00Z"
     },
     {
       "home": "RC Strasbourg",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-21T19:45:00Z"
     },
     {
       "home": "ES Troyes AC",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-20T19:45:00Z"
     }
   ],
   "12": [
@@ -1375,63 +1426,72 @@ let MATCHDAY_HISTORY = {
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-28T16:15:00Z"
     },
     {
       "home": "AJ Auxerre",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-29T14:00:00Z"
     },
     {
       "home": "Stade Brestois",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-27T19:45:00Z"
     },
     {
       "home": "Le Havre AC",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-28T19:45:00Z"
     },
     {
       "home": "Le Mans FC",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-28T19:45:00Z"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-29T19:45:00Z"
     },
     {
       "home": "OGC Nice",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-28T19:45:00Z"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-28T19:45:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-11-29T16:15:00Z"
     }
   ],
   "13": [
@@ -1440,63 +1500,72 @@ let MATCHDAY_HISTORY = {
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-05T19:45:00Z"
     },
     {
       "home": "LOSC Lille",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-05T16:15:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-06T19:45:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-05T19:45:00Z"
     },
     {
       "home": "Paris FC",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-05T19:45:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-06T16:15:00Z"
     },
     {
       "home": "RC Strasbourg",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-05T19:45:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-04T19:45:00Z"
     },
     {
       "home": "ES Troyes AC",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-06T14:00:00Z"
     }
   ],
   "14": [
@@ -1505,63 +1574,72 @@ let MATCHDAY_HISTORY = {
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-12T19:45:00Z"
     },
     {
       "home": "AJ Auxerre",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-11T19:45:00Z"
     },
     {
       "home": "Stade Brestois",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-12T19:45:00Z"
     },
     {
       "home": "Le Havre AC",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-12T19:45:00Z"
     },
     {
       "home": "FC Lorient",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-13T14:00:00Z"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-13T19:45:00Z"
     },
     {
       "home": "OGC Nice",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-12T19:45:00Z"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-12T16:15:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2026-12-13T16:15:00Z"
     }
   ],
   "15": [
@@ -1570,63 +1648,72 @@ let MATCHDAY_HISTORY = {
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T16:00:00Z"
     },
     {
       "home": "Le Mans FC",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-03T14:00:00Z"
     },
     {
       "home": "RC Lens",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-03T19:45:00Z"
     },
     {
       "home": "LOSC Lille",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-03T16:15:00Z"
     },
     {
       "home": "FC Lorient",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T20:00:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T20:00:00Z"
     },
     {
       "home": "Paris FC",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T20:00:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T20:00:00Z"
     },
     {
       "home": "ES Troyes AC",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-02T20:00:00Z"
     }
   ],
   "16": [
@@ -1635,63 +1722,72 @@ let MATCHDAY_HISTORY = {
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-16T16:15:00Z"
     },
     {
       "home": "AJ Auxerre",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-16T19:45:00Z"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-17T19:45:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-15T19:45:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-17T16:15:00Z"
     },
     {
       "home": "OGC Nice",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-16T19:45:00Z"
     },
     {
       "home": "Paris FC",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-17T14:00:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-16T19:45:00Z"
     },
     {
       "home": "RC Strasbourg",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-16T19:45:00Z"
     }
   ],
   "17": [
@@ -1700,63 +1796,72 @@ let MATCHDAY_HISTORY = {
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-24T14:00:00Z"
     },
     {
       "home": "Le Mans FC",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-23T19:45:00Z"
     },
     {
       "home": "RC Lens",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-23T19:45:00Z"
     },
     {
       "home": "LOSC Lille",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-23T16:15:00Z"
     },
     {
       "home": "FC Lorient",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-24T16:15:00Z"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-23T19:45:00Z"
     },
     {
       "home": "RC Strasbourg",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-24T19:45:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-23T19:45:00Z"
     },
     {
       "home": "ES Troyes AC",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-22T19:45:00Z"
     }
   ],
   "18": [
@@ -1765,63 +1870,72 @@ let MATCHDAY_HISTORY = {
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-30T19:45:00Z"
     },
     {
       "home": "Stade Brestois",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-29T19:45:00Z"
     },
     {
       "home": "Le Mans FC",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-30T19:45:00Z"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-31T19:45:00Z"
     },
     {
       "home": "Olympique de Marseille",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-31T16:15:00Z"
     },
     {
       "home": "AS Monaco",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-30T16:15:00Z"
     },
     {
       "home": "Paris FC",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-30T19:45:00Z"
     },
     {
       "home": "Stade Rennais",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-31T14:00:00Z"
     },
     {
       "home": "Toulouse FC",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "kickoff": "2027-01-30T19:45:00Z"
     }
   ],
   "19": [
@@ -1830,63 +1944,72 @@ let MATCHDAY_HISTORY = {
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "Le Havre AC",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "RC Lens",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "FC Lorient",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "OGC Nice",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "Stade Rennais",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "RC Strasbourg",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     },
     {
       "home": "ES Troyes AC",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-06"
     }
   ],
   "20": [
@@ -1895,63 +2018,72 @@ let MATCHDAY_HISTORY = {
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Stade Brestois",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Le Mans FC",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "LOSC Lille",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "FC Lorient",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Paris FC",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     },
     {
       "home": "Toulouse FC",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-13"
     }
   ],
   "21": [
@@ -1960,63 +2092,72 @@ let MATCHDAY_HISTORY = {
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "Le Havre AC",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "RC Lens",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "LOSC Lille",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "AS Monaco",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "OGC Nice",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "Stade Rennais",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     },
     {
       "home": "RC Strasbourg",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-20"
     }
   ],
   "22": [
@@ -2025,63 +2166,72 @@ let MATCHDAY_HISTORY = {
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "Stade Brestois",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "Le Mans FC",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "FC Lorient",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "RC Strasbourg",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     },
     {
       "home": "ES Troyes AC",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-02-27"
     }
   ],
   "23": [
@@ -2090,63 +2240,72 @@ let MATCHDAY_HISTORY = {
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "Le Havre AC",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "RC Lens",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "LOSC Lille",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "AS Monaco",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "Paris FC",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "Stade Rennais",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "Toulouse FC",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     },
     {
       "home": "ES Troyes AC",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-06"
     }
   ],
   "24": [
@@ -2155,63 +2314,72 @@ let MATCHDAY_HISTORY = {
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Stade Brestois",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Le Havre AC",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Le Mans FC",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Olympique de Marseille",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "OGC Nice",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "Paris FC",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     },
     {
       "home": "RC Strasbourg",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-13"
     }
   ],
   "25": [
@@ -2220,63 +2388,72 @@ let MATCHDAY_HISTORY = {
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "RC Lens",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "FC Lorient",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "AS Monaco",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "Stade Rennais",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "Toulouse FC",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     },
     {
       "home": "ES Troyes AC",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-03-20"
     }
   ],
   "26": [
@@ -2285,63 +2462,72 @@ let MATCHDAY_HISTORY = {
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "AJ Auxerre",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "Stade Brestois",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "Le Havre AC",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "Le Mans FC",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "LOSC Lille",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "OGC Nice",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "Paris FC",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     },
     {
       "home": "RC Strasbourg",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-03"
     }
   ],
   "27": [
@@ -2350,63 +2536,72 @@ let MATCHDAY_HISTORY = {
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "LOSC Lille",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "FC Lorient",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "Olympique de Marseille",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "AS Monaco",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "OGC Nice",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     },
     {
       "home": "ES Troyes AC",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-10"
     }
   ],
   "28": [
@@ -2415,63 +2610,72 @@ let MATCHDAY_HISTORY = {
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "AJ Auxerre",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "Stade Brestois",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "Le Havre AC",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "RC Lens",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "AS Monaco",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "Stade Rennais",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     },
     {
       "home": "Toulouse FC",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-17"
     }
   ],
   "29": [
@@ -2480,63 +2684,72 @@ let MATCHDAY_HISTORY = {
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "LOSC Lille",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "FC Lorient",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "Olympique de Marseille",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "OGC Nice",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "Paris FC",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "RC Strasbourg",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     },
     {
       "home": "ES Troyes AC",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-04-24"
     }
   ],
   "30": [
@@ -2545,63 +2758,72 @@ let MATCHDAY_HISTORY = {
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "Le Havre AC",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "RC Lens",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "AS Monaco",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "Stade Rennais",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "RC Strasbourg",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "Toulouse FC",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     },
     {
       "home": "ES Troyes AC",
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-01"
     }
   ],
   "31": [
@@ -2610,63 +2832,72 @@ let MATCHDAY_HISTORY = {
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "Stade Brestois",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "Le Mans FC",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "RC Lens",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "FC Lorient",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "OGC Nice",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "Paris FC",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     },
     {
       "home": "Stade Rennais",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-08"
     }
   ],
   "32": [
@@ -2675,63 +2906,72 @@ let MATCHDAY_HISTORY = {
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "Stade Brestois",
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "LOSC Lille",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "Olympique de Marseille",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "AS Monaco",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "RC Strasbourg",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     },
     {
       "home": "Toulouse FC",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-16"
     }
   ],
   "33": [
@@ -2740,63 +2980,72 @@ let MATCHDAY_HISTORY = {
       "away": "Stade Brestois",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "Le Havre AC",
       "away": "LOSC Lille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "Le Mans FC",
       "away": "RC Strasbourg",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "RC Lens",
       "away": "Stade Rennais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "FC Lorient",
       "away": "Olympique Lyonnais",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "OGC Nice",
       "away": "AS Monaco",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "Paris FC",
       "away": "Olympique de Marseille",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "Toulouse FC",
       "away": "AJ Auxerre",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     },
     {
       "home": "ES Troyes AC",
       "away": "Paris Saint-Germain",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-22"
     }
   ],
   "34": [
@@ -2805,63 +3054,72 @@ let MATCHDAY_HISTORY = {
       "away": "Le Havre AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "Stade Brestois",
       "away": "RC Lens",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "LOSC Lille",
       "away": "Le Mans FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "Olympique Lyonnais",
       "away": "Paris FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "Olympique de Marseille",
       "away": "FC Lorient",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "AS Monaco",
       "away": "ES Troyes AC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "Paris Saint-Germain",
       "away": "Toulouse FC",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "Stade Rennais",
       "away": "Angers SCO",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     },
     {
       "home": "RC Strasbourg",
       "away": "OGC Nice",
       "homeScore": null,
       "awayScore": null,
-      "played": false
+      "played": false,
+      "date": "2027-05-29"
     }
   ]
 };
@@ -3302,7 +3560,9 @@ function openMatchModal(homeName, awayName, playedInfo){
       }).join('') + '</div>';
     };
 
-    bodyEl.innerHTML = playedHtml
+    const whenHtml = (playedInfo && playedInfo.when) ? '<div class="match-when">🗓️ ' + playedInfo.when + '</div>' : '';
+
+    bodyEl.innerHTML = whenHtml + playedHtml
       + '<div class="score-hero">'
       + '<div class="lbl">Score le plus probable</div>'
       + '<div class="digits">' + info.best.i + ' – ' + info.best.j + '</div>'
@@ -3864,6 +4124,16 @@ async function saveManualMatchday(){
   }
 
   if(typeof MATCHDAY_HISTORY === 'undefined') window.MATCHDAY_HISTORY = {};
+  // La saisie manuelle ne connaît pas les horaires : on garde ceux déjà enregistrés pour ces affiches.
+  const prevFixtures = MATCHDAY_HISTORY[md] || [];
+  results.forEach(function(r){
+    const old = prevFixtures.find(function(p){ return p.home === r.home && p.away === r.away; });
+    if(old){
+      if(old.kickoff) r.kickoff = old.kickoff;
+      if(old.date) r.date = old.date;
+      if(old.postponed) r.postponed = old.postponed;
+    }
+  });
   MATCHDAY_HISTORY[md] = results;
 
   recomputeTeamsWithManualData();
@@ -4012,6 +4282,54 @@ function populateMatchdaySelect(){
   sel.value = String(current);
 }
 
+// ---- Jour et heure prévus des matchs (toujours en heure de Paris) ----
+// Un match a soit "kickoff" (date+heure exactes, en UTC), soit seulement "date"
+// (week-end de référence LFP, horaire pas encore fixé), soit rien (anciennes journées).
+const PARIS_TZ = 'Europe/Paris';
+const PARIS_DAY_FMT = new Intl.DateTimeFormat('en-CA', {timeZone: PARIS_TZ, year:'numeric', month:'2-digit', day:'2-digit'});
+function fixtureTime(m){
+  if(!m || !m.kickoff) return null;
+  const t = Date.parse(m.kickoff);
+  return isNaN(t) ? null : t;
+}
+function fixtureDay(m){                 // 'AAAA-MM-JJ' (jour à Paris) ou null
+  const t = fixtureTime(m);
+  if(t !== null) return PARIS_DAY_FMT.format(new Date(t));
+  return (m && m.date) ? m.date : null;
+}
+function timeParis(t){
+  return new Date(t).toLocaleTimeString('fr-FR', {timeZone: PARIS_TZ, hour:'2-digit', minute:'2-digit'});
+}
+function fr1er(s){ return s.replace(/(^|\s)1(\s)/, '$11er$2'); }   // « 1 novembre » -> « 1er novembre »
+function dayLabelParis(day){            // « Vendredi 23 octobre »
+  const d = new Date(day + 'T12:00:00Z');
+  const s = d.toLocaleDateString('fr-FR', {timeZone: PARIS_TZ, weekday:'long', day:'numeric', month:'long'});
+  return fr1er(s.charAt(0).toUpperCase() + s.slice(1));
+}
+function fixtureWhenText(m){            // texte pour la fenêtre de détail ('' si inconnu)
+  if(m && m.postponed) return 'Match reporté — nouvelle date à fixer';
+  const day = fixtureDay(m);
+  if(day === null) return '';
+  const t = fixtureTime(m);
+  if(t !== null) return dayLabelParis(day) + ' · ' + timeParis(t) + ' (heure de Paris)';
+  return dayLabelParis(day) + ' (week-end de référence) · horaire à confirmer';
+}
+function dayHeaderHtml(day, approx){
+  let label = dayLabelParis(day);
+  let extra = '';
+  if(approx){
+    const d = new Date(day + 'T12:00:00Z');
+    if(d.getUTCDay() === 6) label = 'Week-end du ' + fr1er(d.toLocaleDateString('fr-FR', {timeZone: PARIS_TZ, day:'numeric', month:'long'}));
+    extra = 'horaires à confirmer';
+  }else{
+    const todayKey = PARIS_DAY_FMT.format(new Date());
+    const tomorrow = new Date(todayKey + 'T12:00:00Z'); tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    if(day === todayKey) extra = "aujourd'hui";
+    else if(day === tomorrow.toISOString().slice(0, 10)) extra = 'demain';
+  }
+  return '<div class="results-day">' + label + (extra ? '<small>' + extra + '</small>' : '') + '</div>';
+}
+
 function renderResultsForMatchday(matchday){
   const rowsEl = document.getElementById('resultsRows');
   const summaryEl = document.getElementById('resultsSummary');
@@ -4029,7 +4347,25 @@ function renderResultsForMatchday(matchday){
   const liveCount = results.filter(function(m){ const lv = liveOf(m); return lv && lv.state === 'in'; }).length;
   summaryEl.textContent = '(' + playedCount + '/' + results.length + ' joués' + (liveCount ? ' · ' + liveCount + ' en direct' : '') + ')';
 
-  rowsEl.innerHTML = results.map(function(m){
+  // Ordre chronologique (jour, puis heure de coup d'envoi). Sans date connue
+  // (anciennes journées), l'ordre d'origine est conservé.
+  const sortedResults = results.map(function(m, i){ return {m: m, i: i}; }).sort(function(a, b){
+    const da = fixtureDay(a.m) || '9999', db = fixtureDay(b.m) || '9999';
+    if(da !== db) return da < db ? -1 : 1;
+    const ta = fixtureTime(a.m) || 0, tb = fixtureTime(b.m) || 0;
+    if(ta !== tb) return ta - tb;
+    return a.i - b.i;
+  }).map(function(x){ return x.m; });
+  let lastDay = null;
+
+  rowsEl.innerHTML = sortedResults.map(function(m){
+    // Bandeau « jour » quand on change de jour
+    const day = fixtureDay(m);
+    let dayHeader = '';
+    if(day !== null && day !== lastDay){
+      dayHeader = dayHeaderHtml(day, fixtureTime(m) === null);
+      lastDay = day;
+    }
     // Scores en direct (ESPN) : seulement pour les matchs que les données officielles
     // ne donnent pas encore comme terminés.
     const lv = liveOf(m);
@@ -4044,6 +4380,10 @@ function renderResultsForMatchday(matchday){
     } else if (provisional) {
       centerHtml = '<span class="rscore"><span class="live-score">' + lv.home + ' - ' + lv.away + '</span>'
         + '<span class="live-min">terminé</span></span>';
+    } else if (m.postponed) {
+      centerHtml = '<span class="rscore">reporté</span>';
+    } else if (fixtureTime(m) !== null) {
+      centerHtml = '<span class="rscore has-time" title="Coup d\'envoi prévu (heure de Paris)">' + timeParis(fixtureTime(m)) + '</span>';
     } else {
       centerHtml = '<span class="rscore">à venir</span>';
     }
@@ -4060,8 +4400,9 @@ function renderResultsForMatchday(matchday){
       : '<span></span>';
     const manualBadge = m.source === 'manual' ? '<div class="manual-flag">✏️ saisi manuellement</div>' : '';
     const escAttr = function(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); };
-    return '<div class="results-row' + ((m.played || isLive || provisional) ? '' : ' pending') + (isLive ? ' live' : '') + '"'
+    return dayHeader + '<div class="results-row' + ((m.played || isLive || provisional) ? '' : ' pending') + (isLive ? ' live' : '') + '"'
       + ' data-home="' + escAttr(m.home) + '" data-away="' + escAttr(m.away) + '"'
+      + ' data-when="' + escAttr(fixtureWhenText(m)) + '"'
       + ' data-played="' + (m.played ? '1' : '0') + '"'
       + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
       + '<span class="rteam home"><span class="rteam-text">' + m.home + '</span>' + buildAbsenceBadgeHtml(m.home) + '<div class="form-tooltip">' + buildFormTooltipHtml(m.home) + '</div></span>'
@@ -4349,7 +4690,8 @@ if(!FS_ACCESS_SUPPORTED){
       openMatchModal(row.getAttribute('data-home'), row.getAttribute('data-away'), {
         played: row.getAttribute('data-played') === '1',
         homeScore: row.getAttribute('data-hs'),
-        awayScore: row.getAttribute('data-as')
+        awayScore: row.getAttribute('data-as'),
+        when: row.getAttribute('data-when') || ''
       });
     });
   }
