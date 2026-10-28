@@ -370,6 +370,45 @@
   .match-modal-body .stat-note{font-size:12px;margin-top:12px;}
   .match-modal-body .tag{font-size:12px;padding:4px 9px;}
 
+  /* PRÉSENTATION EN ENCARTS — identique sur téléphone ET sur ordinateur (fichier predicteur-foot.html,
+     site et appli) : un encart par match, classés par jour puis heure, avec un bandeau par jour. */
+  .results-select{font-size:15px;padding:6px 8px;}
+  #resultsSummary{font-size:13px;}
+  /* Un encart par match, les uns sous les autres :
+     ligne 1 = les deux équipes, ligne 2 = le score réel,
+     ligne 3 = pronostic du modèle (à gauche) + pourcentages (à droite).
+     Toucher l'encart ouvre la fenêtre de détail. */
+  .results-row{
+    grid-template-columns:1fr 1fr;
+    gap:10px 8px;padding:14px 12px;margin-top:12px;font-size:16px;
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    border-radius:12px;
+  }
+  .results-row .rteam,
+  .results-row .rteam.away{font-size:17px;font-weight:600;line-height:1.25;text-align:center;}
+  .results-row .rteam.home{grid-row:1;grid-column:1;}
+  .results-row .rteam.away{grid-row:1;grid-column:2;}
+  .rteam-text{white-space:normal;overflow:visible;}
+  .results-row .rscore{
+    grid-row:2;grid-column:1 / -1;justify-self:center;
+    font-size:26px;padding:6px 22px;
+  }
+  .results-row.pending .rscore{font-size:15px;}
+  .results-row.pending .rscore.has-time{font-size:24px;padding:6px 26px;}
+  .results-day{font-size:19px;padding:10px 14px;margin:20px 0 0;}
+  .results-day small{font-size:15px;display:block;margin:3px 0 0;}
+  .results-day small::before{content:"";}
+  .match-when{font-size:18px;}
+  .results-row .rscore .live-min{font-size:15px;}
+  .live-status{font-size:14px;}
+  .results-row .rpred{
+    grid-row:3;grid-column:1;justify-self:start;font-size:19px;padding:6px 10px;
+  }
+  .results-row .rproba-badges{grid-row:3;grid-column:2;justify-self:end;gap:5px;}
+  .rproba-badge{font-size:16px;padding:6px 7px;min-width:44px;}
+  .absence-flag{font-size:15px;}
+  .results-row .manual-flag{grid-row:4;font-size:11px;}
+
   @media (max-width:600px){
     .vs{margin:0 auto;}
     .extra{grid-template-columns:1fr;}
@@ -392,44 +431,8 @@
     .update-info{font-size:15px;padding:7px 12px;}
     .update-btn{font-size:14px;padding:9px 16px;}
     .update-status{font-size:13px;}
-    .results-select{font-size:15px;padding:6px 8px;}
-    #resultsSummary{font-size:13px;}
     .manual-entry summary{font-size:14px;}
 
-    /* Un encart par match, les uns sous les autres :
-       ligne 1 = les deux équipes, ligne 2 = le score réel,
-       ligne 3 = pronostic du modèle (à gauche) + pourcentages (à droite).
-       Toucher l'encart ouvre la fenêtre de détail. */
-    .results-row{
-      grid-template-columns:1fr 1fr;
-      gap:10px 8px;padding:14px 12px;margin-top:12px;font-size:16px;
-      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
-      border-radius:12px;
-    }
-    .results-row .rteam,
-    .results-row .rteam.away{font-size:17px;font-weight:600;line-height:1.25;text-align:center;}
-    .results-row .rteam.home{grid-row:1;grid-column:1;}
-    .results-row .rteam.away{grid-row:1;grid-column:2;}
-    .rteam-text{white-space:normal;overflow:visible;}
-    .results-row .rscore{
-      grid-row:2;grid-column:1 / -1;justify-self:center;
-      font-size:26px;padding:6px 22px;
-    }
-    .results-row.pending .rscore{font-size:15px;}
-    .results-row.pending .rscore.has-time{font-size:24px;padding:6px 26px;}
-    .results-day{font-size:19px;padding:10px 14px;margin:20px 0 0;}
-    .results-day small{font-size:15px;display:block;margin:3px 0 0;}
-    .results-day small::before{content:"";}
-    .match-when{font-size:18px;}
-    .results-row .rscore .live-min{font-size:15px;}
-    .live-status{font-size:14px;}
-    .results-row .rpred{
-      grid-row:3;grid-column:1;justify-self:start;font-size:19px;padding:6px 10px;
-    }
-    .results-row .rproba-badges{grid-row:3;grid-column:2;justify-self:end;gap:5px;}
-    .rproba-badge{font-size:16px;padding:6px 7px;min-width:44px;}
-    .absence-flag{font-size:15px;}
-    .results-row .manual-flag{grid-row:4;font-size:11px;}
   }
 </style>
 </head>
