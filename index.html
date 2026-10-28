@@ -235,17 +235,6 @@
   .update-status{font-size:10px;color:var(--chalk-dim);min-height:12px;text-align:center;max-width:400px;line-height:1.4;}
   .update-status.err{color:#e08c84;}
 
-  .board{
-    background:var(--board);
-    border:1px solid var(--board-edge);
-    border-radius:9px;
-    padding:9px;
-  }
-  .board.flicker{animation:flicker .4s ease;}
-  @keyframes flicker{
-    0%{opacity:.3;}30%{opacity:.9;}45%{opacity:.4;}60%{opacity:1;}
-  }
-
   .empty-state{
     text-align:center;color:var(--chalk-dim);padding:14px 10px;font-size:11px;
   }
@@ -399,7 +388,7 @@
   .results-day small{font-size:15px;display:block;margin:3px 0 0;}
   .results-day small::before{content:"";}
   .match-when{font-size:18px;}
-  .results-row .rscore .live-min{font-size:15px;}
+  .results-row .rscore .live-min{font-size:18px;}
   .live-status{font-size:14px;}
   .results-row .rpred{
     grid-row:3;grid-column:1;justify-self:start;font-size:19px;padding:6px 10px;
@@ -413,11 +402,10 @@
     .vs{margin:0 auto;}
     .extra{grid-template-columns:1fr;}
 
-    /* Sur téléphone : on retire le sélecteur manuel "2 équipes au choix" et son
-       bloc de pronostic en bas de page — redondants maintenant que chaque match
-       de la liste des résultats ouvre sa propre fenêtre de détail au clic.
-       Les deux restent disponibles sur grand écran (ordinateur). */
-    .matchup, .board{ display:none; }
+    /* Sur téléphone : on retire le sélecteur manuel "2 équipes au choix" —
+       redondant maintenant que chaque match de la liste des résultats ouvre
+       sa propre fenêtre de détail au clic. Il reste sur grand écran (ordinateur). */
+    .matchup{ display:none; }
 
     /* Mise en page téléphone : textes plus grands ET qui tiennent dans la
        largeur de l'écran. (Avant : un transform:scale() sur .wrap. La liste
@@ -613,44 +601,6 @@
     <div class="update-status" id="manualStatus"></div>
   </details>
 
-  <div class="board" id="board">
-    <div class="empty-state" id="emptyState">Choisis deux équipes ci-dessus pour voir le pronostic.</div>
-    <div id="results" style="display:none">
-      <div class="score-hero">
-        <div class="lbl">Score le plus probable</div>
-        <div class="digits" id="heroScore">0 – 0</div>
-        <div class="prob" id="heroProb">probabilité —</div>
-      </div>
-
-      <div class="probs">
-        <div class="prob-cell">
-          <div class="name" id="homeLbl">Victoire dom.</div>
-          <div class="val" id="pHome" style="color:var(--home)">0%</div>
-          <div class="bar"><div id="barHome" style="background:var(--home);width:0%"></div></div>
-        </div>
-        <div class="prob-cell">
-          <div class="name">Match nul</div>
-          <div class="val" id="pDraw" style="color:var(--chalk)">0%</div>
-          <div class="bar"><div id="barDraw" style="background:var(--chalk);width:0%"></div></div>
-        </div>
-        <div class="prob-cell">
-          <div class="name" id="awayLbl">Victoire ext.</div>
-          <div class="val" id="pAway" style="color:var(--away)">0%</div>
-          <div class="bar"><div id="barAway" style="background:var(--away);width:0%"></div></div>
-        </div>
-      </div>
-
-      <div class="extra">
-        <div class="extra-cell"><span class="k">Plus de 2,5 buts</span><span class="v" id="over25">—</span></div>
-        <div class="extra-cell"><span class="k">Les deux équipes marquent</span><span class="v" id="btts">—</span></div>
-        <div class="extra-cell"><span class="k">Buts attendus (dom.)</span><span class="v" id="xgHome">—</span></div>
-        <div class="extra-cell"><span class="k">Buts attendus (ext.)</span><span class="v" id="xgAway">—</span></div>
-      </div>
-
-      <div class="grid-title">Top 5 des scores les plus probables</div>
-      <div class="score-grid" id="scoreGrid"></div>
-    </div>
-  </div>
 </div>
 
 <div class="match-modal-overlay" id="matchModalOverlay">
@@ -666,7 +616,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 8, updatedAt: "2026-10-28T22:59:46", note: "" };
+let LAST_UPDATE = { matchday: 8, updatedAt: "2026-10-28T23:02:13", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -726,7 +676,8 @@ let MATCHDAY_HISTORY = {
       "away": "Stade Rennais",
       "homeScore": 2,
       "awayScore": 2,
-      "played": true
+      "played": true,
+      "kickoff": "2026-08-23T18:45:00Z"
     },
     {
       "home": "Toulouse FC",
@@ -3851,9 +3802,6 @@ function predict(){
   const aConceded = parseFloat(document.getElementById('awayConceded').value) || 0;
   const aForm = parseFloat(document.getElementById('awayForm').value) || 0;
 
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
-
   // On préfère les vraies stats "à domicile" / "à l'extérieur" quand elles existent
   // (après une mise à jour incluant les tableaux HOME/AWAY de l'API) plutôt que
   // la moyenne générale + un bonus forfaitaire.
@@ -3920,86 +3868,8 @@ function predict(){
   if(hSplitUsed) hAdj.tags.unshift({t:'📊 Stats réelles à domicile', neg:false});
   if(aSplitUsed) aAdj.tags.unshift({t:'📊 Stats réelles à l\'extérieur', neg:false});
 
-  const hAttack = hAdj.scored / LEAGUE_AVG;
-  const hDefense = hAdj.conceded / LEAGUE_AVG;
-  const aAttack = aAdj.scored / LEAGUE_AVG;
-  const aDefense = aAdj.conceded / LEAGUE_AVG;
-
   renderTags('homeTags', hAdj.tags);
   renderTags('awayTags', aAdj.tags);
-
-  // Le bonus/malus domicile-extérieur forfaitaire ne s'applique que si on n'a
-  // pas de vraies stats splitées (sinon l'avantage du terrain est déjà dans les chiffres).
-  const homeAdvMult = hSplitUsed ? 1 : HOME_ADV;
-  const awayAdvMult = aSplitUsed ? 1 : AWAY_ADJ;
-
-  const hFormFactor = 0.9 + (hForm/5)*0.2;
-  const aFormFactor = 0.9 + (aForm/5)*0.2;
-
-  let lambdaHome = hAttack * aDefense * LEAGUE_AVG * homeAdvMult * hFormFactor;
-  let lambdaAway = aAttack * hDefense * LEAGUE_AVG * awayAdvMult * aFormFactor;
-  lambdaHome = Math.max(0.05, lambdaHome);
-  lambdaAway = Math.max(0.05, lambdaAway);
-
-  const matrix = [];
-  let pHomeWin=0, pDraw=0, pAwayWin=0, over25=0, btts=0, grandTotal=0;
-  let best = {i:0,j:0,p:-1};
-
-  for(let i=0;i<=MAXG;i++){
-    matrix[i]=[];
-    for(let j=0;j<=MAXG;j++){
-      let p = poissonP(lambdaHome,i) * poissonP(lambdaAway,j);
-      p *= dixonColesTau(i,j,lambdaHome,lambdaAway,DC_RHO);
-      if(p<0) p=0;
-      matrix[i][j]=p;
-      grandTotal += p;
-      if(i>j) pHomeWin+=p; else if(i===j) pDraw+=p; else pAwayWin+=p;
-      if(i+j>=3) over25+=p;
-      if(i>=1 && j>=1) btts+=p;
-      if(p>best.p) best={i,j,p};
-    }
-  }
-  pHomeWin/=grandTotal; pDraw/=grandTotal; pAwayWin/=grandTotal;
-  over25/=grandTotal; btts/=grandTotal;
-  best.p/=grandTotal;
-
-  document.getElementById('homeLbl').textContent = 'Victoire ' + hName;
-  document.getElementById('awayLbl').textContent = 'Victoire ' + aName;
-  document.getElementById('heroScore').textContent = hName + '  ' + best.i + ' – ' + best.j + '  ' + aName;
-  document.getElementById('heroProb').textContent = 'probabilité ' + (best.p*100).toFixed(1) + '%';
-
-  document.getElementById('pHome').textContent = (pHomeWin*100).toFixed(0)+'%';
-  document.getElementById('pDraw').textContent = (pDraw*100).toFixed(0)+'%';
-  document.getElementById('pAway').textContent = (pAwayWin*100).toFixed(0)+'%';
-  document.getElementById('barHome').style.width = (pHomeWin*100)+'%';
-  document.getElementById('barDraw').style.width = (pDraw*100)+'%';
-  document.getElementById('barAway').style.width = (pAwayWin*100)+'%';
-
-  document.getElementById('over25').textContent = (over25*100).toFixed(0)+'%';
-  document.getElementById('btts').textContent = (btts*100).toFixed(0)+'%';
-  document.getElementById('xgHome').textContent = lambdaHome.toFixed(2);
-  document.getElementById('xgAway').textContent = lambdaAway.toFixed(2);
-
-  const allScores = [];
-  for(let i=0;i<=MAXG;i++){
-    for(let j=0;j<=MAXG;j++){
-      allScores.push({ i:i, j:j, p:(matrix[i][j]/grandTotal)*100 });
-    }
-  }
-  allScores.sort(function(a,b){ return b.p - a.p; });
-  const top5 = allScores.slice(0,5);
-
-  const gridEl = document.getElementById('scoreGrid');
-  gridEl.innerHTML='';
-  top5.forEach(function(s, idx){
-    const cell = document.createElement('div');
-    cell.className = 'cell' + (idx===0 ? ' top' : '');
-    cell.innerHTML = '<div class="sc">'+s.i+'-'+s.j+'</div><div class="pc">'+s.p.toFixed(1)+'%</div>';
-    gridEl.appendChild(cell);
-  });
-
-  const board = document.getElementById('board');
-  board.classList.remove('flicker'); void board.offsetWidth; board.classList.add('flicker');
 }
 
 // ============================================================
@@ -4436,15 +4306,19 @@ function renderResultsForMatchday(matchday){
     const lv = liveOf(m);
     const isLive = !!(lv && lv.state === 'in');
     const provisional = !!(lv && lv.state === 'post' && lv.completed);
+    // Heure de coup d'envoi (heure de Paris) : sur les matchs à venir elle EST la pastille centrale ;
+    // sur les matchs joués / terminés elle est affichée sous le score.
+    const kt = fixtureTime(m);
+    const kickoffLine = (kt !== null) ? '<span class="live-min" title="Coup d\'envoi (heure de Paris)">🕒 ' + timeParis(kt) + '</span>' : '';
     let centerHtml;
     if (m.played) {
-      centerHtml = '<span class="rscore">' + m.homeScore + ' - ' + m.awayScore + '</span>';
+      centerHtml = '<span class="rscore"><span class="live-score">' + m.homeScore + ' - ' + m.awayScore + '</span>' + kickoffLine + '</span>';
     } else if (isLive) {
       centerHtml = '<span class="rscore live"><span class="live-score">' + lv.home + ' - ' + lv.away + '</span>'
         + '<span class="live-min">🔴 ' + liveClockLabel(lv) + '</span></span>';
     } else if (provisional) {
       centerHtml = '<span class="rscore"><span class="live-score">' + lv.home + ' - ' + lv.away + '</span>'
-        + '<span class="live-min">terminé</span></span>';
+        + '<span class="live-min">terminé' + (kt !== null ? ' · ' + timeParis(kt) : '') + '</span></span>';
     } else if (m.postponed) {
       centerHtml = '<span class="rscore">reporté</span>';
     } else if (fixtureTime(m) !== null) {
