@@ -745,11 +745,12 @@ def update_history_only(html_path: Path, matchday, results):
 
 def refresh_schedule(html_path: Path):
     """Met à jour le jour/l'heure prévus des matchs À VENIR de toutes les journées (1 seule requête API) :
-    horaires confirmés par la LFP, matchs déplacés ou reportés. Ne bloque jamais le reste de la mise à jour."""
+    horaires confirmés par la LFP, matchs déplacés ou reportés. Complète aussi l'heure de coup d'envoi
+    des matchs DÉJÀ JOUÉS qui n'en ont pas encore (jamais le score). Ne bloque jamais le reste de la mise à jour."""
     try:
         url = f"https://api.football-data.org/v4/competitions/{COMPETITION_CODE}/matches"
         resp = requests.get(url, headers={"X-Auth-Token": API_KEY},
-                            params={"status": "SCHEDULED,TIMED,POSTPONED"}, timeout=15)
+                            params={"status": "SCHEDULED,TIMED,POSTPONED,FINISHED"}, timeout=15)
         if resp.status_code != 200:
             print(f"Horaires : réponse API {resp.status_code} — ignoré.")
             return
@@ -764,14 +765,21 @@ def refresh_schedule(html_path: Path):
             home = resolve_team_name((m.get("homeTeam") or {}).get("name", "?"))
             away = resolve_team_name((m.get("awayTeam") or {}).get("name", "?"))
             for r in history.get(md, []):
-                if r.get("home") == home and r.get("away") == away and not r.get("played"):
-                    before = (r.get("kickoff"), r.get("date"), r.get("postponed"))
-                    apply_api_schedule(r, m)
-                    after = (r.get("kickoff"), r.get("date"), r.get("postponed"))
-                    if after != before:
-                        changes.append(f"  J{md} {home} - {away} : {before} -> {after}")
+                if r.get("home") != home or r.get("away") != away:
+                    continue
+                if r.get("played"):
+                    # match déjà joué : on ajoute seulement l'heure de coup d'envoi manquante
+                    if r.get("kickoff") or m.get("status") != "FINISHED":
+                        continue
+                elif m.get("status") == "FINISHED":
+                    continue  # résultat pas encore enregistré : géré par la mise à jour des scores
+                before = (r.get("kickoff"), r.get("date"), r.get("postponed"))
+                apply_api_schedule(r, m)
+                after = (r.get("kickoff"), r.get("date"), r.get("postponed"))
+                if after != before:
+                    changes.append(f"  J{md} {home} - {away} : {before} -> {after}")
         if not changes:
-            print(f"Horaires : {len(matches)} match(s) à venir vérifiés, rien de nouveau.")
+            print(f"Horaires : {len(matches)} match(s) vérifiés, rien de nouveau.")
             return
 
         print(f"Horaires : {len(changes)} changement(s) :")
@@ -789,7 +797,7 @@ def refresh_schedule(html_path: Path):
         if new_content != content:
             shutil.copy2(html_path, html_path.with_suffix(html_path.suffix + ".bak"))
             html_path.write_text(new_content, encoding="utf-8")
-            print("✅ Horaires des matchs à venir mis à jour.")
+            print("✅ Horaires des matchs mis à jour.")
     except Exception as e:  # les horaires sont un plus : jamais bloquant
         print(f"⚠️  Horaires : mise à jour ignorée ({type(e).__name__}: {e})")
 
