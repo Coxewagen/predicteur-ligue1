@@ -1,0 +1,97 @@
+{
+ "updatedAt": "2026-11-01T18:11:58Z",
+ "source": "Transfermarkt (joueurs blessés Ligue 1)",
+ "count": 54,
+ "teams": {
+  "Olympique Lyonnais": [
+   "Tyler Morton",
+   "Pavel Sulc",
+   "Loïs Openda",
+   "Nicolás Tagliafico",
+   "Mohamed Ouédraogo"
+  ],
+  "Angers SCO": [
+   "Oumar Pona",
+   "Amine El Ouazzani"
+  ],
+  "OGC Nice": [
+   "Axel Witsel",
+   "Ali Abdi",
+   "Antoine Mendy",
+   "Laurent Abergel",
+   "Moïse Bombito"
+  ],
+  "RC Lens": [
+   "Odsonne Édouard",
+   "Ismaëlo Ganiou",
+   "Abdallah Sima",
+   "Maik Nawrocki"
+  ],
+  "Stade Rennais": [
+   "Brice Samba",
+   "Estéban Lepaul"
+  ],
+  "Paris FC": [
+   "Luca Koleosho",
+   "Jonathan Ikoné",
+   "Nhoa Sangui"
+  ],
+  "Toulouse FC": [
+   "Rafik Messali"
+  ],
+  "Le Mans FC": [
+   "Djibril Sidibé",
+   "Adil Bourabaa"
+  ],
+  "AS Monaco": [
+   "Ansu Fati",
+   "Stanis Idumbo"
+  ],
+  "Paris Saint-Germain": [
+   "Marquinhos",
+   "Ousmane Dembélé",
+   "Khvicha Kvaratskhelia",
+   "Nuno Mendes",
+   "Alessandro Longoni"
+  ],
+  "RC Strasbourg": [
+   "Fábio Baldé",
+   "Joaquín Panichelli"
+  ],
+  "LOSC Lille": [
+   "Ayase Ueda",
+   "Tiago Santos",
+   "Hamza Igamane"
+  ],
+  "AJ Auxerre": [
+   "Rémy Labeau Lascary",
+   "Assane Dioussé",
+   "Bryan Okoh"
+  ],
+  "Le Havre AC": [
+   "Elias Jelert",
+   "Timothée Pembélé",
+   "Lionel Mpasi-Nzau",
+   "Felix Mambimbi",
+   "Stephan Zagadou"
+  ],
+  "Stade Brestois": [
+   "Giovani Versini",
+   "Raphaël Le Guen",
+   "Brendan Chardonnet"
+  ],
+  "ES Troyes AC": [
+   "Anis Ouzenadji",
+   "Yacouba Koné",
+   "Yvann Titi",
+   "Ismaël Boura"
+  ],
+  "Olympique de Marseille": [
+   "Derek Cornelius"
+  ],
+  "FC Lorient": [
+   "Noah Mbamba",
+   "Bandiougou Fadiga"
+  ]
+ }
+}
