@@ -461,6 +461,7 @@ function shieldSvg(n){
 }
 function ic(id){ return '<svg class="ic" aria-hidden="true"><use href="#'+id+'"/></svg>'; }
 
+let LINEUPS={}; try{ LINEUPS=JSON.parse(localStorage.getItem('l1elo_lineups')||'{}')||{}; }catch(e){}
 let DATA = { HIST: EMBED.HIST, UPD: EMBED.UPD, ABS: EMBED.ABS };
 try{
   const s = JSON.parse(localStorage.getItem('l1elo_data') || 'null');
@@ -503,6 +504,39 @@ function xiOf(sq){
     XI.push(...grp.slice(0,SLOTS[g]));
   });
   return XI;
+}
+function sameName(a,b){
+  const x=nrm(a).split(' ').filter(Boolean), y=nrm(b).split(' ').filter(Boolean);
+  if(x.join(' ')===y.join(' ')) return true;
+  const lx=x[x.length-1], ly=y[y.length-1];
+  if(lx===ly && (x.length===1||y.length===1||x[0][0]===y[0][0])) return true;
+  return x.some(w=>w.length>=5&&y.includes(w));
+}
+function impactLineup(team,starters){
+  const sq=EMBED.SQUADS[team]; if(!sq) return {d:0,list:[],official:true};
+  const full=xiOf(sq), V=full.reduce((s,p)=>s+p[2],0);
+  const isStarter=p=>starters.some(n=>sameName(p[0],n));
+  const missing=full.filter(p=>!isStarter(p));
+  const starters_sq=sq.filter(p=>isStarter(p));
+  // remplaçants réellement alignés (titulaires du jour hors XI type)
+  const bench=starters_sq.filter(p=>!full.includes(p)).sort((a,b)=>b[2]-a[2]);
+  let loss=0, gk=false; const list=[];
+  missing.sort((a,b)=>b[2]-a[2]).forEach(p=>{
+    let best=null,bv=-1;
+    bench.filter(q=>q[1]===p[1]).forEach(q=>{ if(q[2]>bv){ bv=q[2]; best=q; } });
+    bench.filter(q=>ADJ[p[1]].includes(q[1])).forEach(q=>{ if(q[2]*0.8>bv){ bv=q[2]*0.8; best=q; } });
+    if(!best){ const any=bench.slice().sort((a,b)=>b[2]-a[2])[0]; if(any){ best=any; bv=any[2]*0.6; } else bv=0; }
+    if(best) bench.splice(bench.indexOf(best),1);
+    const l=Math.max(0,p[2]-bv); loss+=l; if(p[1]==='G'&&bv<0.5*p[2]) gk=true;
+    list.push({n:p[0],r:best?best[0]:'—',l});
+  });
+  let d=EMBED.IMP.B*Math.log(Math.max(V-loss,0.1)/V); if(gk) d=Math.min(d,-EMBED.IMP.GKFLOOR); d=Math.max(d,-EMBED.IMP.CAP);
+  return {d,list,official:true};
+}
+function impactFor(m,side){
+  const lu=LINEUPS[m.h+'|'+m.a];
+  if(lu && lu[side]) return impactLineup(side==='h'?m.h:m.a, lu[side]);
+  return impactOf(side==='h'?m.h:m.a);
 }
 const IMPACT_CACHE={};
 function impactOf(team){
@@ -591,7 +625,7 @@ function compute(){
   });
   const dfNow=deadFlags(teams,pts,gp,nmd);
   keys.forEach(k=>hist[k].forEach(m=>{ if(!m.played){ m.dh=dfNow[m.h]; m.da=dfNow[m.a];
-    m.ih=impactOf(m.h).d; m.ia=impactOf(m.a).d;
+    const IH=impactFor(m,'h'), IA=impactFor(m,'a'); m.ih=IH.d; m.ia=IA.d; m.offH=!!IH.official; m.offA=!!IA.official;
     m.pred=predict(R[m.h]+EMBED.H-R[m.a]+EMBED.STAKES*(m.da-m.dh)+m.ih-m.ia); m.eh=R[m.h]; m.ea=R[m.a]; } }));
   return {R,hist,keys,pre};
 }
@@ -685,7 +719,7 @@ function card(m){
     const c=club(name);
     return '<div class="team">'+shield(name)
       +'<span class="tname'+(isFav?' fav':'')+'"><span class="long">'+name+'</span><span class="short">'+c[1]+'</span>'
-      +'<span class="role">'+ic(isHome?'i-home':'i-plane')+'</span>'+((isHome?m.dh:m.da)?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(isHome?m.ih:m.ia)<0?'<span class="chip qb">🩹 '+Math.round(isHome?m.ih:m.ia)+'</span>':'')+'</span>'
+      +'<span class="role">'+ic(isHome?'i-home':'i-plane')+'</span>'+((isHome?m.dh:m.da)?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&((isHome?m.offH:m.offA)||Math.round(isHome?m.ih:m.ia)<0)?'<span class="chip qb">'+((isHome?m.offH:m.offA)?'📋 ':'🩹 ')+Math.round(isHome?m.ih:m.ia)+'</span>':'')+'</span>'
       +'<span class="pright"><span class="pbadge '+(isHome?'home':'away')+(isFav?' fav':'')+'">'+pc(prob)+'</span>'
       +'<span class="pct'+goalCls+'">'+goals+'</span></span></div>';
   };
@@ -752,8 +786,8 @@ function standings(){
     .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf).map(x=>x.t);
 }
 function f1(v){ return v.toFixed(2).replace('.',','); }
-function absList(t){
-  const im=impactOf(t), lines=im.list.filter(x=>x.l>0).map(x=>'<li><b>'+x.n+'</b> → '+x.r+' <b class="no">−'+x.l.toFixed(1).replace('.',',')+' M€</b></li>').join('');
+function absList(t,m){
+  const im=m?impactFor(m,t===m.h?'h':'a'):impactOf(t), lines=im.list.filter(x=>x.l>0).map(x=>'<li><b>'+x.n+'</b> → '+x.r+' <b class="no">−'+x.l.toFixed(1).replace('.',',')+' M€</b></li>').join('');
   const s=(DATA.ABS||{})[t]; if(!s) return lines||'<li>—</li>';
   return lines+absText(s);
 }
@@ -774,8 +808,8 @@ function openModal(m){
   document.getElementById('mPanel').innerHTML=
     '<div class="handle"></div><button class="modal-close" id="mClose" aria-label="Fermer">✕</button>'
     +'<div class="mwhen"><span class="when">'+ic('i-clock')+when(m.ko)+'</span>'+(bet?'<span class="validated" style="display:inline-flex">'+ic('i-check')+'Validé</span>':'')+'</div>'
-    +'<div class="mteams"><div class="team">'+shield(m.h)+'<span class="tname'+(fav===0?' fav':'')+'"><span class="long">'+m.h+'</span><span class="role">'+ic('i-home')+'</span>'+(m.dh?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(m.ih)<0?'<span class="chip qb">🩹 '+Math.round(m.ih)+'</span>':'')+'</span></div>'
-    +'<div class="team">'+shield(m.a)+'<span class="tname'+(fav===2?' fav':'')+'"><span class="long">'+m.a+'</span><span class="role">'+ic('i-plane')+'</span>'+(m.da?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(m.ia)<0?'<span class="chip qb">🩹 '+Math.round(m.ia)+'</span>':'')+'</span></div></div>'
+    +'<div class="mteams"><div class="team">'+shield(m.h)+'<span class="tname'+(fav===0?' fav':'')+'"><span class="long">'+m.h+'</span><span class="role">'+ic('i-home')+'</span>'+(m.dh?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&(m.offH||Math.round(m.ih)<0)?'<span class="chip qb">'+(m.offH?'📋 ':'🩹 ')+Math.round(m.ih)+'</span>':'')+'</span></div>'
+    +'<div class="team">'+shield(m.a)+'<span class="tname'+(fav===2?' fav':'')+'"><span class="long">'+m.a+'</span><span class="role">'+ic('i-plane')+'</span>'+(m.da?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&(m.offA||Math.round(m.ia)<0)?'<span class="chip qb">'+(m.offA?'📋 ':'🩹 ')+Math.round(m.ia)+'</span>':'')+'</span></div></div>'
     +'<label class="bet"><input type="checkbox" id="mBet"'+(bet?' checked':'')+'><span class="box">'+ic('i-check')+'</span><span>J’ai parié</span></label>'
     +'<div class="bigbadges"><span class="pbadge big home'+(fav===0?' fav':'')+'"><i>Domicile</i>'+pc(p.ph)+'</span>'
     +'<span class="pbadge big draw"><i>Nul</i>'+pc(p.pd)+'</span>'
@@ -792,7 +826,7 @@ function openModal(m){
     +'<tr><td>Buts encaissés / match</td><td>'+avg(sh.ga,sh.p)+'</td><td>'+avg(sa.ga,sa.p)+'</td></tr>'
     +'<tr><td>3 derniers matchs</td><td>'+lastCell(sh)+'</td><td>'+lastCell(sa)+'</td></tr>'
     +'</tbody></table>'
-    +'<h3>Absences</h3><div class="absgrid"><div><b>'+ch+'</b><ul class="abs">'+absList(m.h)+'</ul></div><div><b>'+ca+'</b><ul class="abs">'+absList(m.a)+'</ul></div></div>';
+    +'<h3>Absences</h3><div class="absgrid"><div><b>'+ch+'</b><ul class="abs">'+absList(m.h,m)+'</ul></div><div><b>'+ca+'</b><ul class="abs">'+absList(m.a,m)+'</ul></div></div>';
   document.getElementById('mOverlay').classList.add('open');
   document.getElementById('mClose').onclick=closeModal;
   document.getElementById('mBet').addEventListener('change',e=>{
@@ -871,6 +905,26 @@ async function refresh(){
   b.disabled=false; b.classList.remove('busy');
 }
 
+const SUMMARY_URL='https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/summary?event=';
+async function lineupTick(){
+  let changed=false;
+  for(const k of Object.keys(LIVE)){
+    const lv=LIVE[k]; if(!lv.id || LINEUPS[k]) continue;
+    const mins=(new Date(lv.kickoff).getTime()-Date.now())/60000;
+    if(lv.state==='post' || mins>90) continue;
+    try{
+      const r=await fetch(SUMMARY_URL+lv.id,{cache:'no-store'}); if(!r.ok) continue;
+      const d=await r.json(); const out={};
+      (d.rosters||[]).forEach(ro=>{
+        const tn=ESPN_TEAM_MAP[(ro.team||{}).displayName]; if(!tn) return;
+        const st=(ro.roster||[]).filter(p=>p.starter).map(p=>(p.athlete||{}).displayName||'').filter(Boolean);
+        if(st.length>=11) out[ro.homeAway==='away'?'a':'h']=st;
+      });
+      if(out.h&&out.a){ LINEUPS[k]=out; changed=true; }
+    }catch(e){}
+  }
+  if(changed){ try{ localStorage.setItem('l1elo_lineups',JSON.stringify(LINEUPS)); }catch(e){} S=compute(); renderM(); renderFigs(); }
+}
 function liveOf(m){ return LIVE[m.h+'|'+m.a]||null; }
 function liveClock(lv){ if(lv.name==='STATUS_HALFTIME') return 'Mi-temps'; return lv.clock||'En cours'; }
 let NEWLOGOS={};
@@ -881,7 +935,7 @@ function parseEspn(data){
     const hn=ESPN_TEAM_MAP[h.team.displayName], an=ESPN_TEAM_MAP[a.team.displayName]; if(!hn||!an) return;
     if(h.team.logo) NEWLOGOS[hn]=h.team.logo; if(a.team.logo) NEWLOGOS[an]=a.team.logo;
     const st=ev.status.type;
-    out[hn+'|'+an]={state:st.state,name:st.name,clock:ev.status.displayClock||'',home:Number(h.score)||0,away:Number(a.score)||0,kickoff:ev.date};
+    out[hn+'|'+an]={id:ev.id,state:st.state,name:st.name,clock:ev.status.displayClock||'',home:Number(h.score)||0,away:Number(a.score)||0,kickoff:ev.date};
   }catch(e){} });
   return out;
 }
@@ -896,7 +950,7 @@ async function liveTick(){
     next=live.length?30*1000:(soon?60*1000:5*60*1000);
     let logoChanged=false; Object.keys(NEWLOGOS).forEach(k=>{ if(LOGOS[k]!==NEWLOGOS[k]){ LOGOS[k]=NEWLOGOS[k]; logoChanged=true; } });
     if(logoChanged){ try{ localStorage.setItem('l1elo_logos',JSON.stringify(LOGOS)); }catch(e){} renderC(); }
-    const sig=JSON.stringify(ov); const changed=sig!==liveSig||logoChanged; liveSig=sig; LIVE=ov;
+    const sig=JSON.stringify(ov); const changed=sig!==liveSig||logoChanged; liveSig=sig; LIVE=ov; lineupTick();
     if(!userNav && live.length){
       const [h,a]=live[0].split('|'); const k=S.keys.find(k=>S.hist[k].some(m=>m.h===h&&m.a===a));
       if(k!=null && k!==md){ md=k; }
