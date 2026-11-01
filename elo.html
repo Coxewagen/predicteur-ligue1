@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prédicteur Ligue 1</title>
+<style>
+
+/* Même identité que le Prédicteur NFL (page web) : terrain vert nuit en fond, blanc "craie" pour
+   le texte, ambre pour les accents/CTA, bleu marine en structure — un seul thème fixe (comme la
+   page web elle-même, qui n'a pas de variante claire), pas de bascule clair/sombre ici. */
+:root{
+  --pitch:#0d2818; --pitch2:#0a2013;
+  --surface:rgba(255,255,255,.055); --surface-solid:#15331f;
+  --ink:#f2f2f0; --muted:#c3d1ca; --line:rgba(255,255,255,.16); --track:rgba(255,255,255,.1);
+  --navy:#1d3a6e; --on-navy:#ffffff; --navy-soft:#b7c6e4;
+  --field:#3ddc84; --on-field:#04200f; --field-bg:rgba(61,220,132,.16);
+  --bad:#ff6b60; --bad-bg:rgba(255,107,96,.16);
+  --warn:#ffb020; --warn-bg:rgba(255,176,32,.16);
+  --gold:#ffb020; --gold-bg:rgba(255,176,32,.16);
+  --sans:"IBM Plex Sans",Arial,Helvetica,sans-serif; --cond:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:linear-gradient(160deg,var(--pitch),var(--pitch2));color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.45;margin:0}
+svg.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-0.2em}
+
+.app{max-width:760px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+
+/* --- barre du haut --- */
+/* Pas de bandeau bleu plein : ça détonnait avec le vert terrain du reste de l'appli. Le titre
+   reste sur le fond vert comme dans la page web d'origine (titre ambre, sous-titre craie), avec
+   juste un fin trait de séparation en bas — le bleu marine redevient un simple accent (comme sur
+   la page web), pas un bloc de couleur à lui tout seul. */
+.topbar{background:transparent;color:var(--ink);display:flex;gap:12px;align-items:center;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 14px;border-bottom:1px solid var(--line)}
+.topbar .ball{width:40px;height:40px;flex:none}
+.topbar .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.eyebrow{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.topbar h1{font-family:var(--cond);font-size:24px;margin:0;font-weight:700;color:var(--gold)}
+.refresh{background:rgba(255,255,255,0.1);border:1px solid var(--line);color:var(--ink);
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none}
+.refresh:active{background:rgba(255,255,255,0.28)}
+.refresh.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.offline-banner{background:var(--warn-bg);color:var(--warn);display:flex;gap:8px;align-items:center;
+  font-size:14px;padding:8px 16px;font-weight:600}
+
+/* --- contenu --- */
+main{flex:1;padding:16px;padding-bottom:28px;display:flex;flex-direction:column;gap:16px}
+.view{display:flex;flex-direction:column;gap:14px}
+
+h2{font-family:var(--cond);font-size:22px;margin:0;font-weight:700;display:flex;align-items:center;gap:9px}
+h2 .sq{width:32px;height:32px;border-radius:9px;background:var(--navy);color:var(--on-navy);display:grid;place-items:center;flex:none}
+h2 .sq.g{background:var(--field);color:var(--on-field)}
+h2 .sq.gold{background:var(--gold);color:#241a02}
+h2.week-head #weekTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.week-pager{margin-left:auto;display:flex;gap:6px;flex:none}
+.pager-btn{width:30px;height:30px;border-radius:50%;background:var(--track);border:none;color:var(--ink);
+  font-size:18px;line-height:1;display:grid;place-items:center;font-family:var(--sans)}
+.pager-btn:disabled{opacity:.35}
+.meta{color:var(--muted);font-size:16px;margin:0}
+.alert{background:var(--warn-bg);border-left:6px solid var(--warn);border-radius:10px;padding:12px 14px;font-size:16px;display:flex;gap:10px}
+.alert svg{color:var(--warn);margin-top:3px;flex:none}
+
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:15px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+
+/* --- cartes de match --- */
+.games{display:flex;flex-direction:column;gap:10px}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  display:flex;flex-direction:column;gap:9px}
+.game.net{border-color:var(--field);box-shadow:inset 5px 0 0 var(--field)}
+.ghead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.when{font-weight:600;color:var(--muted);font-size:16px;display:inline-flex;align-items:center;gap:6px}
+.tag{font-family:var(--cond);font-size:15px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;background:var(--track);color:var(--muted)}
+.tag.net{background:var(--field);color:var(--on-field)}
+.tag.ok{background:var(--field-bg);color:var(--field)} .tag.ko{background:var(--bad-bg);color:var(--bad)}
+.team{display:flex;align-items:center;gap:10px}
+.shield{width:36px;height:36px;flex:none}
+.tname{font-size:17px;font-weight:500;min-width:0;flex:1;display:flex;align-items:center;gap:6px 7px;flex-wrap:wrap}
+.tname.fav{font-weight:700}
+.tname .short{display:none}
+.role{color:var(--muted);display:inline-flex}
+.chip{font-size:14px;font-weight:700;padding:1px 7px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);color:var(--warn)}
+.chip.qb{background:var(--bad-bg);color:var(--bad)}
+.pct{font-family:var(--cond);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pct.fav{color:var(--field)}
+.split{display:flex;height:11px;border-radius:999px;overflow:hidden;gap:3px;background:var(--surface);outline:1px solid var(--line)}
+.split i{display:block;height:100%}
+.gfoot{font-size:16px;color:var(--muted);display:flex;gap:4px 14px;flex-wrap:wrap}
+.gfoot b{color:var(--ink);font-variant-numeric:tabular-nums}
+.game.clickable{cursor:pointer}
+
+/* --- verrou abonnement : remplace les probabilités quand non-abonné --- */
+.lock-row{display:flex;align-items:center;gap:10px;background:var(--gold-bg);color:var(--gold);
+  border-radius:9px;padding:8px 11px;font-size:14.5px;font-weight:600}
+.lock-row svg{flex:none}
+.lock-row .go{margin-left:auto;background:var(--gold);color:#241a02;border:none;border-radius:999px;
+  font-size:13.5px;font-weight:700;padding:5px 12px;white-space:nowrap}
+.blur-fig{filter:blur(6px);user-select:none;pointer-events:none}
+
+/* --- bilan --- */
+.figs{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.fig{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--navy);border-radius:12px;
+  padding:11px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fig.g{border-top-color:var(--field)}
+.fig .n{font-family:var(--cond);font-size:32px;line-height:1.1;font-weight:700;font-variant-numeric:tabular-nums}
+.fig .l{font-size:13.5px;color:var(--muted)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15.5px;font-variant-numeric:tabular-nums}
+th{font-family:var(--cond);text-align:left;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);border-bottom:2px solid var(--navy);padding:7px 8px 7px 0}
+td{border-bottom:1px solid var(--line);padding:8px 8px 8px 0;vertical-align:top}
+.yes{color:var(--field);font-weight:700} .no{color:var(--bad);font-weight:700}
+
+/* --- carte "verrou" pleine largeur (bilan complet, détail des absences) --- */
+.gate-card{background:var(--surface);border:1px dashed var(--gold);border-radius:12px;padding:18px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.gate-card svg.big{width:34px;height:34px;color:var(--gold)}
+.gate-card b{font-size:16px}
+.gate-card p{margin:0;color:var(--muted);font-size:14.5px}
+.btn-gold{background:var(--gold);color:#241a02;border:none;border-radius:999px;font-weight:700;
+  font-size:15.5px;padding:10px 20px;font-family:var(--sans)}
+
+/* --- écran Abonnement --- */
+.pro-hero{background:linear-gradient(160deg,var(--navy),#0a1f3d);color:#fff;border-radius:16px;
+  padding:22px 18px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
+.pro-hero svg{width:40px;height:40px;color:var(--gold)}
+.pro-hero h3{margin:2px 0 0;font-family:var(--cond);font-size:23px}
+.pro-hero p{margin:0;color:var(--navy-soft);font-size:15px}
+.pro-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.pro-list li{display:flex;gap:10px;align-items:flex-start;font-size:15.5px}
+.pro-list svg{color:var(--field);flex:none;margin-top:2px}
+.plan{background:var(--surface);border:2px solid var(--gold);border-radius:14px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:4px}
+.plan .price{font-family:var(--cond);font-size:26px;font-weight:700}
+.plan .sub{color:var(--muted);font-size:14px}
+.btn-main{background:var(--gold);color:#241a02;border:none;border-radius:12px;font-weight:700;
+  font-size:17px;padding:14px;font-family:var(--sans);width:100%}
+.btn-ghost{background:none;border:none;color:var(--muted);font-size:14px;text-decoration:underline;padding:8px}
+.pro-active{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:20px 0}
+.pro-active svg{width:46px;height:46px;color:var(--field)}
+.legal{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.legal a{color:var(--muted)}
+
+/* --- navigation par onglets --- */
+.tabbar{display:flex;border-top:1px solid var(--line);background:var(--surface-solid);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:9px 4px 8px;color:var(--muted);font-size:12.5px;font-family:var(--sans);font-weight:600}
+.tab.active{color:var(--gold)}
+.tab .ic{width:1.3em;height:1.3em}
+
+/* --- modale fiche de match --- */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;
+  align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-panel{position:relative;width:100%;max-width:760px;max-height:85vh;overflow-y:auto;
+  background:linear-gradient(160deg,var(--surface-solid),var(--pitch2));border-radius:18px 18px 0 0;
+  padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 18px);
+  box-shadow:0 -10px 30px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:14px}
+.modal-panel .handle{width:40px;height:4px;border-radius:999px;background:var(--line);margin:0 auto}
+.modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;
+  background:var(--track);border:none;color:var(--ink);font-size:16px;line-height:1}
+
+@media (max-width:380px){
+  .tname .long{display:none} .tname .short{display:inline}
+  .figs{gap:7px} .fig{padding:9px 7px} .fig .n{font-size:27px} .fig .l{font-size:12.5px}
+}
+
+/* --- case « J'ai parié » + badge « Validé » (mémorisés sur l'appareil) --- */
+.gtags{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.validated{display:none;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 10px;border-radius:999px;align-items:center;gap:5px;background:var(--gold);color:#241a02}
+.betted .validated{display:inline-flex}
+.game.betted{border-color:var(--gold);box-shadow:inset 5px 0 0 var(--gold)}
+.bet{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:6px 0;align-self:flex-start;min-height:44px}
+.bet input{position:absolute;opacity:0;width:1px;height:1px}
+.bet .box{width:28px;height:28px;border-radius:8px;border:2px solid var(--muted);display:grid;place-items:center;flex:none;color:transparent}
+.bet .box svg{width:18px;height:18px;stroke-width:3}
+.bet input:checked + .box{background:var(--gold);border-color:var(--gold);color:#241a02}
+.bet input:focus-visible + .box{outline:3px solid var(--gold);outline-offset:2px}
+
+/* --- fiche détaillée --- */
+.mwhen{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.dim{color:var(--muted);font-size:16px;font-weight:500;font-family:var(--sans)}
+.verdict{margin:0;display:flex;gap:8px;align-items:flex-start;font-size:16px;font-weight:700}
+.modal-panel h3{font-family:var(--cond);font-size:21px;margin:4px 0 0}
+table.cmp{font-size:16px} table.cmp th:not(:first-child),table.cmp td:not(:first-child){text-align:center}
+table.cmp td:first-child{color:var(--muted);font-size:16px}
+.absgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.absgrid>div{min-width:0}
+ul.abs{margin:4px 0 0;padding-left:18px} ul.abs li{margin:4px 0;font-size:16px}
+@media (max-width:420px){.absgrid{grid-template-columns:1fr}}
+
+/* --- pastilles de pourcentage (mêmes couleurs que le prédicteur : bleu = domicile, rouge = extérieur) --- */
+.pright{display:flex;align-items:center;gap:10px;flex:none}
+.pbadge{font-family:Consolas,"Courier New",monospace;font-weight:800;font-size:22px;color:#fff;border-radius:8px;
+  padding:6px 11px;min-width:76px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.35)}
+.pbadge.home{background:#1d3a6e} .pbadge.away{background:#7a1f1f}
+.pbadge.fav{box-shadow:0 0 0 3px var(--gold)}
+.pbadge.big{font-size:34px;padding:10px 18px;min-width:118px}
+.pbadge.big i{display:block;font-style:normal;font-family:var(--sans);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.9;margin-bottom:2px}
+.bigbadges{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.pright .pct{min-width:2ch;text-align:right}
+@media (max-width:460px){.pbadge{font-size:19px;min-width:64px;padding:5px 7px}.pright{gap:7px}.pbadge.big{font-size:30px;min-width:104px;padding:9px 14px}}
+
+/* Un élément avec l'attribut hidden doit vraiment disparaître, même si sa classe lui donne un display (bandeau hors-ligne, etc.). */
+[hidden]{display:none !important;}
+
+.site-shell{max-width:760px;margin:0 auto;min-height:100%}
+
+/* --- ajouts M3 : QB incertain, marché contraire, bloc marché --- */
+.chip.qbq{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn)}
+.tag.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn)}
+.mkt{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:7px;font-size:16px}
+.mkt.contra{border-color:var(--warn);box-shadow:inset 5px 0 0 var(--warn)}
+.mkt .lead{margin:0;font-family:var(--cond);font-size:21px;font-weight:700}
+.mkt p{margin:0}
+.mkt b{font-variant-numeric:tabular-nums}
+.mkt .warnline{color:var(--warn);font-weight:700;display:flex;gap:8px;align-items:flex-start}
+.mkt .note{color:var(--muted);font-size:15px}
+.filterbar{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap}
+.fbtn{background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:999px;font-family:var(--sans);
+  font-weight:700;font-size:17px;padding:10px 18px;min-height:48px;display:inline-flex;gap:9px;align-items:center;cursor:pointer}
+.fbtn.on{background:var(--gold);color:#241a02}
+.fbtn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#filterCount{color:var(--muted);font-size:16px;font-weight:600}
+h2.week-head #weekTitle{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
+.legend .tag{font-size:13px;padding:2px 8px}
+.legend{gap:8px 14px}
+.updbar{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap}
+.ubtn{background:var(--gold);color:#241a02;border:2px solid var(--gold);border-radius:999px;font-family:var(--sans);
+  font-weight:700;font-size:17px;padding:10px 18px;min-height:48px;display:inline-flex;gap:9px;align-items:center;cursor:pointer}
+.ubtn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.ubtn[disabled]{opacity:.75;cursor:progress}
+.ubtn.busy svg{animation:spin .8s linear infinite}
+#updMsg{color:var(--muted);font-size:16px;font-weight:600}
+#updMsg.ok{color:var(--field)}
+#updMsg.err{color:var(--warn)}
+#liveMsg{color:var(--muted);font-size:16px;font-weight:600;flex-basis:100%}
+#liveMsg.on{color:var(--bad)}
+.tag.live{background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad)}
+.tag.live .dot{width:10px;height:10px;border-radius:50%;background:var(--bad);animation:livepulse 1.2s ease-in-out infinite}
+@keyframes livepulse{50%{opacity:.25}}
+:root{color-scheme:dark}
+
+/* --- ajouts foot : nul, score prévu, classement --- */
+.drawrow{display:flex;align-items:center;gap:10px}
+.drawrow .shield{display:grid;place-items:center;font-family:var(--cond);font-weight:700;color:var(--muted);font-size:15px}
+.drawrow .tname{color:var(--muted)}
+.pbadge.draw{background:#4a5560}
+.pct.ko{color:var(--bad)}
+.rank td.n,.rank th.n{text-align:right}
+.rank td{font-size:16px}.rank th,.rank td{padding-right:6px}.rank td.pts{font-weight:800;font-size:18px}.rank tr.cut td{border-bottom:2px solid var(--gold)}
+.rank .tcell{display:flex;align-items:center;gap:10px}
+.rank .shield{width:30px;height:30px}
+.mtable td,.mtable th{text-align:center}.mtable td:first-child{text-align:left;color:var(--muted)}
+.topsc{display:flex;gap:8px;flex-wrap:wrap}
+.topsc span{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-family:var(--cond);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.topsc span small{display:block;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--muted)}
+.shield.logo{object-fit:contain;background:transparent}
+.betrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.betrow .prevu{font-size:17px;white-space:nowrap;display:inline}
+.game .pbadge{width:104px;min-width:0;padding-left:4px;padding-right:4px}
+.pcol{width:104px;display:flex;justify-content:center}
+.game .pct{min-width:2ch;text-align:right}
+@media (max-width:460px){.game .pbadge{width:88px}.pcol{width:88px}}
+.bets td{font-size:17px}.bets td.n{font-variant-numeric:tabular-nums}.bets tr.tot td{font-weight:800;border-top:2px solid var(--gold)}
+.bilh{font-family:var(--cond);font-size:20px;margin:4px 0 -4px;color:var(--gold)}
+.reco{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-radius:10px;padding:9px 12px;font-size:17px}
+.reco b{font-size:18px;display:inline-flex;align-items:center;gap:6px}
+.reco span{font-variant-numeric:tabular-nums;font-weight:600}
+.reco.win{background:var(--field);color:var(--on-field)}
+.reco.dc{background:var(--gold);color:#241a02}
+.reco.none{background:var(--track);color:var(--muted);font-weight:700}
+.reco.ko{background:var(--bad-bg);color:var(--bad);outline:2px solid var(--bad)}
+.reco.ok{outline:2px solid #fff}
+#oddsMsg{flex-basis:100%;font-size:16px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:underline dotted}
+#oddsMsg.err{color:var(--warn)}
+.keyrow{display:flex;gap:8px}.keyrow input{flex:1;min-width:0;font:inherit;font-size:17px;padding:10px 14px;border-radius:12px;border:2px solid var(--gold);background:var(--surface-solid);color:var(--ink)}
+.wmx{display:inline-flex;align-items:center;gap:4px;font-weight:800;padding:2px 9px;border-radius:999px;background:rgba(0,0,0,.22)}
+.wmx.good{background:#0b3d1f;color:#7dffb0}.wmx.bad{background:#4a1010;color:#ffb3ad}
+.codds{display:flex;gap:8px;font-size:15px;color:var(--muted);justify-content:flex-end}
+#combo .stake{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700}
+#combo .stake input{width:120px;font:inherit;font-size:20px;padding:8px 12px;border-radius:10px;border:2px solid var(--gold);background:var(--surface-solid);color:var(--ink)}
+#combo .gain{display:flex;gap:8px 18px;flex-wrap:wrap;font-size:18px}#combo .gain b{font-size:22px}
+#combo .lead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#combo table{font-size:17px}#combo tr.tot td{border-top:2px solid var(--gold);font-weight:800}
+.choice{display:flex;gap:8px}.choice button{flex:1;font:inherit;font-size:16px;font-weight:700;padding:9px 6px;border-radius:10px;border:2px solid var(--gold);background:var(--surface-solid);color:var(--ink);cursor:pointer}
+.choice button.on{background:var(--gold);color:#241a02}
+.pbadge.big.draw{background:#4a5560}
+.bigbadges{flex-wrap:nowrap;gap:8px}.bigbadges .pbadge.big{flex:1;min-width:0;font-size:28px;padding:10px 4px}
+.mteams .team .tname{font-size:18px}
+.up{color:var(--field);font-weight:700}.down{color:var(--bad);font-weight:700}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M3 13l18-8-6 16-3-7z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <svg class="ball" viewBox="0 0 54 54" aria-hidden="true">
+      <circle cx="27" cy="27" r="23" fill="#FFFFFF" stroke="#10151c" stroke-width="2"/>
+      <path d="M27 17l9 6.5-3.4 10.5H21.4L18 23.5z" fill="#10151c"/>
+      <path d="M27 17V5.5M36 23.5l10.5-3.5M32.6 34l6.6 9.2M21.4 34l-6.6 9.2M18 23.5L7.5 20" stroke="#10151c" stroke-width="2.2" fill="none"/>
+    </svg>
+    <div class="txt">
+      <span class="eyebrow" id="eyebrow"></span>
+      <h1>Prédicteur Ligue 1</h1>
+    </div>
+  </header>
+
+  <main>
+    <section class="view">
+      <h2 class="week-head">
+        <span class="sq"><svg class="ic"><use href="#i-cal"/></svg></span>
+        <span id="weekTitle"></span>
+        <span class="week-pager"><button type="button" class="pager-btn" id="prev">‹</button><button type="button" class="pager-btn" id="next">›</button></span>
+      </h2>
+      <p class="meta" id="upd"></p>
+      <div class="updbar"><button type="button" id="updBtn" class="ubtn"><svg class="ic"><use href="#i-refresh"/></svg><span>Mettre à jour</span></button><span id="updMsg" role="status" aria-live="polite"></span><span id="liveMsg" role="status"></span><span id="oddsMsg" role="status"></span></div>
+      <div class="filterbar"><button type="button" id="filterBtn" class="fbtn" aria-pressed="false"><svg class="ic"><use href="#i-star"/></svg><span>Matchs sûrs et doubles chances</span></button><span id="filterCount"></span></div>
+      <div class="keyrow" id="keyRow" hidden><input type="text" id="keyIn" placeholder="Clé The Odds API" autocomplete="off"><button type="button" class="ubtn" id="keySave">OK</button></div>
+      <div class="games" id="list"></div>
+      <div class="mkt" id="combo" hidden><div id="comboBody"></div>
+        <div class="stake"><label for="stakeIn">Mise</label><input id="stakeIn" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0"><span>€</span></div>
+        <div class="gain" id="gainOut"></div></div>
+    </section>
+
+    <section class="view">
+      <h2><span class="sq g"><svg class="ic"><use href="#i-chart"/></svg></span>Bilan</h2>
+      <h3 class="bilh" id="bilMd"></h3>
+      <div class="figs" id="figsMd"></div>
+      <h3 class="bilh">Saison</h3>
+      <div class="figs" id="figs"></div>
+    </section>
+
+    <section class="view">
+      <h2><span class="sq gold"><svg class="ic"><use href="#i-trophy"/></svg></span>Classement Ligue 1</h2>
+      <div class="tbl"><table class="rank"><thead><tr><th>#</th><th>Équipe</th><th class="n">J</th><th class="n">V</th><th class="n">N</th><th class="n">D</th><th class="n">Diff</th><th class="n">Pts</th></tr></thead><tbody id="rank"></tbody></table></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-overlay" id="mOverlay"><div class="modal-panel" id="mPanel"></div></div>
+<script>
+const EMBED = {"P":[0.2435271896000928,0.22999410049139296,0.2329922253720047,0.22124428438233315],"RHO":-0.043258059130917466,"K":15,"H":50,"START":{"AS Monaco":1549.37,"Le Havre AC":1415.07,"RC Strasbourg":1533.31,"Olympique de Marseille":1555.68,"Paris FC":1470.73,"AJ Auxerre":1454.18,"FC Lorient":1467.45,"Olympique Lyonnais":1557.94,"Stade Brestois":1459.02,"RC Lens":1588.36,"Angers SCO":1400.56,"Toulouse FC":1483.73,"Stade Rennais":1542.76,"OGC Nice":1461.06,"ES Troyes AC":1395.67,"Le Mans FC":1395.67,"Paris Saint-Germain":1698.97,"LOSC Lille":1570.48},"HIST":{"1":[["Angers SCO","LOSC Lille",0,2,1,"2026-08-23T13:00:00Z"],["Le Havre AC","AS Monaco",0,1,1,"2026-08-23T15:15:00Z"],["Le Mans FC","Stade Brestois",2,2,1,"2026-08-22T18:45:00Z"],["RC Lens","AJ Auxerre",5,2,1,"2026-08-22T15:15:00Z"],["Olympique de Marseille","RC Strasbourg",4,0,1,"2026-08-21T18:45:00Z"],["OGC Nice","FC Lorient",0,0,1,"2026-08-22T18:45:00Z"],["Paris Saint-Germain","Stade Rennais",2,2,1,"2026-08-23T18:45:00Z"],["Toulouse FC","Olympique Lyonnais",0,2,1,"2026-08-22T18:45:00Z"],["ES Troyes AC","Paris FC",0,0,1,"2026-08-22T18:45:00Z"]],"2":[["AJ Auxerre","Angers SCO",1,3,1,"2026-08-29T18:45:00Z"],["Stade Brestois","Toulouse FC",2,2,1,"2026-08-29T18:45:00Z"],["LOSC Lille","Paris Saint-Germain",2,2,1,"2026-08-28T18:45:00Z"],["FC Lorient","ES Troyes AC",1,2,1,"2026-08-29T18:45:00Z"],["Olympique Lyonnais","Le Havre AC",1,1,1,"2026-08-29T18:45:00Z"],["AS Monaco","Olympique de Marseille",2,0,1,"2026-08-30T18:45:00Z"],["Paris FC","OGC Nice",3,0,1,"2026-08-30T13:00:00Z"],["Stade Rennais","Le Mans FC",3,2,1,"2026-08-30T15:15:00Z"],["RC Strasbourg","RC Lens",2,1,1,"2026-08-29T15:15:00Z"]],"3":[["Angers SCO","Stade Rennais",1,2,1,"2026-09-06T15:15:00Z"],["Le Havre AC","Stade Brestois",1,2,1,"2026-09-05T18:45:00Z"],["RC Lens","FC Lorient",0,1,1,"2026-09-05T15:15:00Z"],["Olympique Lyonnais","AJ Auxerre",3,1,1,"2026-09-04T17:00:00Z"],["Olympique de Marseille","Paris FC",2,3,1,"2026-09-06T18:45:00Z"],["OGC Nice","Le Mans FC",1,1,1,"2026-09-05T18:45:00Z"],["Paris Saint-Germain","AS Monaco",1,2,1,"2026-09-04T19:05:00Z"],["Toulouse FC","LOSC Lille",0,1,1,"2026-09-03T18:45:00Z"],["ES Troyes AC","RC Strasbourg",2,6,1,"2026-09-06T13:00:00Z"]],"4":[["AJ Auxerre","OGC Nice",1,0,1,"2026-09-12T18:45:00Z"],["Stade Brestois","Paris Saint-Germain",0,1,1,"2026-09-13T18:45:00Z"],["Le Havre AC","Angers SCO",0,0,1,"2026-09-12T18:45:00Z"],["Le Mans FC","RC Lens",2,2,1,"2026-09-13T15:15:00Z"],["LOSC Lille","ES Troyes AC",2,0,1,"2026-09-13T13:00:00Z"],["FC Lorient","Toulouse FC",2,2,1,"2026-09-12T18:45:00Z"],["Paris FC","Olympique Lyonnais",0,0,1,"2026-09-12T18:45:00Z"],["Stade Rennais","Olympique de Marseille",1,0,1,"2026-09-11T18:45:00Z"],["RC Strasbourg","AS Monaco",1,1,1,"2026-09-12T15:15:00Z"]],"5":[["Angers SCO","ES Troyes AC",2,0,1,"2026-09-19T18:45:00Z"],["AJ Auxerre","Stade Brestois",2,1,1,"2026-09-20T13:00:00Z"],["Le Mans FC","FC Lorient",2,1,1,"2026-09-19T18:45:00Z"],["Olympique Lyonnais","Stade Rennais",4,0,1,"2026-09-19T18:45:00Z"],["Olympique de Marseille","Paris Saint-Germain",1,2,1,"2026-09-20T18:45:00Z"],["AS Monaco","RC Lens",2,1,1,"2026-09-18T18:45:00Z"],["OGC Nice","LOSC Lille",2,1,1,"2026-09-20T15:15:00Z"],["Paris FC","RC Strasbourg",2,1,1,"2026-09-19T15:15:00Z"],["Toulouse FC","Le Havre AC",3,2,1,"2026-09-19T18:45:00Z"]],"6":[["RC Lens","Olympique Lyonnais",2,1,1,"2026-10-09T18:45:00Z"],["LOSC Lille","Le Havre AC",1,0,1,"2026-10-10T15:15:00Z"],["Stade Brestois","Angers SCO",5,1,1,"2026-10-10T18:45:00Z"],["FC Lorient","Paris FC",1,0,1,"2026-10-10T18:45:00Z"],["Paris Saint-Germain","Le Mans FC",3,1,1,"2026-10-10T18:45:00Z"],["AS Monaco","Toulouse FC",2,2,1,"2026-10-10T18:45:00Z"],["OGC Nice","RC Strasbourg",2,1,1,"2026-10-11T13:00:00Z"],["Stade Rennais","AJ Auxerre",4,1,1,"2026-10-11T15:15:00Z"],["ES Troyes AC","Olympique de Marseille",0,2,1,"2026-10-11T18:45:00Z"]],"7":[["Le Mans FC","Toulouse FC",0,3,1,"2026-10-16T18:45:00Z"],["RC Strasbourg","Paris Saint-Germain",1,3,1,"2026-10-17T15:15:00Z"],["ES Troyes AC","RC Lens",1,3,1,"2026-10-17T18:45:00Z"],["LOSC Lille","Stade Brestois",1,1,1,"2026-10-17T18:45:00Z"],["Angers SCO","Olympique de Marseille",2,5,1,"2026-10-18T13:00:00Z"],["FC Lorient","AS Monaco",1,0,1,"2026-10-18T15:15:00Z"],["Paris FC","Stade Rennais",4,3,1,"2026-10-18T15:15:00Z"],["Le Havre AC","AJ Auxerre",1,3,1,"2026-10-18T15:15:00Z"],["Olympique Lyonnais","OGC Nice",2,1,1,"2026-10-18T18:45:00Z"]],"8":[["Stade Brestois","OGC Nice",1,2,1,"2026-10-23T18:45:00Z"],["RC Lens","Paris FC",2,1,1,"2026-10-24T18:45:00Z"],["AS Monaco","LOSC Lille",1,1,1,"2026-10-25T14:00:00Z"],["Olympique de Marseille","Le Havre AC",4,3,1,"2026-10-25T16:15:00Z"],["Stade Rennais","RC Strasbourg",3,0,1,"2026-10-25T16:15:00Z"],["Angers SCO","FC Lorient",0,0,1,"2026-10-25T16:15:00Z"],["Toulouse FC","ES Troyes AC",0,0,1,"2026-10-25T16:15:00Z"],["AJ Auxerre","Le Mans FC",1,1,1,"2026-10-25T16:15:00Z"],["Paris Saint-Germain","Olympique Lyonnais",2,0,1,"2026-10-26T19:30:00Z"]],"9":[["Le Havre AC","Paris Saint-Germain",1,5,1,"2026-10-30T18:00:00Z"],["OGC Nice","Stade Rennais",5,2,1,"2026-10-30T18:00:00Z"],["LOSC Lille","RC Lens",1,0,1,"2026-10-30T20:05:00Z"],["ES Troyes AC","Le Mans FC",2,0,1,"2026-10-31T19:45:00Z"],["RC Strasbourg","AJ Auxerre",null,null,0,"2026-11-01T14:00:00Z"],["Olympique Lyonnais","Angers SCO",null,null,0,"2026-11-01T16:15:00Z"],["Paris FC","AS Monaco",null,null,0,"2026-11-01T16:15:00Z"],["Olympique de Marseille","Toulouse FC",null,null,0,"2026-11-01T19:45:00Z"],["FC Lorient","Stade Brestois",null,null,0,"2026-11-02T19:45:00Z"]],"10":[["Angers SCO","OGC Nice",null,null,0,"2026-11-08T16:15:00Z"],["AJ Auxerre","Paris FC",null,null,0,"2026-11-07T16:15:00Z"],["Stade Brestois","Olympique Lyonnais",null,null,0,"2026-11-08T16:15:00Z"],["Le Havre AC","FC Lorient",null,null,0,"2026-11-08T16:15:00Z"],["Le Mans FC","AS Monaco",null,null,0,"2026-11-08T16:15:00Z"],["RC Lens","Olympique de Marseille",null,null,0,"2026-11-08T19:45:00Z"],["Paris Saint-Germain","ES Troyes AC",null,null,0,"2026-11-07T19:45:00Z"],["Stade Rennais","LOSC Lille",null,null,0,"2026-11-08T14:00:00Z"],["Toulouse FC","RC Strasbourg",null,null,0,"2026-11-06T19:45:00Z"]],"11":[["RC Lens","Toulouse FC",null,null,0,"2026-11-21T19:45:00Z"],["LOSC Lille","Olympique Lyonnais",null,null,0,"2026-11-21T19:45:00Z"],["FC Lorient","Stade Rennais",null,null,0,"2026-11-22T16:15:00Z"],["Olympique de Marseille","Le Mans FC",null,null,0,"2026-11-22T19:45:00Z"],["AS Monaco","AJ Auxerre",null,null,0,"2026-11-21T19:45:00Z"],["OGC Nice","Paris Saint-Germain",null,null,0,"2026-11-21T16:15:00Z"],["Paris FC","Angers SCO",null,null,0,"2026-11-22T14:00:00Z"],["RC Strasbourg","Stade Brestois",null,null,0,"2026-11-21T19:45:00Z"],["ES Troyes AC","Le Havre AC",null,null,0,"2026-11-20T19:45:00Z"]],"12":[["Angers SCO","RC Lens",null,null,0,"2026-11-28T16:15:00Z"],["AJ Auxerre","Olympique de Marseille",null,null,0,"2026-11-29T14:00:00Z"],["Stade Brestois","Paris FC",null,null,0,"2026-11-27T19:45:00Z"],["Le Havre AC","RC Strasbourg",null,null,0,"2026-11-28T19:45:00Z"],["Le Mans FC","LOSC Lille",null,null,0,"2026-11-28T19:45:00Z"],["Olympique Lyonnais","AS Monaco",null,null,0,"2026-11-29T19:45:00Z"],["OGC Nice","ES Troyes AC",null,null,0,"2026-11-28T19:45:00Z"],["Paris Saint-Germain","FC Lorient",null,null,0,"2026-11-28T19:45:00Z"],["Toulouse FC","Stade Rennais",null,null,0,"2026-11-29T16:15:00Z"]],"13":[["RC Lens","Le Havre AC",null,null,0,"2026-12-05T19:45:00Z"],["LOSC Lille","AJ Auxerre",null,null,0,"2026-12-05T16:15:00Z"],["Olympique de Marseille","OGC Nice",null,null,0,"2026-12-06T19:45:00Z"],["AS Monaco","Angers SCO",null,null,0,"2026-12-05T19:45:00Z"],["Paris FC","Le Mans FC",null,null,0,"2026-12-05T19:45:00Z"],["Stade Rennais","Stade Brestois",null,null,0,"2026-12-06T16:15:00Z"],["RC Strasbourg","FC Lorient",null,null,0,"2026-12-05T19:45:00Z"],["Toulouse FC","Paris Saint-Germain",null,null,0,"2026-12-04T19:45:00Z"],["ES Troyes AC","Olympique Lyonnais",null,null,0,"2026-12-06T14:00:00Z"]],"14":[["Angers SCO","RC Strasbourg",null,null,0,"2026-12-12T19:45:00Z"],["AJ Auxerre","Toulouse FC",null,null,0,"2026-12-11T19:45:00Z"],["Stade Brestois","ES Troyes AC",null,null,0,"2026-12-12T19:45:00Z"],["Le Havre AC","Le Mans FC",null,null,0,"2026-12-12T19:45:00Z"],["FC Lorient","LOSC Lille",null,null,0,"2026-12-13T14:00:00Z"],["Olympique Lyonnais","Olympique de Marseille",null,null,0,"2026-12-13T19:45:00Z"],["OGC Nice","RC Lens",null,null,0,"2026-12-12T19:45:00Z"],["Paris Saint-Germain","Paris FC",null,null,0,"2026-12-12T16:15:00Z"],["Stade Rennais","AS Monaco",null,null,0,"2026-12-13T16:15:00Z"]],"15":[["Stade Brestois","Olympique de Marseille",null,null,0,"2027-01-02T16:00:00Z"],["Le Mans FC","Olympique Lyonnais",null,null,0,"2027-01-03T14:00:00Z"],["RC Lens","Paris Saint-Germain",null,null,0,"2027-01-03T19:45:00Z"],["LOSC Lille","RC Strasbourg",null,null,0,"2027-01-03T16:15:00Z"],["FC Lorient","AJ Auxerre",null,null,0,"2027-01-02T20:00:00Z"],["AS Monaco","OGC Nice",null,null,0,"2027-01-02T20:00:00Z"],["Paris FC","Le Havre AC",null,null,0,"2027-01-02T20:00:00Z"],["Toulouse FC","Angers SCO",null,null,0,"2027-01-02T20:00:00Z"],["ES Troyes AC","Stade Rennais",null,null,0,"2027-01-02T20:00:00Z"]],"16":[["Angers SCO","Paris Saint-Germain",null,null,0,"2027-01-16T16:15:00Z"],["AJ Auxerre","ES Troyes AC",null,null,0,"2027-01-16T19:45:00Z"],["Olympique Lyonnais","FC Lorient",null,null,0,"2027-01-17T19:45:00Z"],["Olympique de Marseille","LOSC Lille",null,null,0,"2027-01-15T19:45:00Z"],["AS Monaco","Stade Brestois",null,null,0,"2027-01-17T16:15:00Z"],["OGC Nice","Le Havre AC",null,null,0,"2027-01-16T19:45:00Z"],["Paris FC","Toulouse FC",null,null,0,"2027-01-17T14:00:00Z"],["Stade Rennais","RC Lens",null,null,0,"2027-01-16T19:45:00Z"],["RC Strasbourg","Le Mans FC",null,null,0,"2027-01-16T19:45:00Z"]],"17":[["Le Havre AC","Stade Rennais",null,null,0,"2027-01-24T14:00:00Z"],["Le Mans FC","Angers SCO",null,null,0,"2027-01-23T19:45:00Z"],["RC Lens","Stade Brestois",null,null,0,"2027-01-23T19:45:00Z"],["LOSC Lille","Paris FC",null,null,0,"2027-01-23T16:15:00Z"],["FC Lorient","Olympique de Marseille",null,null,0,"2027-01-24T16:15:00Z"],["Paris Saint-Germain","AJ Auxerre",null,null,0,"2027-01-23T19:45:00Z"],["RC Strasbourg","Olympique Lyonnais",null,null,0,"2027-01-24T19:45:00Z"],["Toulouse FC","OGC Nice",null,null,0,"2027-01-23T19:45:00Z"],["ES Troyes AC","AS Monaco",null,null,0,"2027-01-22T19:45:00Z"]],"18":[["Angers SCO","Le Havre AC",null,null,0,"2027-01-30T19:45:00Z"],["Stade Brestois","RC Strasbourg",null,null,0,"2027-01-29T19:45:00Z"],["Le Mans FC","OGC Nice",null,null,0,"2027-01-30T19:45:00Z"],["Olympique Lyonnais","LOSC Lille",null,null,0,"2027-01-31T19:45:00Z"],["Olympique de Marseille","ES Troyes AC",null,null,0,"2027-01-31T16:15:00Z"],["AS Monaco","Paris Saint-Germain",null,null,0,"2027-01-30T16:15:00Z"],["Paris FC","AJ Auxerre",null,null,0,"2027-01-30T19:45:00Z"],["Stade Rennais","FC Lorient",null,null,0,"2027-01-31T14:00:00Z"],["Toulouse FC","RC Lens",null,null,0,"2027-01-30T19:45:00Z"]],"19":[["AJ Auxerre","AS Monaco",null,null,0,null],["Le Havre AC","Toulouse FC",null,null,0,null],["RC Lens","Angers SCO",null,null,0,null],["FC Lorient","Le Mans FC",null,null,0,null],["OGC Nice","Stade Brestois",null,null,0,null],["Paris Saint-Germain","Olympique de Marseille",null,null,0,"2027-02-07T19:45:00Z"],["Stade Rennais","Olympique Lyonnais",null,null,0,null],["RC Strasbourg","Paris FC",null,null,0,null],["ES Troyes AC","LOSC Lille",null,null,0,null]],"20":[["AJ Auxerre","RC Strasbourg",null,null,0,null],["Stade Brestois","Stade Rennais",null,null,0,null],["Le Mans FC","Paris Saint-Germain",null,null,0,null],["LOSC Lille","OGC Nice",null,null,0,null],["FC Lorient","Le Havre AC",null,null,0,null],["Olympique Lyonnais","RC Lens",null,null,0,null],["Olympique de Marseille","Angers SCO",null,null,0,null],["Paris FC","ES Troyes AC",null,null,0,null],["Toulouse FC","AS Monaco",null,null,0,null]],"21":[["Angers SCO","Paris FC",null,null,0,null],["Le Havre AC","Olympique Lyonnais",null,null,0,null],["RC Lens","ES Troyes AC",null,null,0,null],["LOSC Lille","FC Lorient",null,null,0,null],["AS Monaco","Le Mans FC",null,null,0,null],["OGC Nice","AJ Auxerre",null,null,0,null],["Paris Saint-Germain","Stade Brestois",null,null,0,null],["Stade Rennais","Toulouse FC",null,null,0,null],["RC Strasbourg","Olympique de Marseille",null,null,0,null]],"22":[["AJ Auxerre","LOSC Lille",null,null,0,null],["Stade Brestois","AS Monaco",null,null,0,null],["Le Mans FC","Paris FC",null,null,0,null],["FC Lorient","Angers SCO",null,null,0,null],["Olympique Lyonnais","Toulouse FC",null,null,0,null],["Olympique de Marseille","Stade Rennais",null,null,0,null],["Paris Saint-Germain","RC Lens",null,null,0,"2027-02-28T19:45:00Z"],["RC Strasbourg","Le Havre AC",null,null,0,null],["ES Troyes AC","OGC Nice",null,null,0,null]],"23":[["Angers SCO","AJ Auxerre",null,null,0,null],["Le Havre AC","OGC Nice",null,null,0,null],["RC Lens","RC Strasbourg",null,null,0,null],["LOSC Lille","Olympique de Marseille",null,null,0,null],["AS Monaco","Olympique Lyonnais",null,null,0,null],["Paris FC","Stade Brestois",null,null,0,null],["Stade Rennais","Paris Saint-Germain",null,null,0,null],["Toulouse FC","Le Mans FC",null,null,0,null],["ES Troyes AC","FC Lorient",null,null,0,null]],"24":[["AJ Auxerre","Paris Saint-Germain",null,null,0,null],["Stade Brestois","LOSC Lille",null,null,0,null],["Le Havre AC","RC Lens",null,null,0,null],["Le Mans FC","Stade Rennais",null,null,0,null],["Olympique Lyonnais","ES Troyes AC",null,null,0,null],["Olympique de Marseille","AS Monaco",null,null,0,null],["OGC Nice","Toulouse FC",null,null,0,null],["Paris FC","FC Lorient",null,null,0,null],["RC Strasbourg","Angers SCO",null,null,0,null]],"25":[["Angers SCO","Le Mans FC",null,null,0,null],["RC Lens","LOSC Lille",null,null,0,null],["FC Lorient","OGC Nice",null,null,0,null],["Olympique de Marseille","Olympique Lyonnais",null,null,0,"2027-03-21T19:45:00Z"],["AS Monaco","Le Havre AC",null,null,0,null],["Paris Saint-Germain","RC Strasbourg",null,null,0,null],["Stade Rennais","Paris FC",null,null,0,null],["Toulouse FC","Stade Brestois",null,null,0,null],["ES Troyes AC","AJ Auxerre",null,null,0,null]],"26":[["Angers SCO","AS Monaco",null,null,0,null],["AJ Auxerre","RC Lens",null,null,0,null],["Stade Brestois","FC Lorient",null,null,0,null],["Le Havre AC","ES Troyes AC",null,null,0,null],["Le Mans FC","Olympique de Marseille",null,null,0,null],["LOSC Lille","Stade Rennais",null,null,0,null],["OGC Nice","Olympique Lyonnais",null,null,0,null],["Paris FC","Paris Saint-Germain",null,null,0,null],["RC Strasbourg","Toulouse FC",null,null,0,null]],"27":[["Le Mans FC","AJ Auxerre",null,null,0,null],["LOSC Lille","Toulouse FC",null,null,0,null],["FC Lorient","RC Lens",null,null,0,null],["Olympique Lyonnais","RC Strasbourg",null,null,0,null],["Olympique de Marseille","Stade Brestois",null,null,0,null],["AS Monaco","Stade Rennais",null,null,0,null],["OGC Nice","Paris FC",null,null,0,null],["Paris Saint-Germain","Le Havre AC",null,null,0,null],["ES Troyes AC","Angers SCO",null,null,0,null]],"28":[["Angers SCO","Olympique Lyonnais",null,null,0,null],["AJ Auxerre","FC Lorient",null,null,0,null],["Stade Brestois","Le Mans FC",null,null,0,null],["Le Havre AC","Olympique de Marseille",null,null,0,null],["RC Lens","OGC Nice",null,null,0,null],["AS Monaco","RC Strasbourg",null,null,0,null],["Paris Saint-Germain","LOSC Lille",null,null,0,null],["Stade Rennais","ES Troyes AC",null,null,0,null],["Toulouse FC","Paris FC",null,null,0,null]],"29":[["Le Mans FC","Le Havre AC",null,null,0,null],["LOSC Lille","AS Monaco",null,null,0,null],["FC Lorient","Paris Saint-Germain",null,null,0,null],["Olympique Lyonnais","Stade Brestois",null,null,0,null],["Olympique de Marseille","AJ Auxerre",null,null,0,null],["OGC Nice","Angers SCO",null,null,0,null],["Paris FC","RC Lens",null,null,0,null],["RC Strasbourg","Stade Rennais",null,null,0,null],["ES Troyes AC","Toulouse FC",null,null,0,null]],"30":[["AJ Auxerre","Olympique Lyonnais",null,null,0,null],["Le Havre AC","Paris FC",null,null,0,null],["RC Lens","Le Mans FC",null,null,0,null],["AS Monaco","FC Lorient",null,null,0,null],["Paris Saint-Germain","Angers SCO",null,null,0,null],["Stade Rennais","OGC Nice",null,null,0,null],["RC Strasbourg","LOSC Lille",null,null,0,null],["Toulouse FC","Olympique de Marseille",null,null,0,null],["ES Troyes AC","Stade Brestois",null,null,0,null]],"31":[["Angers SCO","Toulouse FC",null,null,0,null],["Stade Brestois","AJ Auxerre",null,null,0,null],["Le Mans FC","ES Troyes AC",null,null,0,null],["RC Lens","AS Monaco",null,null,0,null],["FC Lorient","RC Strasbourg",null,null,0,null],["Olympique Lyonnais","Paris Saint-Germain",null,null,0,"2027-05-09T18:45:00Z"],["OGC Nice","Olympique de Marseille",null,null,0,null],["Paris FC","LOSC Lille",null,null,0,null],["Stade Rennais","Le Havre AC",null,null,0,null]],"32":[["AJ Auxerre","Stade Rennais",null,null,0,null],["Stade Brestois","Le Havre AC",null,null,0,null],["LOSC Lille","Angers SCO",null,null,0,null],["Olympique Lyonnais","Le Mans FC",null,null,0,null],["Olympique de Marseille","RC Lens",null,null,0,null],["AS Monaco","Paris FC",null,null,0,null],["Paris Saint-Germain","OGC Nice",null,null,0,null],["RC Strasbourg","ES Troyes AC",null,null,0,null],["Toulouse FC","FC Lorient",null,null,0,null]],"33":[["Angers SCO","Stade Brestois",null,null,0,null],["Le Havre AC","LOSC Lille",null,null,0,null],["Le Mans FC","RC Strasbourg",null,null,0,null],["RC Lens","Stade Rennais",null,null,0,null],["FC Lorient","Olympique Lyonnais",null,null,0,null],["OGC Nice","AS Monaco",null,null,0,null],["Paris FC","Olympique de Marseille",null,null,0,null],["Toulouse FC","AJ Auxerre",null,null,0,null],["ES Troyes AC","Paris Saint-Germain",null,null,0,null]],"34":[["AJ Auxerre","Le Havre AC",null,null,0,null],["Stade Brestois","RC Lens",null,null,0,null],["LOSC Lille","Le Mans FC",null,null,0,null],["Olympique Lyonnais","Paris FC",null,null,0,null],["Olympique de Marseille","FC Lorient",null,null,0,null],["AS Monaco","ES Troyes AC",null,null,0,null],["Paris Saint-Germain","Toulouse FC",null,null,0,null],["Stade Rennais","Angers SCO",null,null,0,null],["RC Strasbourg","OGC Nice",null,null,0,null]]},"UPD":"2026-11-01T06:47:48","ABS":{"Angers SCO":"aucun absent confirmé (liste officielle L1 : B. Diatta, poste non confirmé, non compté ; Zinga incertain ; Lefort et O. Camara de retour)","AJ Auxerre":"Labeau-Lascary (att., quadriceps, ~1 mois), Okoh et S. Fofana (déf.) absents ; Dioussé aussi (poste non confirmé, non compté) ; Siwe et Senaya incertains ; Mandengue de retour","Stade Brestois":"Chardonnet (capitaine, déf., mollet) et Le Guen (déf., péroné) absents ; Sa. Diop (cheville, poste non confirmé, non compté) ; Baldé de retour ; Versini cité absent par ligue1.com mais sur le banc selon Le Télégramme","Le Havre AC":"Mpasi (gardien n°1, tendon d'Achille), Pembélé (genou), Jelert (cuisse) et Zagadou (déf.) absents ; Mambimbi (ailier remplaçant) non compté ; Seko de retour","Le Mans FC":"Bourabaa (att., 3 buts, 2e meilleur buteur) absent ; Colas, Voyer et Torrente incertains","RC Lens":"Sima (att.), Nawrocki et Ganiou (déf., genou, opéré) absents ; Gradit incertain (de retour à l'entraînement) ; Baidoo et Udol de retour","LOSC Lille":"Ueda et Igamane (att.) et T. Santos (déf.) absents ; Sahraoui incertain ; Özer et Alexsandro de retour","FC Lorient":"Katseris (déf., adducteurs, longue absence) absent ; Semedo, M. Bamba et Fadiga incertains ; Mbamba et I. Jensen de retour","Olympique Lyonnais":"K. Nakamura (att., suspendu), Openda (att., péroné, jusqu'à la trêve de novembre) et Tagliafico (déf.) absents ; Ouédraogo (ligaments croisés, poste non confirmé, non compté) ; Sulc et Kango incertains","Olympique de Marseille":"Cornelius (déf., hanche, absent jusqu'à la trêve hivernale) absent ; Koum aussi (poste non confirmé, non compté) ; Moumbagna incertain ; Højbjerg de retour","AS Monaco":"Dier (déf., cuisse) et Idumbo (att., dos) absents ; Benzahra (poste non confirmé, non compté) ; Brunner et Soubeir de retour","OGC Nice":"Abdi (quadriceps), Bombito (tibia) et A. Mendy (ligaments croisés) absents ; Abergel, Abdul Samed et Everton aussi absents (postes non comptés)","Paris FC":"Ikoné (att.) absent ; Sangui aussi (poste non confirmé, non compté)","Paris Saint-Germain":"Dembélé (cuisse) et Kvaratskhelia (ligaments croisés, plusieurs mois) ; Nuno Mendes et Marquinhos (cuisse) absents ; Mayulu de retour ; match reporté au lundi 26/10 20h30","Stade Rennais":"aucun absent (liste officielle L1) ; Lepaul (att., cheville) incertain","RC Strasbourg":"Panichelli et Nanasi (att.) et I. Doukouré (déf.) absents ; F. Baldé et Washington aussi (postes non confirmés, non comptés) ; Godo et Kellyman de retour","Toulouse FC":"aucun absent ; Oppong et A. Francis incertains ; Azizi de retour","ES Troyes AC":"Titi, I. Boura et Ouzenadji (déf.) absents longue durée ; Y. Koné aussi (poste non confirmé, non compté) ; Gozzi incertain"},"STAKES":52.3,"SQUADS":{"Paris Saint-Germain":[["Matvey Safonov","G",30.0,810],["Lucas Chevalier","G",22.0,0],["Alessandro Longoni","G",0.3,0],["Willian Pacho","DC",80.0,540],["Ilya Zabarnyi","DC",40.0,360],["Marquinhos","DC",28.0,450],["Lucas Beraldo","DC",22.0,244],["Nuno Mendes","DL",80.0,217],["Lucas Hernández","DL",18.0,411],["Lucas Digne","DL",6.0,0],["Achraf Hakimi","DL",80.0,569],["Vitinha","MI",140.0,586],["João Neves","MI",140.0,508],["Warren Zaïre-Emery","MI",80.0,658],["Senny Mayulu","MI",40.0,133],["Fabián Ruiz","MI",30.0,416],["Dro Fernández","MI",15.0,241],["Khvicha Kvaratskhelia","AT",140.0,377],["Mika Godts","AT",40.0,281],["Quentin Ndjantou","AT",6.0,28],["Désiré Doué","AT",120.0,436],["Maghnes Akliouche","AT",50.0,550],["Ousmane Dembélé","BU",100.0,238],["Ferran Torres","BU",55.0,587]],"AS Monaco":[["Philipp Köhn","G",3.0,0],["Lukas Hradecky","G",1.5,756],["Jules Stawiecki","G",0.15,0],["Christian Mawissa","DC",15.0,27],["Sadibou Sané","DC",12.0,756],["Mohammed Salisu","DC",10.0,67],["Eric Dier","DC",4.0,576],["Samuel Nibombe","DC",1.0,0],["Nazinho","DL",10.0,746],["Vanderson","DL",18.0,702],["Jordan Teze","DL",15.0,143],["Denis Zakaria","MI",25.0,634],["Lamine Camara","MI",55.0,756],["Mamadou Coulibaly","MI",20.0,256],["Pape Cabral","MI",5.0,14],["Edan Diop","MI",3.0,239],["Anis Soubeir","MI",2.0,81],["Aleksandr Golovin","MI",18.0,744],["Stanis Idumbo","MI",10.0,357],["Mathys Detourbet","AT",20.0,208],["Ansu Fati","AT",15.0,96],["Takumi Minamino","AT",10.0,52],["Folarin Balogun","BU",50.0,71],["Matthis Abline","BU",25.0,401],["Mika Biereth","BU",15.0,57],["Paris Brunner","BU",15.0,517]],"RC Strasbourg":[["Filip Jørgensen","G",15.0,810],["Milosz Piekutowski","G",0.6,0],["Karim Coulibaly","DC",28.0,388],["Ismaël Doukouré","DC",20.0,316],["Lucas Høgsberg","DC",18.0,288],["Jeyland Mitchell","DC",8.0,640],["Hermann Malonga","DC",0.0,0],["Oso","DL",10.0,630],["Mateo Del Blanco","DL",5.0,12],["Genesis Antwi","DL",3.0,0],["Dário Essugo","MI",15.0,381],["Diogo Sousa","MI",10.0,541],["Maxi Oyedele","MI",5.0,0],["Samir El Mourabet","MI",22.0,0],["Pape Demba Diop","MI",9.0,581],["Tyrese Noubissie","MI",1.0,0],["Giovanni Reyna","MI",7.0,575],["Omari Kellyman","MI",4.0,0],["Benjamin Brantlind","MI",2.0,0],["Martial Godo","AT",22.0,0],["Sebastian Nanasi","AT",15.0,412],["Fábio Baldé","AT",5.0,0],["Gessime Yassine","AT",20.0,0],["Samuel Amo-Ameyaw","AT",8.0,244],["Yaya Diémé","AT",0.3,55],["Joaquín Panichelli","BU",35.0,0],["Conrad Harder","BU",17.0,0],["Jacobo Ortega","BU",7.0,368],["Deivid Washington","BU",5.0,0],["Sékou Mara","BU",4.0,76]],"Olympique Lyonnais":[["Dominik Greif","G",9.0,585],["Rémy Descamps","G",1.5,180],["Justin Bengui","G",0.25,0],["Lassine Diarra","G",0.0,0],["Moussa Niakhaté","DC",15.0,585],["Ruben Kluivert","DC",8.0,117],["Felix Bacher","DC",6.0,686],["Noham Kamara","DC",3.0,0],["Clinton Mata","DC",2.5,180],["Abner","DL",10.0,586],["Nicolás Tagliafico","DL",4.0,80],["Mohamed Ouédraogo","DL",2.0,90],["Zachary Athekame","DL",15.0,765],["Steeve Kango","DL",1.0,0],["Tyler Morton","MI",30.0,533],["Paul Akouokou","MI",0.4,0],["Mads Bidstrup","MI",15.0,0],["Khalis Merah","MI",15.0,146],["Corentin Tolisso","MI",10.0,621],["Pavel Sulc","MI",20.0,417],["Noah Nartey","MI",15.0,217],["Keito Nakamura","AT",12.0,110],["Rémi Himbert","AT",8.0,0],["Julien Duranville","AT",6.0,0],["Ernest Nuamah","AT",12.0,0],["Kaïl Boudache","AT",8.0,297],["Loïs Openda","BU",25.0,513],["Alejandro Gomes Rodríguez","BU",0.8,0]],"Stade Rennais":[["Brice Samba","G",7.0,630],["Nicolas Lemaître","G",0.5,180],["Kilian Belazzoug","G",0.0,0],["Charlie Cresswell","DC",25.0,810],["Abdelhamid Ait Boudlal","DC",20.0,450],["Anthony Rouault","DC",12.0,540],["Gonçalo Oliveira","DC",3.0,0],["Quentin Merlin","DL",15.0,250],["Mahamadou Nagida","DL",10.0,510],["Przemyslaw Frankowski","DL",6.0,594],["Bryan Reynolds","DL",4.0,266],["Mahdi Camara","MI",12.0,541],["Djaoui Cissé","MI",10.0,119],["Valentin Rongier","MI",8.0,727],["Adrien Thomasson","MI",4.0,556],["Ludovic Blas","AT",10.0,287],["Sebastian Szymański","MI",15.0,485],["Ayanda Sishuba","MI",0.6,0],["Henrick Do Marcolino","MI",0.3,12],["Issa Soumaré","AT",8.0,393],["Mousa Al-Tamari","AT",10.0,533],["Arnaud Nordin","AT",4.0,93],["Elías Legendre Quiñónez","AT",1.0,0],["Estéban Lepaul","BU",45.0,543],["Eliezer Mayenda","BU",18.0,160],["Boulaye Dia","BU",5.0,230]],"LOSC Lille":[["Berke Özer","G",12.0,720],["Orlando Gill","G",7.5,90],["Nathan Ngoy","DC",25.0,720],["Alexsandro","DC",15.0,720],["Isaac Cossier","DC",2.5,41],["Tanguy Nianzou","DC",1.2,246],["Romain Perraud","DL",7.0,686],["Calvin Verdonk","DL",2.5,134],["Tiago Santos","DL",10.0,472],["Loun Srdanovic","DL",3.0,0],["Maxima Goffi","DL",1.0,269],["Ngal'ayel Mukau","MI",15.0,564],["Nabil Bentaleb","MI",4.5,703],["Benjamin André","MI",3.0,464],["Maurits Kjærgaard","MI",8.0,168],["Hákon Arnar Haraldsson","MI",30.0,664],["Başar Önal","AT",10.0,211],["Osame Sahraoui","AT",7.0,115],["Soriba Diaoune","AT",4.0,178],["Tiago Morais","AT",1.2,0],["Dilane Bakwa","AT",28.0,345],["Ethan Mbappé","AT",12.0,494],["Gaëtan Perrin","AT",5.0,133],["Ayase Ueda","BU",20.0,227],["Hamza Igamane","BU",18.0,0],["Olivier Giroud","BU",0.9,419]],"RC Lens":[["Robin Risser","G",30.0,810],["Mathieu Gorgelin","G",0.2,0],["Régis Gurtner","G",0.1,0],["Ilan Jourdren","G",0.0,0],["Ismaëlo Ganiou","DC",30.0,433],["Samson Baidoo","DC",25.0,247],["Jean-Clair Todibo","DC",22.0,263],["Kyllian Antonio","DC",10.0,507],["Nidal Celik","DC",7.0,0],["Souleymane Sagnan","DC",3.0,246],["Maik Nawrocki","DC",2.5,152],["Jonathan Gradit","DC",2.5,153],["Matthieu Udol","DL",8.0,648],["Jhoanner Chávez","DL",2.0,0],["Saud Abdulhamid","DL",9.0,255],["Ruben Aguilar","DL",2.5,620],["Yacine Titraoui","MI",9.0,401],["Andrija Bulatovic","MI",8.0,274],["Michaël Cuisance","MI",6.0,549],["Amadou Haidara","MI",5.0,407],["Mezian Mesloub","MI",8.0,127],["Thorgan Hazard","MI",2.0,0],["Abdallah Sima","AT",7.0,384],["Michal Skoras","AT",6.0,368],["Junior Kadile","AT",5.0,123],["Florian Thauvin","AT",5.0,787],["Franjo Ivanović","BU",15.0,0],["Odsonne Édouard","BU",12.0,252],["Florian Sotoca","BU",1.2,327]],"Paris FC":[["Obed Nkambadio","G",5.0,90],["Kevin Trapp","G",1.8,666],["Diego Coppola","DC",20.0,756],["Moustapha Mbow","DC",10.0,275],["Otávio","DC",10.0,334],["Samir Chergui","DC",4.0,458],["Yoan Koré","DC",0.6,0],["Nhoa Sangui","DL",10.0,0],["Emmanuel Mbemba","DL",2.0,49],["Thibault De Smet","DL",1.2,45],["Adama Camara","DL",4.0,672],["Hamari Traoré","DL",1.5,446],["Maxime Lopez","MI",5.0,689],["Pierre Lees-Melou","MI",4.5,744],["Patrick Zabi","MI",20.0,81],["Rudy Matondo","MI",20.0,208],["Vincent Marchetti","MI",1.5,11],["Pablo Pagis","MI",20.0,627],["Moses Simon","AT",7.0,201],["Ilan Kebbal","AT",12.0,513],["Luca Koleosho","AT",10.0,0],["Jonathan Ikoné","AT",4.0,25],["Lassine Sinayoko","BU",15.0,738],["Jean-Philippe Krasso","BU",3.5,4],["Omar Sissoko","BU",1.0,24]],"Olympique de Marseille":[["Jeffrey de Lange","G",2.5,720],["Théo Vermot","G",0.3,0],["Jelle Van Neck","G",0.0,0],["Nayef Aguerd","DC",15.0,508],["CJ Egan-Riley","DC",9.0,705],["Bamo Meïté","DC",7.0,0],["Derek Cornelius","DC",2.5,26],["Emerson","DL",9.0,714],["Ulisses Garcia","DL",3.0,0],["Alexi Koum","DL",0.35,0],["Timothy Weah","DL",20.0,617],["Kelyann Bezahaf","DL",1.0,96],["Pierre-Emile Højbjerg","MI",15.0,534],["Tochukwu Nnadi","MI",4.5,231],["Geoffrey Kondogbia","MI",2.5,204],["Nouhoum Kamissoko","MI",0.2,159],["Himad Abdelli","MI",5.0,634],["Angel Gomes","MI",10.0,476],["Igor Paixão","AT",35.0,547],["Tadjidine Mmadi","AT",1.0,20],["Keyliane Abdallah","AT",5.0,0],["Amine Harit","AT",5.0,0],["Amine Gouiri","BU",30.0,679],["Neal Maupay","BU",4.0,154],["Faris Moumbagna","BU",3.5,17]],"OGC Nice":[["Yehvann Diouf","G",7.0,810],["Teddy Boulhendi","G",0.3,0],["Martin Ponsot","G",0.0,0],["Antoine Mendy","DC",10.0,124],["Youssouf Ndayishimiye","DC",7.0,778],["Moïse Bombito","DC",7.0,0],["Alidu Seidu","DC",5.0,131],["Mohamed Abdelmonem","DC",2.5,692],["Niels Nkounkou","DL",2.6,583],["Ali Abdi","DL",2.0,47],["Jonathan Clauss","DL",4.0,747],["Hamza Koutoune","DL",0.3,58],["Xavier Mandza","MI",5.0,715],["Salis Abdul Samed","MI",4.0,0],["Everton","MI",2.0,111],["Laurent Abergel","MI",1.8,0],["Axel Witsel","MI",1.2,0],["Nassim Laarej","MI",0.0,0],["Hicham Boudaoui","MI",12.0,327],["Djibril Coulibaly","MI",8.0,558],["Morgan Sanson","MI",3.0,19],["Issiaga Camara","MI",0.25,0],["Mohamed Amoura","AT",20.0,534],["Sofiane Diop","AT",15.0,0],["Isak Jansson","AT",3.0,42],["Gauthier Hein","AT",5.0,30],["Nathan Ngoumou","AT",3.5,159],["Elye Wahi","BU",18.0,615],["Zoumana Diallo","BU",0.8,60]],"Toulouse FC":[["Guillaume Restes","G",18.0,611],["Mathys Niflore","G",2.5,109],["Mark McKenzie","DC",7.0,720],["Rasmus Nicolaisen","DC",5.0,445],["Seny Koumbassa","DC",5.0,287],["David Odogu","DC",5.0,0],["Christ Tapé","DL",3.5,714],["Rafik Messali","DL",1.5,472],["Ismaïl Diallo","DL",0.9,159],["Niko Sigur","MI",4.0,334],["Alexis Vossah","MI",15.0,298],["Cristian Cásseres Jr.","MI",12.0,720],["Mathis Amougou","MI",9.0,0],["Thomas Jørgensen","MI",7.5,702],["Abu Francis","MI",2.0,0],["Niklas Schmidt","MI",1.5,224],["Aymen Amaaouch","MI",0.0,0],["Aron Dønnum","AT",5.0,137],["Sion Oppong","AT",3.5,119],["Ilyas Azizi","AT",2.0,342],["Santiago Hidalgo","BU",6.0,0],["Casper Tengstedt","BU",3.5,406],["Jacen Russell-Rowe","BU",3.0,547],["Julián Vignolo","BU",1.5,185]],"FC Lorient":[["Yvon Mvogo","G",2.5,720],["Bingourou Kamara","G",0.6,0],["Benjamin Leroy","G",0.1,0],["Montassar Talbi","DC",8.0,720],["Formose Mendy","DC",1.5,0],["Nathaniel Adjei","DC",1.5,705],["Nosa Edward Obaretin","DC",1.5,0],["Isaak Touré","DC",1.2,267],["Arsène Kouassi","DL",15.0,720],["Srdjan Kuzmic","DL",3.0,2],["Alec Georgen","DL",1.5,96],["Dembo Sylla","DL",1.5,700],["Arthur Avom","MI",20.0,506],["Noah Cadiou","MI",7.0,714],["Noah Mbamba","MI",2.0,142],["Théo Le Bris","AT",5.0,273],["Panos Katseris","AT",3.0,177],["Jean-Victor Makengo","MI",6.0,686],["Gabin Bernardeau","MI",1.2,467],["Bandiougou Fadiga","MI",0.15,0],["Isak Jensen","AT",5.0,154],["Souleymane Faye","AT",3.0,133],["Ibrahima Baldé","BU",3.0,311],["Mohamed Bamba","BU",2.0,0],["Mamadou Koné","BU",2.0,365],["Aiyegun Tosin","BU",1.8,44]],"AJ Auxerre":[["Mamadou Diop","G",2.0,540],["Paul Nardi","G",1.2,270],["Louis Mezerette","G",0.0,0],["Clément Akpa","DC",9.0,796],["Sinaly Diomandé","DC",6.0,180],["Axel Tuanzebe","DC",5.0,540],["Bryan Okoh","DC",4.0,0],["Christ Makosso","DC",2.0,548],["Elikya Legros","DC",2.0,0],["Telli Siwe","DC",1.0,0],["Alvin Petit Dol","DC",0.0,0],["Fredrik Oppegård","DL",1.5,565],["Sékou Fofana","DL",1.2,0],["Ackah-Tidiane Zoukrou","DL",0.0,0],["Marvin Senaya","DL",3.0,27],["Lamine Sy","DL",2.5,765],["Arthur Piedfort","MI",5.0,779],["Pierre Ekwah","MI",2.0,52],["Assane Dioussé","MI",0.5,0],["Lamfia Dioubaté","MI",0.3,0],["Kévin Danois","MI",20.0,0],["Naouirou Ahamada","MI",3.0,609],["Tidiane Devernois","MI",0.3,0],["Romain Faivre","MI",4.0,572],["Danny Namaso","AT",6.0,722],["Aristide Zossou","AT",2.5,131],["Rayan Mandengue","AT",0.4,98],["Mamoudou Cissokho","AT",0.2,0],["Cameron Archer","BU",7.0,614],["Rémy Labeau Lascary","BU",4.0,256],["Ryan Rodin","BU",0.3,0],["Xiangxin Wei","BU",0.3,0]],"Stade Brestois":[["Egil Selvik","G",1.5,720],["Mathieu Patouillet","G",0.6,0],["Romain Cagnon","G",0.0,0],["Noé Poillion","G",0.0,0],["Raphaël Le Guen","DC",15.0,450],["Brendan Chardonnet","DC",4.0,0],["Gautier Lloris","DC",3.0,611],["Bradley Locko","DL",6.0,718],["Justin Bourgault","DL",1.0,2],["Kenny Lala","DL",1.5,652],["Luck Zogbé","DL",1.2,68],["Joris Chotard","MI",7.0,683],["Mamady Diambou","MI",1.5,131],["Hugo Magnetti","MI",6.0,537],["Joseph Nonge","MI",2.0,215],["Lucas Tousart","MI",2.0,406],["Kamory Doumbia","MI",12.0,648],["Pathé Mboup","AT",2.5,629],["Giovani Versini","AT",5.0,149],["Noah Edjouma","AT",5.0,54],["Djylian N'Guessan","BU",5.0,28],["Mama Baldé","BU",3.0,307],["Ludovic Ajorque","BU",3.0,712],["Mathis Lainé","BU",0.1,15]],"Angers SCO":[["Anthony Lopes","G",0.9,765],["Melvin Zinga","G",0.3,0],["Oumar Pona","G",0.2,0],["Ousmane Camara","DC",8.0,619],["Emmanuel Biumla","DC",2.5,128],["Jordan Lefort","DC",1.0,644],["Maël Gernigon","DC",0.3,118],["Joseph Kalulu","DL",2.0,603],["Lilian Raolisoa","DL",4.0,387],["Marius Louër","DL",2.0,48],["Carlens Arcus","DL",1.8,555],["Yassin Belkhdim","MI",7.0,0],["Branco van den Boomen","MI",2.5,64],["Haris Belkebla","MI",1.8,188],["Louis Mouton","MI",4.0,687],["Bané Diatta","MI",0.8,124],["Amine Sbaï","AT",6.0,735],["Anthony Bermont","AT",3.0,176],["Harouna Djibirin","AT",1.5,117],["Jim Allevinah","AT",1.0,72],["Prosper Peter","BU",12.0,381],["Amine El Ouazzani","BU",2.5,530],["Usman Simbakoli","BU",0.7,0]],"Le Havre AC":[["Arnaud Bodart","G",1.5,90],["Lionel Mpasi-Nzau","G",0.7,270],["Gauthier Gallon","G",0.6,451],["Ayumu Seko","DC",5.0,691],["Stephan Zagadou","DC",4.0,0],["Ahmed Touba","DC",2.5,720],["Lamine N'Diaye","DC",0.5,230],["Vincent Sasso","DC",0.15,161],["Enzo Koffi","DL",1.8,253],["Elias Jelert","DL",5.0,279],["Timothée Pembélé","DL",1.8,208],["Djibril Ouziad","DL",0.5,579],["Junior Mwanga","MI",6.0,536],["Mathéo Bodmer","MI",0.3,0],["Daren Mosengo","MI",0.3,0],["Rassoul Ndiaye","MI",8.0,494],["Simon Ebonog","MI",4.5,787],["Amir Richardson","MI",4.0,756],["Guy-Noël Zohouri","MI",0.1,0],["Kaito Mizuta","MI",0.6,0],["Ismaïl Bouneb","MI",0.4,0],["Felix Mambimbi","AT",0.5,0],["Rayan Fofana","BU",8.0,336],["Josh Maja","BU",4.5,519],["Sota Nakamura","BU",0.9,388],["Mbwana Samatta","BU",0.7,696],["Elysée Logbo","BU",0.2,0],["Joan Tincrès","BU",0.1,0]],"ES Troyes AC":[["Patrick Beach","G",2.0,630],["Hillel Konaté","G",0.4,180],["Zacharie Boucher","G",0.1,0],["Junior Diaz","DC",6.0,810],["Paolo Gozzi","DC",1.2,310],["Adrien Monfray","DC",0.2,0],["Ismaël Boura","DL",4.0,24],["Anis Ouzenadji","DL",2.5,450],["Yvann Titi","DL",2.5,55],["Lucas Maronnier","DL",0.8,587],["Noah Donkor","DL",0.3,177],["Alexandre Phliponeau","MI",0.35,0],["Roman Murcy","MI",0.05,0],["Mouhamed Diop","MI",4.0,738],["Antoine Mille","MI",2.5,713],["Iron Gomis","MI",1.4,0],["Hugo Picard","AT",3.0,338],["Dermane Karim","MI",2.5,624],["Idrissa Soukouna","MI",0.0,0],["Kandet Diawara","AT",1.2,380],["Merwan Ifnaoui","AT",2.5,506],["Amadou Diakité","AT",0.05,0],["Jérémy Le Douaron","BU",3.0,313],["Timothé Nkada","BU",2.0,292],["Christ Batola","BU",1.0,12],["Renaud Ripart","BU",0.35,546],["Yacouba Koné","BU",0.3,29],["Ibrahim Traoré","BU",0.05,0]],"Le Mans FC":[["Nicolas Kocik","G",1.5,621],["Ewan Hatfout","G",0.3,189],["Augustin Delbecque","G",0.0,0],["Noa Boissé","DC",3.0,545],["Raúl Torrente","DC",2.5,254],["Théo Eyoum","DC",1.2,180],["Harold Voyer","DC",0.9,0],["Samuel Yohou","DC",0.2,556],["Lucas Calodat","DL",3.0,547],["Yasser Larouci","DL",1.5,241],["João Almeida","DL",0.4,0],["Lucas Buades","DL",1.5,426],["Rayan Bamba","DL",1.5,0],["Djibril Sidibé","DL",1.0,0],["Lucas Bretelle","MI",1.2,584],["Alexandre Lauray","MI",0.8,481],["Adil Bourabaa","MI",3.5,398],["Jean Vercruysse","MI",0.7,441],["Edwin Quarshie","MI",0.5,0],["Daouda Traoré","MI",0.4,90],["Martin Rossignol","MI",0.4,0],["Erwan Colas","AT",0.6,27],["Billal Brahimi","AT",1.0,0],["Habib Diallo","BU",3.0,295],["Louis Mafouta","BU",1.0,749],["Dame Gueye","BU",0.8,475],["Antoine Rabillard","BU",0.7,308],["William Harhouz","BU",0.4,52],["Enzo Vagner","BU",0.0,0]]},"IMP":{"B":97.6,"CAP":40,"GKFLOOR":15,"MINREG":150}};
+const LIVE_URL = 'https://coxewagen.github.io/predicteur-ligue1/index.html';
+const MAXG = 10;
+const LIVE_SCORES_URL = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard';
+const ESPN_TEAM_MAP = {
+  'AJ Auxerre':'AJ Auxerre','AS Monaco':'AS Monaco','Angers':'Angers SCO','Brest':'Stade Brestois',
+  'Le Havre AC':'Le Havre AC','Le Mans':'Le Mans FC','Lens':'RC Lens','Lille':'LOSC Lille',
+  'Lorient':'FC Lorient','Lyon':'Olympique Lyonnais','Marseille':'Olympique de Marseille',
+  'Nice':'OGC Nice','Paris FC':'Paris FC','Paris Saint-Germain':'Paris Saint-Germain',
+  'Stade Rennais':'Stade Rennais','Strasbourg':'RC Strasbourg','Toulouse':'Toulouse FC','Troyes':'ES Troyes AC'
+};
+let LOGOS={}; try{ LOGOS=JSON.parse(localStorage.getItem('l1elo_logos')||'{}')||{}; }catch(e){ LOGOS={}; }
+const ODDS_URL='https://api.the-odds-api.com/v4/sports/soccer_france_ligue_one/odds/?regions=fr&markets=h2h&oddsFormat=decimal&bookmakers=winamax_fr&apiKey=';
+const DEFAULT_ODDS_KEY='';
+let ODDS={}, ODDS_AT=0, ODDS_KEY=DEFAULT_ODDS_KEY;
+try{ const o=JSON.parse(localStorage.getItem('l1elo_odds')||'null'); if(o){ ODDS=o.odds||{}; ODDS_AT=o.at||0; } ODDS_KEY=localStorage.getItem('l1elo_oddskey')||DEFAULT_ODDS_KEY; }catch(e){}
+let BETODDS={}; try{ BETODDS=JSON.parse(localStorage.getItem('l1elo_betodds')||'{}')||{}; }catch(e){}
+const NAME_KEYS=[['saint-germain','Paris Saint-Germain'],['saint germain','Paris Saint-Germain'],['psg','Paris Saint-Germain'],['paris fc','Paris FC'],['auxerre','AJ Auxerre'],['monaco','AS Monaco'],['angers','Angers SCO'],['troyes','ES Troyes AC'],['lorient','FC Lorient'],['havre','Le Havre AC'],['le mans','Le Mans FC'],['lens','RC Lens'],['lille','LOSC Lille'],['nice','OGC Nice'],['lyon','Olympique Lyonnais'],['marseille','Olympique de Marseille'],['strasbourg','RC Strasbourg'],['rennes','Stade Rennais'],['rennais','Stade Rennais'],['brest','Stade Brestois'],['toulouse','Toulouse FC'],['nantes','FC Nantes'],['metz','FC Metz']];
+function canonName(n){ const s=String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); for(const [k,v] of NAME_KEYS){ if(s.includes(k)) return v; } return null; }
+function oddsStatus(txt,err){ const el=document.getElementById('oddsMsg'); el.textContent='Cotes Winamax : '+txt; el.className=err?'err':''; }
+async function fetchOdds(force){
+  if(!ODDS_KEY){ document.getElementById('keyRow').hidden=false; oddsStatus('clé manquante',true); return; }
+  if(!force && Date.now()-ODDS_AT<3*3600*1000){ oddsStatus(Object.keys(ODDS).length+' matchs · '+new Date(ODDS_AT).toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'}),false); return; }
+  oddsStatus('chargement…',false);
+  let r;
+  try{ r=await fetch(ODDS_URL+encodeURIComponent(ODDS_KEY),{cache:'no-store'}); }
+  catch(e){ oddsStatus('connexion impossible',true); return; }
+  if(r.status===401){ document.getElementById('keyRow').hidden=false; oddsStatus('clé refusée',true); return; }
+  if(r.status===429){ oddsStatus('quota du mois épuisé',true); return; }
+  if(!r.ok){ oddsStatus('erreur '+r.status,true); return; }
+  let data; try{ data=await r.json(); }catch(e){ oddsStatus('réponse illisible',true); return; }
+  const out={}; let raw=0, noWmx=0, noName=[];
+  (Array.isArray(data)?data:[]).forEach(ev=>{
+    raw++;
+    const h=canonName(ev.home_team), a=canonName(ev.away_team); if(!h||!a){ noName.push(ev.home_team+' / '+ev.away_team); return; }
+    const bk=(ev.bookmakers||[]).find(b=>b.key==='winamax_fr'); if(!bk){ noWmx++; return; }
+    const mk=(bk.markets||[]).find(m=>m.key==='h2h'); if(!mk){ noWmx++; return; }
+    const o={}; mk.outcomes.forEach(x=>{ if(x.name==='Draw') o.d=x.price; else if(canonName(x.name)===h) o.h=x.price; else if(canonName(x.name)===a) o.a=x.price; });
+    if(o.h&&o.d&&o.a) out[h+'|'+a]=o;
+  });
+  ODDS=out; ODDS_AT=Date.now();
+  try{ localStorage.setItem('l1elo_odds',JSON.stringify({odds:ODDS,at:ODDS_AT})); }catch(e){}
+  const n=Object.keys(out).length;
+  if(n) oddsStatus(n+' matchs · '+new Date(ODDS_AT).toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'}),false);
+  else oddsStatus(raw+' matchs reçus, '+noWmx+' sans Winamax'+(noName.length?', noms inconnus : '+noName.join(', '):''),true);
+  renderM();
+}
+function oddsOf(m){ return ODDS[m.h+'|'+m.a]||null; }
+let BETCHOICE={}; try{ BETCHOICE=JSON.parse(localStorage.getItem('l1elo_betchoice')||'{}')||{}; }catch(e){}
+function frozen(id){ const v=BETODDS[id]; if(v==null) return null; return typeof v==='number'?{r:v,w:null}:v; }
+function oddsPair(m){ const o=oddsOf(m); if(!o) return null; const r=reco(m), cf=r.fav===0?o.h:o.a; return {r: r.type==='win'?cf:1/(1/cf+1/o.d), w: cf}; }
+function freeze(m){ const id=idOf(m), p=oddsPair(m); if(p) BETODDS[id]=p; }
+function saveBets(){ try{ localStorage.setItem('l1elo_bets',JSON.stringify(BETS)); localStorage.setItem('l1elo_betodds',JSON.stringify(BETODDS)); localStorage.setItem('l1elo_betchoice',JSON.stringify(BETCHOICE)); }catch(e){} }
+function selOf(m){
+  const r=reco(m), id=idOf(m);
+  if(BETCHOICE[id]==='win' && r.type!=='win'){ const p=m.pred, pf=r.fav===0?p.ph:p.pa; return {type:'win',fav:r.fav,label:'Victoire '+club(r.fav===0?m.h:m.a)[1],prob:pf,choice:true}; }
+  return r.type==='none'?Object.assign({},r,{label:r.dcLabel}):r;
+}
+function recoOdds(m,r){
+  const id=idOf(m), f=BETS[id]?frozen(id):null; if(f&&f.r) return f.r;
+  const o=oddsOf(m); if(!o||r.type==='none') return null;
+  const cf=r.fav===0?o.h:o.a;
+  return r.type==='win'? cf : 1/(1/cf+1/o.d);
+}
+let LIVE={}, liveSig='', liveTimer=null, userNav=false;
+
+const CLUBS = {
+  'Paris Saint-Germain':['PSG','Paris SG','#004170','#DA291C','#fff'],
+  'Olympique de Marseille':['OM','Marseille','#2FAEE0','#FFFFFF','#fff'],
+  'Olympique Lyonnais':['OL','Lyon','#1B3D8F','#DA0812','#fff'],
+  'AS Monaco':['ASM','Monaco','#E30613','#FFFFFF','#fff'],
+  'LOSC Lille':['LOSC','Lille','#E01E13','#1C2B5A','#fff'],
+  'RC Lens':['RCL','Lens','#FFD100','#E3001B','#fff'],
+  'Stade Rennais':['SRF','Rennes','#E13327','#111111','#fff'],
+  'OGC Nice':['OGC','Nice','#111111','#C8102E','#fff'],
+  'RC Strasbourg':['RCS','Strasbourg','#0090D7','#FFFFFF','#fff'],
+  'Toulouse FC':['TFC','Toulouse','#5B2D86','#FFFFFF','#fff'],
+  'Stade Brestois':['SB','Brest','#E20E17','#FFFFFF','#fff'],
+  'FC Lorient':['FCL','Lorient','#F58113','#111111','#fff'],
+  'AJ Auxerre':['AJA','Auxerre','#FFFFFF','#004A97','#fff'],
+  'Angers SCO':['SCO','Angers','#111111','#FFFFFF','#fff'],
+  'Le Havre AC':['HAC','Le Havre','#87CEEB','#00305E','#fff'],
+  'Paris FC':['PFC','Paris FC','#0C2340','#6CACE4','#fff'],
+  'ES Troyes AC':['EST','Troyes','#005BAC','#FFFFFF','#fff'],
+  'Le Mans FC':['LM','Le Mans','#E2001A','#FFD200','#fff']
+};
+function club(n){ return CLUBS[n] || [n.slice(0,3).toUpperCase(), n, '#445', '#889', '#fff']; }
+function shield(n){
+  if(LOGOS[n]) return '<img class="shield logo" src="'+LOGOS[n]+'" alt="'+n+'" loading="lazy" onerror="this.outerHTML=shieldSvg(this.alt)">';
+  return shieldSvg(n);
+}
+function shieldSvg(n){
+  const c=club(n), ab=c[0], fs=ab.length<=3?15:(ab.length===4?12:10);
+  return '<svg class="shield" viewBox="0 0 48 48" role="img" aria-label="'+n+'"><circle cx="24" cy="24" r="22" fill="'+c[2]+'"/>'
+    +'<path d="M8.444 39.556A22 22 0 0 0 39.556 8.444Z" fill="'+c[3]+'"/>'
+    +'<circle cx="24" cy="24" r="21" fill="none" stroke="#f2f2f0" stroke-width="1.6" opacity=".92"/>'
+    +'<circle cx="24" cy="24" r="22" fill="none" stroke="#10151c" stroke-width="2"/>'
+    +'<text x="24" y="'+(24+fs*0.36)+'" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-weight="800" font-size="'+fs+'" fill="'+c[4]+'" stroke="rgba(0,0,0,.85)" stroke-width="3.4" style="paint-order:stroke fill">'+ab+'</text></svg>';
+}
+function ic(id){ return '<svg class="ic" aria-hidden="true"><use href="#'+id+'"/></svg>'; }
+
+let DATA = { HIST: EMBED.HIST, UPD: EMBED.UPD, ABS: EMBED.ABS };
+try{
+  const s = JSON.parse(localStorage.getItem('l1elo_data') || 'null');
+  if(s && s.HIST && s.UPD && s.ABS && new Date(s.UPD) > new Date(DATA.UPD)) DATA = s;
+}catch(e){}
+let BETS = {};
+try{ BETS = JSON.parse(localStorage.getItem('l1elo_bets') || '{}') || {}; }catch(e){ BETS = {}; }
+let FILTER = false;
+try{ FILTER = localStorage.getItem('l1elo_filter') === '1'; }catch(e){}
+
+function pois(l,k){ let f=1; for(let i=2;i<=k;i++) f*=i; return Math.exp(-l)*Math.pow(l,k)/f; }
+function gmult(gd){ gd=Math.abs(gd); return gd<=1?1:(gd===2?1.5:(11+gd)/8); }
+
+const SLOTS={G:1,DC:2,DL:2,MI:3,AT:2,BU:1}, ADJ={G:[],DC:['DL'],DL:['DC'],MI:['AT'],AT:['MI','BU'],BU:['AT']};
+const SKIP=['incertain','de retour','aucun absent','reporte','mais sur le banc'];
+function nrm(s){ return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/-/g,' '); }
+function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function absentsOf(team){
+  const text=(DATA.ABS||{})[team]||'', sq=EMBED.SQUADS[team]||[], out=new Set();
+  text.split(';').forEach(seg=>{
+    const ns=nrm(seg); if(SKIP.some(k=>ns.includes(k))) return;
+    sq.forEach(p=>{
+      const parts=nrm(p[0]).split(' ').filter(Boolean);
+      let cands = parts.length>1 ? parts.slice(1).map((_,i)=>parts.slice(i+1).join(' ')).concat(parts.slice(1).filter(w=>w.length>=5)) : [parts[0]];
+      cands.push(nrm(p[0]));
+      for(const sur of cands){
+        const m=ns.match(new RegExp('(?:\\b([a-z]{1,2})\\. )?\\b'+esc(sur)+'\\b'));
+        if(m){ if(m[1] && !parts[0].startsWith(m[1])) continue; out.add(p[0]); break; }
+      }
+    });
+  });
+  return [...out];
+}
+function xiOf(sq){
+  const XI=[];
+  Object.keys(SLOTS).forEach(g=>{
+    const grp=sq.filter(p=>p[1]===g).slice();
+    if(g==='G') grp.sort((a,b)=>(b[3]-a[3])||(b[2]-a[2]));
+    else grp.sort((a,b)=>((b[3]>=EMBED.IMP.MINREG)-(a[3]>=EMBED.IMP.MINREG))||(b[2]-a[2]));
+    XI.push(...grp.slice(0,SLOTS[g]));
+  });
+  return XI;
+}
+const IMPACT_CACHE={};
+function impactOf(team){
+  const key=team+'|'+((DATA.ABS||{})[team]||''); if(IMPACT_CACHE[key]) return IMPACT_CACHE[key];
+  const sq=EMBED.SQUADS[team]; if(!sq){ return IMPACT_CACHE[key]={d:0,list:[]}; }
+  const absent=new Set(absentsOf(team)), full=xiOf(sq), V=full.reduce((s,p)=>s+p[2],0);
+  const fullN=new Set(full.map(p=>p[0]));
+  const bench=sq.filter(p=>!fullN.has(p[0])&&!absent.has(p[0])).sort((a,b)=>b[2]-a[2]);
+  let loss=0, gk=false; const list=[];
+  full.filter(p=>absent.has(p[0])).sort((a,b)=>b[2]-a[2]).forEach(p=>{
+    let best=null,bv=-1;
+    bench.filter(q=>q[1]===p[1]).forEach(q=>{ if(q[2]>bv){ bv=q[2]; best=q; } });
+    bench.filter(q=>ADJ[p[1]].includes(q[1])).forEach(q=>{ if(q[2]*0.8>bv){ bv=q[2]*0.8; best=q; } });
+    if(!best) bv=0;
+    if(best) bench.splice(bench.indexOf(best),1);
+    const l=Math.max(0,p[2]-bv); loss+=l; if(p[1]==='G'&&bv<0.5*p[2]) gk=true;
+    list.push({n:p[0],r:best?best[0]:'—',l});
+  });
+  let d=EMBED.IMP.B*Math.log(Math.max(V-loss,0.1)/V); if(gk) d=Math.min(d,-EMBED.IMP.GKFLOOR); d=Math.max(d,-EMBED.IMP.CAP);
+  return IMPACT_CACHE[key]={d,list,absent:[...absent]};
+}
+function predict(d){
+  const P=EMBED.P, x=d/100;
+  const lh=Math.exp(P[0]+P[1]*x), la=Math.exp(P[2]-P[3]*x), rho=EMBED.RHO;
+  const M=[]; let tot=0;
+  for(let i=0;i<=MAXG;i++){ M[i]=[]; for(let j=0;j<=MAXG;j++){
+    let p=pois(lh,i)*pois(la,j);
+    if(i===0&&j===0) p*=1-lh*la*rho; else if(i===0&&j===1) p*=1+lh*rho;
+    else if(i===1&&j===0) p*=1+la*rho; else if(i===1&&j===1) p*=1-rho;
+    p=Math.max(p,0); M[i][j]=p; tot+=p; } }
+  let ph=0,pd=0,pa=0;
+  for(let i=0;i<=MAXG;i++) for(let j=0;j<=MAXG;j++){ M[i][j]/=tot; if(i>j) ph+=M[i][j]; else if(i===j) pd+=M[i][j]; else pa+=M[i][j]; }
+  const out = ph>=pd && ph>=pa ? 0 : (pa>=pd ? 2 : 1);
+  let best=[0,0,-1];
+  for(let i=0;i<=6;i++) for(let j=0;j<=6;j++){
+    const o = i>j?0:(i===j?1:2);
+    if(o===out && M[i][j]>best[2]) best=[i,j,M[i][j]];
+  }
+  const all=[]; for(let i=0;i<=6;i++) for(let j=0;j<=6;j++) all.push([i,j,M[i][j]]);
+  all.sort((x,y)=>y[2]-x[2]);
+  return {ph,pd,pa,out,sh:best[0],sa:best[1],top:all.slice(0,5)};
+}
+
+function deadFlags(teams,pts,gp,nmd){
+  // équipe qui n'a mathématiquement plus rien à jouer (ni titre, ni Europe, ni maintien)
+  const n=teams.length, euroPos=n>=20?6:5, relPos=n>=20?18:16;
+  const order=teams.slice().sort((a,b)=>a<b?-1:(a>b?1:0));
+  order.sort((a,b)=>pts[b]-pts[a]);
+  const pe=pts[order[euroPos-1]], pr=pts[order[relPos-1]], pc=pts[order[0]];
+  const out={};
+  teams.forEach(t=>{
+    const rem=nmd-gp[t], mx=pts[t]+3*rem, i=order.indexOf(t);
+    const canEuro=(mx>=pe && i>=euroPos-1) || (i<euroPos-1 && pts[t]-3*rem<=pts[order[euroPos]]);
+    const danger=pts[t]<=pr+3*rem;
+    const title=mx>=pc && pts[t]-3*rem<=pts[order[1]];
+    out[t]=(canEuro||danger||title)?0:1;
+  });
+  return out;
+}
+function compute(){
+  const R={}; Object.keys(EMBED.START).forEach(t=>R[t]=EMBED.START[t]);
+  const hist={}, pre={};
+  const keys=Object.keys(DATA.HIST).map(Number).sort((a,b)=>a-b);
+  const tset={}; keys.forEach(k=>DATA.HIST[k].forEach(g=>{ tset[g[0]]=1; tset[g[1]]=1; }));
+  const teams=Object.keys(tset), nmd=2*(teams.length-1);
+  const pts={}, gp={}; teams.forEach(t=>{ pts[t]=0; gp[t]=0; });
+  keys.forEach(k=>{
+    hist[k]=[];
+    DATA.HIST[k].forEach(g=>{
+      const [h,a,hg,ag,played,ko]=g;
+      if(R[h]==null) R[h]=1400; if(R[a]==null) R[a]=1400;
+      const m={h,a,hg,ag,played:!!played&&hg!=null&&ag!=null,ko,md:k};
+      hist[k].push(m);
+      if(m.played){
+        const d=R[h]+EMBED.H-R[a];
+        const df=deadFlags(teams,pts,gp,nmd); m.dh=df[h]; m.da=df[a];
+        m.pred=predict(d+EMBED.STAKES*(m.da-m.dh)); m.eh=R[h]; m.ea=R[a];
+        const E=1/(1+Math.pow(10,-d/400)), S=hg>ag?1:(hg===ag?0.5:0);
+        const delta=EMBED.K*gmult(hg-ag)*(S-E);
+        pre[h]=pre[h]||[]; pre[a]=pre[a]||[];
+        pre[h].push(delta); pre[a].push(-delta);
+        R[h]+=delta; R[a]-=delta;
+        for(const [t,f,c] of [[h,hg,ag],[a,ag,hg]]){ gp[t]++; pts[t]+= f>c?3:(f===c?1:0); }
+      }
+    });
+  });
+  const dfNow=deadFlags(teams,pts,gp,nmd);
+  keys.forEach(k=>hist[k].forEach(m=>{ if(!m.played){ m.dh=dfNow[m.h]; m.da=dfNow[m.a];
+    m.ih=impactOf(m.h).d; m.ia=impactOf(m.a).d;
+    m.pred=predict(R[m.h]+EMBED.H-R[m.a]+EMBED.STAKES*(m.da-m.dh)+m.ih-m.ia); m.eh=R[m.h]; m.ea=R[m.a]; } }));
+  return {R,hist,keys,pre};
+}
+let S=compute(), md=null;
+function currentMd(){
+  for(const k of S.keys){ if(S.hist[k].some(m=>!m.played)) return k; }
+  return S.keys[S.keys.length-1];
+}
+const FMT_WHEN=new Intl.DateTimeFormat('fr-FR',{timeZone:'Europe/Paris',weekday:'short',day:'numeric',month:'short'});
+const FMT_H=new Intl.DateTimeFormat('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'});
+function when(ko){ if(!ko) return ''; const d=new Date(ko); return FMT_WHEN.format(d)+' · '+FMT_H.format(d); }
+function pc(v){ return (v*100).toFixed(1).replace('.',',')+'&nbsp;%'; }
+function favOf(p){ return p.ph>=p.pa?0:2; }
+function idOf(m){ return m.md+'_'+m.h+'_'+m.a; }
+
+function reco(m){
+  // Victoire si favori >= 60 % ; sinon « favori ou nul » si >= 70 % ; sinon trop serré.
+  // Cote mini = 1 / réussite réelle mesurée (plafonnée : victoire 72 %, double chance 71 % sous 75 %, 77 % au-dessus).
+  const p=m.pred, fav=favOf(p), pf=fav===0?p.ph:p.pa, team=club(fav===0?m.h:m.a)[1], dc=pf+p.pd;
+  if(pf>=0.60) return {type:'win',fav,label:'Victoire '+team,prob:pf,cote:1/Math.min(pf,0.72)};
+  if(dc>=0.70) return {type:'dc',fav,label:team+' ou nul',prob:dc,cote:1/(dc<0.75?Math.min(dc,0.71):Math.min(dc,0.77))};
+  return {type:'none',fav,label:'Trop serré',dcLabel:team+' ou nul',prob:dc,cote:1/dc};
+}
+function recoResult(r,o){ if(o===null) return null; return r.type==='win'? o===r.fav : o!==(r.fav===0?2:0); }
+function realProb(r){ if(r.type==='win') return r.prob<0.6?r.prob:Math.min(r.prob,0.72); if(r.type==='dc') return r.prob<0.75?Math.min(r.prob,0.71):Math.min(r.prob,0.77); return r.prob; }
+function selOdds(m,s){ const id=idOf(m), f=BETS[id]?frozen(id):null; const cur=oddsPair(m); const src=(f&&(s.type==='win'?f.w:f.r))?f:cur; if(!src) return null; return (s.type==='win'&&s.choice)?src.w:src.r; }
+function outcomeOf(m){ if(m.played) return m.hg>m.ag?0:(m.hg===m.ag?1:2); const lv=liveOf(m); if(lv&&lv.state==='post') return lv.home>lv.away?0:(lv.home===lv.away?1:2); return null; }
+let COMBO={cote:null};
+function stakeKey(){ return 'l1elo_stake_'+md; }
+function renderGain(){
+  const inp=document.getElementById('stakeIn'), v=parseFloat(String(inp.value).replace(',','.'))||0, out=document.getElementById('gainOut');
+  if(!v||!COMBO.cote){ out.innerHTML=''; return; }
+  const g=v*COMBO.cote, f=x=>x.toFixed(2).replace('.',',')+' €';
+  if(COMBO.lost) out.innerHTML='<span>Perdu <b class="no">−'+f(v)+'</b></span>';
+  else out.innerHTML='<span>Gain <b class="'+(COMBO.won?'yes':'')+'">'+f(g)+'</b></span><span>Bénéfice <b class="yes">+'+f(g-v)+'</b></span>';
+}
+function renderCombo(){
+  const el=document.getElementById('combo'); const games=(S.hist[md]||[]).filter(m=>BETS[idOf(m)]);
+  if(games.length<1){ el.hidden=true; return; }
+  el.hidden=false;
+  let p=1, c=1, cOk=true, done=0, won=0;
+  const rows=games.sort((x,y)=>String(x.ko||'').localeCompare(String(y.ko||''))).map(m=>{
+    const r=selOf(m), lab=r.label, rp=realProb(r), w=selOdds(m,r), res=recoResult(r,outcomeOf(m));
+    if(res===null) p*=rp; else if(!res) p=0; if(w) c*=w; else cOk=false; if(res!==null){ done++; if(res) won++; }
+    const mark=res===null?'':(res?' <span class="yes">✓</span>':' <span class="no">✗</span>');
+    return '<tr><td>'+lab+mark+'</td><td class="n">'+pc(rp)+'</td><td class="n">'+(w?w.toFixed(2).replace('.',','):'—')+'</td></tr>';
+  }).join('');
+  const lost=done>won, all=done===games.length;
+  const status=lost?'<span class="tag ko">'+ic('i-x')+'Perdu</span>':(all?'<span class="tag ok">'+ic('i-check')+'Gagné</span>':'');
+  let pAll=1; games.forEach(m=>{ pAll*=realProb(selOf(m)); }); const mini=1/pAll;
+  COMBO={cote:cOk?c:null,lost,all,won:all&&!lost};
+  document.getElementById('comboBody').innerHTML='<p class="lead">'+(games.length>1?'Combiné · '+games.length+' matchs':'Pari simple')+' '+status+'</p>'
+    +'<table class="rank"><thead><tr><th></th><th class="n">Réussite</th><th class="n">Cote</th></tr></thead><tbody>'+rows
+    +'<tr class="tot"><td>Total</td><td class="n"><b>'+pc(p)+'</b></td><td class="n"><b>'+(cOk?c.toFixed(2).replace('.',','):'—')+'</b></td></tr></tbody></table>'
+    +'<p>Cote mini <b>'+mini.toFixed(2).replace('.',',')+'</b>'+(cOk?' · <span class="wmx '+(c>=mini?'good':'bad')+'">Winamax '+c.toFixed(2).replace('.',',')+' '+(c>=mini?'✓':'✗')+'</span>':'')+'</p>';
+  const inp=document.getElementById('stakeIn');
+  if(inp.dataset.md!==String(md)){ inp.dataset.md=String(md); let s=''; try{ s=localStorage.getItem(stakeKey())||''; }catch(e){} inp.value=s; }
+  renderGain();
+}
+function recoHtml(m,o){
+  const r=reco(m), res=recoResult(r,o);
+  const mark=res===null?'':(res?' '+ic('i-check'):' '+ic('i-x'));
+  if(r.type==='none'){
+    const o=oddsOf(m), wo=o?1/(1/(r.fav===0?o.h:o.a)+1/o.d):null;
+    const w=wo?' <span class="wmx '+(wo>=r.cote?'good':'bad')+'">Winamax ≈'+wo.toFixed(2).replace('.',',')+' '+(wo>=r.cote?'✓':'✗')+'</span>':'';
+    return '<div class="reco none"><b>'+r.label+'</b><span>'+r.dcLabel+' '+pc(r.prob)+' · cote mini '+r.cote.toFixed(2).replace('.',',')+w+'</span></div>';
+  }
+  const wo=recoOdds(m,r);
+  const wtxt=wo?' <span class="wmx '+(wo>=r.cote?'good':'bad')+'">Winamax '+(r.type==='dc'?'≈':'')+wo.toFixed(2).replace('.',',')+' '+(wo>=r.cote?'✓':'✗')+'</span>':'';
+  return '<div class="reco '+r.type+(res===null?'':(res?' ok':' ko'))+'"><b>'+r.label+mark+'</b><span>'+pc(r.prob)+' · cote mini '+r.cote.toFixed(2).replace('.',',')+wtxt+'</span></div>';
+}
+function card(m){
+  const p=m.pred, fav=favOf(p), pf=fav===0?p.ph:p.pa, net=pf>=0.60;
+  const id=idOf(m), bet=!!BETS[id];
+  let tags='<span class="validated">'+ic('i-check')+'Validé</span>';
+  let o=null;
+  const lv=liveOf(m);
+  if(lv && !m.played && lv.state!=='pre'){
+    const fin=lv.state==='post';
+    const lo=lv.home>lv.away?0:(lv.home===lv.away?1:2);
+    if(fin) tags+= lo===fav ? '<span class="tag ok">'+ic('i-check')+'Prévision juste</span>' : '<span class="tag ko">'+ic('i-x')+'Prévision fausse</span>';
+    else tags+='<span class="tag live"><span class="dot"></span>'+liveClock(lv)+'</span>';
+    m._lv={h:lv.home,a:lv.away,fin,lo};
+  } else m._lv=null;
+  if(m._lv){}
+  else if(m.played){
+    o=m.hg>m.ag?0:(m.hg===m.ag?1:2);
+    tags+= o===fav ? '<span class="tag ok">'+ic('i-check')+'Prévision juste</span>' : '<span class="tag ko">'+ic('i-x')+'Prévision fausse</span>';
+  } else if(net) tags+='<span class="tag net">'+ic('i-star')+'Favori net</span>';
+  const row=(name,prob,isHome,isFav,goals,goalCls)=>{
+    const c=club(name);
+    return '<div class="team">'+shield(name)
+      +'<span class="tname'+(isFav?' fav':'')+'"><span class="long">'+name+'</span><span class="short">'+c[1]+'</span>'
+      +'<span class="role">'+ic(isHome?'i-home':'i-plane')+'</span>'+((isHome?m.dh:m.da)?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(isHome?m.ih:m.ia)<0?'<span class="chip qb">🩹 '+Math.round(isHome?m.ih:m.ia)+'</span>':'')+'</span>'
+      +'<span class="pright"><span class="pbadge '+(isHome?'home':'away')+(isFav?' fav':'')+'">'+pc(prob)+'</span>'
+      +'<span class="pct'+goalCls+'">'+goals+'</span></span></div>';
+  };
+  let gh, ga, ch='', ca='';
+  if(m.played){ gh=m.hg; ga=m.ag; if(o===0) ch=' fav'; if(o===2) ca=' fav'; }
+  else if(m._lv){ gh=m._lv.h; ga=m._lv.a; if(m._lv.lo===0) ch=' fav'; if(m._lv.lo===2) ca=' fav'; }
+  else { gh=''; ga=''; }
+  const draw='<div class="drawrow"><span class="shield">N</span><span class="tname">Match nul</span>'
+    +'<span class="pright"><span class="pbadge draw">'+pc(p.pd)+'</span><span class="pct">&nbsp;</span></span></div>';
+  const foot = (m.played||m._lv)
+    ? '<span>Prévu : <b>'+p.sh+' – '+p.sa+'</b></span>'
+    : '<span>Prévu : <b>'+p.sh+' – '+p.sa+'</b></span>';
+  return '<div class="game clickable'+(net&&!m.played?' net':'')+(bet?' betted':'')+'" data-gid="'+id+'">'
+    +'<div class="ghead"><span class="when">'+ic('i-clock')+when(m.ko)+'</span><span class="gtags">'+tags+'</span></div>'
+    +row(m.h,p.ph,true,fav===0,gh,ch)+draw+row(m.a,p.pa,false,fav===2,ga,ca)
+    +(oddsOf(m)?'<div class="codds"><span>Winamax 1 <b>'+oddsOf(m).h.toFixed(2).replace('.',',')+'</b></span><span>N <b>'+oddsOf(m).d.toFixed(2).replace('.',',')+'</b></span><span>2 <b>'+oddsOf(m).a.toFixed(2).replace('.',',')+'</b></span></div>':'')
+    +recoHtml(m, m.played?(m.hg>m.ag?0:(m.hg===m.ag?1:2)):(m._lv&&m._lv.fin?m._lv.lo:null))
+    +(bet&&reco(m).type!=='win'?'<div class="choice" data-cid="'+id+'"><button type="button" data-c="reco" class="'+(BETCHOICE[id]==='win'?'':'on')+'">'+(reco(m).type==='none'?reco(m).dcLabel:reco(m).label)+'</button><button type="button" data-c="win" class="'+(BETCHOICE[id]==='win'?'on':'')+'">Victoire '+club(reco(m).fav===0?m.h:m.a)[1]+'</button></div>':'')
+    +'<div class="betrow"><label class="bet"><input type="checkbox" data-bet="'+id+'"'+(bet?' checked':'')+'><span class="box">'+ic('i-check')+'</span><span>J’ai parié</span></label>'
+    +'<span class="pright"><span class="pcol"><span class="gfoot prevu">'+foot+'</span></span><span class="pct">&nbsp;</span></span></div>'
+    +'</div>';
+}
+
+function renderM(){
+  const games=(S.hist[md]||[]).slice().sort((x,y)=>String(x.ko||'').localeCompare(String(y.ko||'')));
+  document.getElementById('weekTitle').textContent='Matchs de la journée '+md;
+  document.getElementById('eyebrow').textContent='Saison 2026-2027 · Journée '+md;
+  const shown=FILTER?games.filter(m=>reco(m).type!=='none'):games;
+  document.getElementById('list').innerHTML=shown.map(card).join('');
+  document.getElementById('filterCount').textContent=FILTER?(shown.length+' / '+games.length):'';
+  const fb=document.getElementById('filterBtn'); fb.classList.toggle('on',FILTER); fb.setAttribute('aria-pressed',FILTER?'true':'false');
+  document.getElementById('prev').disabled = md<=S.keys[0];
+  document.getElementById('next').disabled = md>=S.keys[S.keys.length-1];
+  document.querySelectorAll('input[data-bet]').forEach(inp=>inp.addEventListener('change',()=>{
+    const id=inp.getAttribute('data-bet');
+    const mm=(S.hist[md]||[]).find(x=>idOf(x)===id);
+    if(inp.checked){ BETS[id]=1; if(mm) freeze(mm); } else { delete BETS[id]; delete BETODDS[id]; delete BETCHOICE[id]; }
+    saveBets();
+    inp.closest('.game').classList.toggle('betted',inp.checked); renderM();
+    renderFigs();
+  }));
+  renderCombo();
+  document.querySelectorAll('#list .choice button').forEach(btn=>btn.addEventListener('click',ev=>{
+    ev.stopPropagation(); const id=btn.parentNode.getAttribute('data-cid');
+    if(btn.getAttribute('data-c')==='win') BETCHOICE[id]='win'; else delete BETCHOICE[id];
+    saveBets(); renderM(); renderFigs();
+  }));
+  document.querySelectorAll('#list .game').forEach(el=>el.addEventListener('click',ev=>{
+    if(ev.target.closest('.bet')||ev.target.closest('.choice')) return;
+    const gid=el.getAttribute('data-gid'); const m=(S.hist[md]||[]).find(x=>idOf(x)===gid); if(m) openModal(m);
+  }));
+}
+function teamStats(t){
+  let p=0,w=0,d=0,l=0,gf=0,ga=0; const last=[];
+  S.keys.forEach(k=>S.hist[k].forEach(m=>{ if(!m.played||(m.h!==t&&m.a!==t)) return;
+    const home=m.h===t, f=home?m.hg:m.ag, c=home?m.ag:m.hg; p++; gf+=f; ga+=c;
+    if(f>c) w++; else if(f===c) d++; else l++;
+    last.push({r:f>c?'V':(f===c?'N':'D'),f,c,opp:home?m.a:m.h,home,ko:m.ko}); }));
+  last.sort((x,y)=>String(y.ko||'').localeCompare(String(x.ko||'')));
+  return {p,w,d,l,gf,ga,pts:w*3+d,last:last.slice(0,3)};
+}
+function standings(){
+  return Object.keys(EMBED.START).map(t=>{const s=teamStats(t);return {t,pts:s.pts,gd:s.gf-s.ga,gf:s.gf};})
+    .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf).map(x=>x.t);
+}
+function f1(v){ return v.toFixed(2).replace('.',','); }
+function absList(t){
+  const im=impactOf(t), lines=im.list.filter(x=>x.l>0).map(x=>'<li><b>'+x.n+'</b> → '+x.r+' <b class="no">−'+x.l.toFixed(1).replace('.',',')+' M€</b></li>').join('');
+  const s=(DATA.ABS||{})[t]; if(!s) return lines||'<li>—</li>';
+  return lines+absText(s);
+}
+function absText(s){
+  return s.split(/\s*;\s*/).filter(Boolean).map(x=>'<li>'+x.replace(/</g,'&lt;')+'</li>').join('');
+}
+function openModal(m){
+  window._mOpen=m;
+  const p=m.pred, fav=favOf(p), id=idOf(m), bet=!!BETS[id];
+  const sh=teamStats(m.h), sa=teamStats(m.a), st=standings();
+  const lastCell=s=>s.last.map(x=>'<span class="'+(x.r==='V'?'yes':(x.r==='D'?'no':''))+'"><b>'+x.r+'</b></span> '+x.f+'-'+x.c+' <span class="dim">'+(x.home?'vs ':'à ')+club(x.opp)[1]+'</span>').join('<br>')||'—';
+  const avg=(a,b)=>b?f1(a/b):'—';
+  const lv=liveOf(m);
+  const res=(!m.played && lv && lv.state!=='pre')?'<div class="gfoot"><span>'+(lv.state==='post'?'Terminé':'<span class="tag live"><span class="dot"></span>'+liveClock(lv)+'</span>')+' <b>'+lv.home+' – '+lv.away+'</b></span><span>Prévu : <b>'+p.sh+' – '+p.sa+'</b></span></div>'
+    :m.played?'<div class="gfoot"><span>Résultat : <b>'+m.hg+' – '+m.ag+'</b></span><span>Prévu : <b>'+p.sh+' – '+p.sa+'</b></span></div>'
+                    :'<div class="gfoot"><span>Score prévu : <b>'+p.sh+' – '+p.sa+'</b></span></div>';
+  const ch=club(m.h)[1], ca=club(m.a)[1];
+  document.getElementById('mPanel').innerHTML=
+    '<div class="handle"></div><button class="modal-close" id="mClose" aria-label="Fermer">✕</button>'
+    +'<div class="mwhen"><span class="when">'+ic('i-clock')+when(m.ko)+'</span>'+(bet?'<span class="validated" style="display:inline-flex">'+ic('i-check')+'Validé</span>':'')+'</div>'
+    +'<div class="mteams"><div class="team">'+shield(m.h)+'<span class="tname'+(fav===0?' fav':'')+'"><span class="long">'+m.h+'</span><span class="role">'+ic('i-home')+'</span>'+(m.dh?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(m.ih)<0?'<span class="chip qb">🩹 '+Math.round(m.ih)+'</span>':'')+'</span></div>'
+    +'<div class="team">'+shield(m.a)+'<span class="tname'+(fav===2?' fav':'')+'"><span class="long">'+m.a+'</span><span class="role">'+ic('i-plane')+'</span>'+(m.da?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&Math.round(m.ia)<0?'<span class="chip qb">🩹 '+Math.round(m.ia)+'</span>':'')+'</span></div></div>'
+    +'<label class="bet"><input type="checkbox" id="mBet"'+(bet?' checked':'')+'><span class="box">'+ic('i-check')+'</span><span>J’ai parié</span></label>'
+    +'<div class="bigbadges"><span class="pbadge big home'+(fav===0?' fav':'')+'"><i>Domicile</i>'+pc(p.ph)+'</span>'
+    +'<span class="pbadge big draw"><i>Nul</i>'+pc(p.pd)+'</span>'
+    +'<span class="pbadge big away'+(fav===2?' fav':'')+'"><i>Extérieur</i>'+pc(p.pa)+'</span></div>'
+    +recoHtml(m, m.played?(m.hg>m.ag?0:(m.hg===m.ag?1:2)):((lv&&lv.state==='post')?(lv.home>lv.away?0:(lv.home===lv.away?1:2)):null))
+    +res
+    +'<h3>Scores les plus probables</h3><div class="topsc">'+p.top.map(x=>'<span>'+x[0]+' – '+x[1]+'<small>'+(x[2]*100).toFixed(1).replace('.',',')+' %</small></span>').join('')+'</div>'
+    +'<table class="cmp mtable"><thead><tr><th></th><th>'+ch+'</th><th>'+ca+'</th></tr></thead><tbody>'
+    +'<tr><td>Elo</td><td>'+Math.round(m.eh)+'</td><td>'+Math.round(m.ea)+'</td></tr>'
+    +'<tr><td>Classement</td><td>'+(st.indexOf(m.h)+1)+'<sup>e</sup></td><td>'+(st.indexOf(m.a)+1)+'<sup>e</sup></td></tr>'
+    +'<tr><td>Points</td><td>'+sh.pts+'</td><td>'+sa.pts+'</td></tr>'
+    +'<tr><td>Bilan V-N-D</td><td>'+sh.w+'-'+sh.d+'-'+sh.l+'</td><td>'+sa.w+'-'+sa.d+'-'+sa.l+'</td></tr>'
+    +'<tr><td>Buts marqués / match</td><td>'+avg(sh.gf,sh.p)+'</td><td>'+avg(sa.gf,sa.p)+'</td></tr>'
+    +'<tr><td>Buts encaissés / match</td><td>'+avg(sh.ga,sh.p)+'</td><td>'+avg(sa.ga,sa.p)+'</td></tr>'
+    +'<tr><td>3 derniers matchs</td><td>'+lastCell(sh)+'</td><td>'+lastCell(sa)+'</td></tr>'
+    +'</tbody></table>'
+    +'<h3>Absences</h3><div class="absgrid"><div><b>'+ch+'</b><ul class="abs">'+absList(m.h)+'</ul></div><div><b>'+ca+'</b><ul class="abs">'+absList(m.a)+'</ul></div></div>';
+  document.getElementById('mOverlay').classList.add('open');
+  document.getElementById('mClose').onclick=closeModal;
+  document.getElementById('mBet').addEventListener('change',e=>{
+    if(e.target.checked){ BETS[id]=1; freeze(m); } else { delete BETS[id]; delete BETODDS[id]; delete BETCHOICE[id]; }
+    saveBets();
+    renderM(); renderFigs(); openModal(m);
+  });
+}
+function closeModal(){ document.getElementById('mOverlay').classList.remove('open'); }
+function renderFigs(){
+  const z=()=>({sOk:0,sN:0,cOk:0,cN:0,n:0,w:0,wait:0});
+  const season=z(), day=z();
+  S.keys.forEach(k=>S.hist[k].forEach(m=>{
+    const p=m.pred, fav=favOf(p), bet=!!BETS[idOf(m)];
+    let o=null;
+    if(m.played) o=m.hg>m.ag?0:(m.hg===m.ag?1:2);
+    else { const lv=liveOf(m); if(lv && lv.state==='post') o=lv.home>lv.away?0:(lv.home===lv.away?1:2); }
+    for(const r of (k===md?[season,day]:[season])){
+      if(bet){ r.n++; if(o===null) r.wait++; else if(recoResult(selOf(m),o)) r.w++; }
+      if(o===null) continue;
+      r.sN++; if(o===fav) r.sOk++;
+      if(Math.max(p.ph,p.pa)>=0.6){ r.cN++; if(o===fav) r.cOk++; }
+    }
+  }));
+  const fig=(n,l,g)=>'<div class="fig'+(g?' g':'')+'"><span class="n">'+n+'</span><span class="l">'+l+'</span></div>';
+  const tiles=r=>fig(r.sOk+'/'+r.sN,'Bons vainqueurs',false)+fig(r.cOk+'/'+r.cN,'Favoris ≥ 60 %',true)
+    +fig(r.w+'/'+r.n,'Paris gagnés'+(r.wait?' · '+r.wait+' en attente':''),false);
+  document.getElementById('bilMd').textContent='Journée '+md;
+  document.getElementById('figsMd').innerHTML=tiles(day);
+  document.getElementById('figs').innerHTML=tiles(season);
+}
+function renderC(){
+  const T={}; Object.keys(EMBED.START).forEach(t=>T[t]={t,p:0,w:0,d:0,l:0,gf:0,ga:0});
+  const add=(h,a,hg,ag)=>{ if(!T[h]||!T[a]) return;
+    for(const [x,f,c] of [[h,hg,ag],[a,ag,hg]]){ const s=T[x]; s.p++; s.gf+=f; s.ga+=c; if(f>c) s.w++; else if(f===c) s.d++; else s.l++; } };
+  S.keys.forEach(k=>S.hist[k].forEach(m=>{
+    if(m.played) add(m.h,m.a,m.hg,m.ag);
+    else { const lv=liveOf(m); if(lv && lv.state==='post') add(m.h,m.a,lv.home,lv.away); }
+  }));
+  const rows=Object.values(T).map(s=>Object.assign(s,{pts:s.w*3+s.d,gd:s.gf-s.ga}))
+    .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
+  document.getElementById('rank').innerHTML=rows.map((s,i)=>
+    '<tr'+(i===3||i===14?' class="cut"':'')+'><td>'+(i+1)+'</td><td><span class="tcell">'+shield(s.t)+club(s.t)[1]+'</span></td>'
+    +'<td class="n">'+s.p+'</td><td class="n">'+s.w+'</td><td class="n">'+s.d+'</td><td class="n">'+s.l+'</td>'
+    +'<td class="n '+(s.gd>0?'up':(s.gd<0?'down':''))+'">'+(s.gd>0?'+':'')+s.gd+'</td><td class="n pts">'+s.pts+'</td></tr>').join('');
+}
+const FMT_UPD=new Intl.DateTimeFormat('fr-FR',{timeZone:'Europe/Paris',weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function renderUpd(){
+  const s=DATA.UPD; const d=new Date(s.length<=19? s+'+01:00' : s);
+  const hm=s.slice(11,16).replace(':',' h ');
+  document.getElementById('upd').textContent='Mis à jour le '+FMT_UPD.format(d)+' à '+hm;
+}
+function render(){ renderUpd(); renderM(); renderFigs(); renderC(); }
+
+async function refresh(){
+  const b=document.getElementById('updBtn'), msg=document.getElementById('updMsg');
+  b.disabled=true; b.classList.add('busy'); msg.className=''; msg.textContent='';
+  try{
+    const r=await fetch(LIVE_URL+'?t='+Date.now(),{cache:'no-store'});
+    const t=await r.text();
+    const h=JSON.parse(t.match(/let MATCHDAY_HISTORY = (\{[\s\S]*?\});/)[1]);
+    const u=t.match(/let LAST_UPDATE = \{[^}]*updatedAt: "([^"]+)"/)[1];
+    const slim={}; Object.keys(h).forEach(k=>slim[k]=h[k].map(g=>[g.home,g.away,g.homeScore,g.awayScore,g.played?1:0,g.kickoff]));
+    const abs={}; const tb=(t.match(/let TEAMS = \[([\s\S]*?)\n\];/)||[])[1]||'';
+    const ko={};
+    tb.split('\n').forEach(line=>{ const n=line.match(/name:"([^"]+)"/); const a=line.match(/absenceReason:"((?:[^"\\]|\\.)*)"/); if(n) abs[n[1]]=a?a[1]:'';
+      if(n){ const g=f=>{ const x=line.match(new RegExp(f+':\\s*([^,}]+)')); return x?x[1].trim():''; };
+        const gk=g('gkOut')==='true', kp=g('keyPlayerOut')==='true', att=parseFloat(g('absentAttackers'))||0, de=parseFloat(g('absentDefenders'))||0;
+        ko[n[1]]=(gk||(kp&&(att>0||de>0)))?1:0; } });
+    DATA={HIST:slim,UPD:u,ABS:Object.keys(abs).length?abs:DATA.ABS};
+    try{ localStorage.setItem('l1elo_data',JSON.stringify(DATA)); }catch(e){}
+    const wasCur=(md===currentMd());
+    S=compute(); if(wasCur) md=currentMd(); render();
+    msg.className='ok'; msg.textContent='✓';
+  }catch(e){ msg.className='err'; msg.textContent='Connexion impossible'; }
+  b.disabled=false; b.classList.remove('busy');
+}
+
+function liveOf(m){ return LIVE[m.h+'|'+m.a]||null; }
+function liveClock(lv){ if(lv.name==='STATUS_HALFTIME') return 'Mi-temps'; return lv.clock||'En cours'; }
+let NEWLOGOS={};
+function parseEspn(data){
+  const out={};
+  ((data&&data.events)||[]).forEach(ev=>{ try{
+    const c=ev.competitions[0]; const h=c.competitors.find(x=>x.homeAway==='home'), a=c.competitors.find(x=>x.homeAway==='away');
+    const hn=ESPN_TEAM_MAP[h.team.displayName], an=ESPN_TEAM_MAP[a.team.displayName]; if(!hn||!an) return;
+    if(h.team.logo) NEWLOGOS[hn]=h.team.logo; if(a.team.logo) NEWLOGOS[an]=a.team.logo;
+    const st=ev.status.type;
+    out[hn+'|'+an]={state:st.state,name:st.name,clock:ev.status.displayClock||'',home:Number(h.score)||0,away:Number(a.score)||0,kickoff:ev.date};
+  }catch(e){} });
+  return out;
+}
+async function liveTick(){
+  clearTimeout(liveTimer);
+  let next=5*60*1000; const lm=document.getElementById('liveMsg');
+  try{
+    const r=await fetch(LIVE_SCORES_URL,{cache:'no-store'}); if(!r.ok) throw new Error(r.status);
+    const ov=parseEspn(await r.json()); const keys=Object.keys(ov);
+    const live=keys.filter(k=>ov[k].state==='in');
+    const soon=keys.some(k=>ov[k].state==='pre' && new Date(ov[k].kickoff).getTime()-Date.now()<20*60*1000);
+    next=live.length?30*1000:(soon?60*1000:5*60*1000);
+    let logoChanged=false; Object.keys(NEWLOGOS).forEach(k=>{ if(LOGOS[k]!==NEWLOGOS[k]){ LOGOS[k]=NEWLOGOS[k]; logoChanged=true; } });
+    if(logoChanged){ try{ localStorage.setItem('l1elo_logos',JSON.stringify(LOGOS)); }catch(e){} renderC(); }
+    const sig=JSON.stringify(ov); const changed=sig!==liveSig||logoChanged; liveSig=sig; LIVE=ov;
+    if(!userNav && live.length){
+      const [h,a]=live[0].split('|'); const k=S.keys.find(k=>S.hist[k].some(m=>m.h===h&&m.a===a));
+      if(k!=null && k!==md){ md=k; }
+    }
+    if(changed){ renderM(); renderC(); renderFigs(); const ov2=document.getElementById('mOverlay'); if(ov2.classList.contains('open') && window._mOpen) openModal(window._mOpen); }
+    const hh=new Date().toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris'});
+    if(live.length){ lm.className='on'; lm.textContent='● '+live.length+' match'+(live.length>1?'s':'')+' en direct · '+hh; }
+    else { lm.className=''; lm.textContent='Aucun match en direct · '+hh; }
+  }catch(e){ next=2*60*1000; lm.className=''; lm.textContent='Scores en direct indisponibles'; }
+  if(!document.hidden) liveTimer=setTimeout(liveTick,next);
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) clearTimeout(liveTimer); else liveTick(); });
+document.getElementById('prev').onclick=()=>{ userNav=true; const i=S.keys.indexOf(md); if(i>0){ md=S.keys[i-1]; renderM(); renderFigs(); } };
+document.getElementById('next').onclick=()=>{ userNav=true; const i=S.keys.indexOf(md); if(i<S.keys.length-1){ md=S.keys[i+1]; renderM(); renderFigs(); } };
+document.getElementById('updBtn').onclick=()=>{ refresh(); fetchOdds(true); };
+document.getElementById('oddsMsg').onclick=()=>{ const k=document.getElementById('keyRow'); k.hidden=!k.hidden; document.getElementById('keyIn').value=ODDS_KEY; };
+document.getElementById('keySave').onclick=()=>{ const v=document.getElementById('keyIn').value.trim(); if(!v) return;
+  ODDS_KEY=v; try{ localStorage.setItem('l1elo_oddskey',v); }catch(e){} document.getElementById('keyRow').hidden=true; fetchOdds(true); };
+document.getElementById('filterBtn').onclick=()=>{ FILTER=!FILTER; try{ localStorage.setItem('l1elo_filter',FILTER?'1':'0'); }catch(e){} renderM(); };
+
+document.getElementById('mOverlay').addEventListener('click',e=>{ if(e.target.id==='mOverlay') closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+// Paris déjà faits : tous les favoris à 60 % et plus des journées 1 à 8 (cochés une seule fois, décochables)
+try{
+  if(!localStorage.getItem('l1elo_prefill_v1')){
+    S.keys.forEach(k=>{ if(k<=8) S.hist[k].forEach(m=>{ if(m.played && Math.max(m.pred.ph,m.pred.pa)>=0.6) BETS[idOf(m)]=1; }); });
+    localStorage.setItem('l1elo_bets',JSON.stringify(BETS)); localStorage.setItem('l1elo_prefill_v1','1');
+  }
+}catch(e){}
+document.getElementById('stakeIn').addEventListener('input',e=>{ try{ localStorage.setItem(stakeKey(),e.target.value); }catch(err){} renderGain(); });
+md=currentMd(); render(); refresh(); liveTick(); fetchOdds(false);
+</script>
+</body>
+</html>
