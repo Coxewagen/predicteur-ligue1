@@ -1,0 +1,115 @@
+name: Build appli Ligue 1 Elo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'elo.html'
+      - '.github/workflows/build-apk-elo.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk-elo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;34.0.0'
+
+      - name: Install Capacitor
+        run: |
+          mkdir -p elo-build && cd elo-build
+          npm init -y
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+
+      - name: Générer le projet Capacitor
+        working-directory: elo-build
+        run: |
+          mkdir -p www
+          cp ../elo.html www/index.html
+          node_modules/.bin/cap init "Ligue 1 Elo" com.coxewagen.ligue1elo --web-dir=www
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
+            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true } });
+            fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));
+          "
+          node_modules/.bin/cap add android
+          node_modules/.bin/cap sync android
+          cp -r ../android-icons/. android/app/src/main/res/
+          python3 - << 'PY'
+          p = 'android/app/src/main/res/values/styles.xml'
+          s = open(p, encoding='utf-8').read()
+          old = '<item name="android:background">@drawable/splash</item>'
+          if s.count(old) == 1:
+              s = s.replace(old, old + '\n        <item name="windowSplashScreenBackground">@color/splash_background</item>')
+              open(p, 'w', encoding='utf-8').write(s)
+          PY
+
+      - name: Signature et numéro de version
+        working-directory: elo-build
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv("CI_KEYSTORE_PATH"))
+                      storePassword System.getenv("CI_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("CI_KEY_ALIAS")
+                      keyPassword System.getenv("CI_KEY_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          def ciVersionCode = (System.getenv("CI_VERSION_CODE") ?: "1") as Integer
+          def ciVersionName = System.getenv("CI_VERSION_NAME") ?: "1"
+          android.defaultConfig.versionCode = ciVersionCode
+          android.defaultConfig.versionName = ciVersionName
+          EOF
+
+      - name: Build de l'APK signé
+        working-directory: elo-build
+        env:
+          CI_KEYSTORE_PATH: ${{ github.workspace }}/android.keystore
+          CI_KEYSTORE_PASSWORD: predicteurL1store
+          CI_KEY_ALIAS: android
+          CI_KEY_PASSWORD: predicteurL1store
+          CI_VERSION_CODE: ${{ github.run_number }}
+          CI_VERSION_NAME: ${{ github.run_number }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../../ligue1-elo.apk
+
+      - name: Publier l'APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-elo-latest
+          name: "Ligue 1 Elo — version ${{ github.run_number }}"
+          body: "Télécharge ligue1-elo.apk ci-dessous et ouvre-le sur ton téléphone."
+          files: ligue1-elo.apk
+          make_latest: false
