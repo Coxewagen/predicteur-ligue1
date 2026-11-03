@@ -1,13 +1,12 @@
 {
- "updatedAt": "2026-11-02T08:45:54Z",
+ "updatedAt": "2026-11-03T08:45:55Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 54,
+ "count": 52,
  "teams": {
   "Olympique Lyonnais": [
    "Tyler Morton",
    "Pavel Sulc",
    "Loïs Openda",
-   "Nicolás Tagliafico",
    "Mohamed Ouédraogo"
   ],
   "Angers SCO": [
@@ -17,6 +16,7 @@
   "OGC Nice": [
    "Axel Witsel",
    "Ali Abdi",
+   "Nicolás Tagliafico",
    "Antoine Mendy",
    "Laurent Abergel",
    "Moïse Bombito"
@@ -75,11 +75,6 @@
    "Felix Mambimbi",
    "Stephan Zagadou"
   ],
-  "Stade Brestois": [
-   "Giovani Versini",
-   "Raphaël Le Guen",
-   "Brendan Chardonnet"
-  ],
   "ES Troyes AC": [
    "Anis Ouzenadji",
    "Yacouba Koné",
@@ -89,8 +84,11 @@
   "Olympique de Marseille": [
    "Derek Cornelius"
   ],
+  "Stade Brestois": [
+   "Raphaël Le Guen",
+   "Brendan Chardonnet"
+  ],
   "FC Lorient": [
-   "Noah Mbamba",
    "Bandiougou Fadiga"
   ]
  }
