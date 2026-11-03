@@ -298,6 +298,7 @@ h2.week-head #weekTitle{white-space:normal;overflow:visible;text-overflow:clip;l
 .bigbadges{flex-wrap:nowrap;gap:8px}.bigbadges .pbadge.big{flex:1;min-width:0;font-size:28px;padding:10px 4px}
 .mteams .team .tname{font-size:18px}
 .up{color:var(--field);font-weight:700}.down{color:var(--bad);font-weight:700}
+.tag.big{font-size:17px;padding:5px 12px}
 </style>
 </head>
 <body>
@@ -706,7 +707,9 @@ function recoHtml(m,o){
 function card(m){
   const p=m.pred, fav=favOf(p), pf=fav===0?p.ph:p.pa, net=pf>=0.60;
   const id=idOf(m), bet=!!BETS[id];
-  let tags='<span class="validated">'+ic('i-check')+'Validé</span>';
+  let tags='';
+  const betRes=bet?recoResult(selOf(m),outcomeOf(m)):null;
+  if(betRes!==null) tags+='<span class="tag big '+(betRes?'ok':'ko')+'">'+ic(betRes?'i-check':'i-x')+(betRes?'Pari gagné':'Pari perdu')+'</span>';
   let o=null;
   const lv=liveOf(m);
   if(lv && !m.played && lv.state!=='pre'){
@@ -813,7 +816,7 @@ function openModal(m){
   const ch=club(m.h)[1], ca=club(m.a)[1];
   document.getElementById('mPanel').innerHTML=
     '<div class="handle"></div><button class="modal-close" id="mClose" aria-label="Fermer">✕</button>'
-    +'<div class="mwhen"><span class="when">'+ic('i-clock')+when(m.ko)+'</span>'+(bet?'<span class="validated" style="display:inline-flex">'+ic('i-check')+'Validé</span>':'')+'</div>'
+    +'<div class="mwhen"><span class="when">'+ic('i-clock')+when(m.ko)+'</span>'+((bet&&recoResult(selOf(m),outcomeOf(m))!==null)?(recoResult(selOf(m),outcomeOf(m))?'<span class="tag big ok">'+ic('i-check')+'Pari gagné</span>':'<span class="tag big ko">'+ic('i-x')+'Pari perdu</span>'):'')+'</div>'
     +'<div class="mteams"><div class="team">'+shield(m.h)+'<span class="tname'+(fav===0?' fav':'')+'"><span class="long">'+m.h+'</span><span class="role">'+ic('i-home')+'</span>'+(m.dh?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&(m.offH||Math.round(m.ih)<0)?'<span class="chip qb">'+(m.offH?'📋 ':'🩹 ')+Math.round(m.ih)+'</span>':'')+'</span></div>'
     +'<div class="team">'+shield(m.a)+'<span class="tname'+(fav===2?' fav':'')+'"><span class="long">'+m.a+'</span><span class="role">'+ic('i-plane')+'</span>'+(m.da?'<span class="chip">Sans enjeu</span>':'')+((!m.played)&&(m.offA||Math.round(m.ia)<0)?'<span class="chip qb">'+(m.offA?'📋 ':'🩹 ')+Math.round(m.ia)+'</span>':'')+'</span></div></div>'
     +'<label class="bet"><input type="checkbox" id="mBet"'+(bet?' checked':'')+'><span class="box">'+ic('i-check')+'</span><span>J’ai parié</span></label>'
