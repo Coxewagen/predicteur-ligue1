@@ -54,7 +54,7 @@ h2.day{margin:26px 0 12px;font-size:22px;color:var(--gold);display:flex;align-it
 @media(max-width:600px){.mg{grid-template-columns:1fr}}
 
 .o{display:block;font-size:15px;color:var(--mut);margin-top:5px;white-space:nowrap}
-</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 19:06</p>
+</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 19:22</p>
 <p id="lmsg" style="margin:0 0 10px;color:var(--mut);font-size:16px"></p><h2 class="day">Mardi 3 novembre</h2><div class="grid"><div class="card" data-g="432-134" data-h="432" data-a="134" data-fav="0" data-t="dc" data-day="03" data-en="Galatasaray|VfB Stuttgart" data-pw="0.4131" data-pdc="0.6501" data-ow="1.860" data-odc="1.324">
 <div class="ctop"><span class="t">18:45</span><span class="res"></span></div>
 <div class="teams"><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/432.png" alt="" onerror="this.style.visibility='hidden'"><b>Galatasaray</b></div><div class="mid"><span class="live"></span><span class="pv">1-0</span></div><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/134.png" alt="" onerror="this.style.visibility='hidden'"><b>Stuttgart</b></div></div>
@@ -241,7 +241,7 @@ function lab(st){var n=(st.type&&st.type.name)||'';if(n==='STATUS_HALFTIME')retu
 async function tick(){
   var out={},ok=false;
   for(const d of ['20261103','20261104']){
-    try{var r=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates='+d,{cache:'no-store'});if(!r.ok)continue;var j=await r.json();ok=true;
+    try{var u='https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates='+d,j=null;var CH=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.CapacitorHttp;if(CH){try{var rr=await CH.get({url:u});j=(typeof rr.data==='string')?JSON.parse(rr.data):rr.data;}catch(x){j=null}}if(!j){var r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;j=await r.json();}ok=true;
       (j.events||[]).forEach(function(e){var c=e.competitions[0],h=c.competitors.find(x=>x.homeAway==='home'),a=c.competitors.find(x=>x.homeAway==='away');
         out[h.team.id+'-'+a.team.id]={h:+h.score||0,a:+a.score||0,state:e.status.type.state,txt:lab(e.status)};});
     }catch(e){}
