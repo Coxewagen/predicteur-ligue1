@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'ldc-app.html'
+      - 'android-icons-ldc/**'
       - '.github/workflows/build-apk-ldc.yml'
 
 permissions:
@@ -54,7 +55,7 @@ jobs:
           "
           node_modules/.bin/cap add android
           node_modules/.bin/cap sync android
-          cp -r ../android-icons/. android/app/src/main/res/
+          cp -r ../android-icons-ldc/. android/app/src/main/res/
           python3 - << 'PY'
           p = 'android/app/src/main/res/values/styles.xml'
           s = open(p, encoding='utf-8').read()
