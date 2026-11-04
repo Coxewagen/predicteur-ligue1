@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pronos LdC</title><style>body{margin:0;background:#07120d;color:#fff;font:20px system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}button{font:inherit;font-weight:800;padding:12px 22px;border-radius:999px;border:0;background:#ffc83d;color:#241a02;margin-top:16px}</style></head>
+<body><div id="m">Chargement…</div>
+<script>
+(function(){
+var URL='https://raw.githubusercontent.com/Coxewagen/predicteur-ligue1/main/ldc.html',K='ldc_app_cache';
+var RELOAD='<script>(function(){var t=Date.now();document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-t>600000)location.reload();});})();<\/script>';
+function show(h){document.open();document.write(h.replace('</body>',RELOAD+'</body>'));document.close();}
+function fail(){var c=null;try{c=localStorage.getItem(K)}catch(e){}
+  if(c){show(c);return;}
+  document.getElementById('m').innerHTML='Pas de connexion<br><button onclick="location.reload()">Réessayer</button>';}
+fetch(URL+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text();}).then(function(h){
+  if(h.indexOf('<html')<0)throw 0;try{localStorage.setItem(K,h)}catch(e){}show(h);}).catch(fail);
+})();
+</script></body></html>
