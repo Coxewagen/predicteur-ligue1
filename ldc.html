@@ -55,7 +55,7 @@ h2.day{margin:26px 0 12px;font-size:22px;color:var(--gold);display:flex;align-it
 @media(max-width:600px){.mg{grid-template-columns:1fr}}
 
 .o{display:block;font-size:15px;color:var(--mut);margin-top:5px;white-space:nowrap}
-</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 21:31</p>
+</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 21:38</p>
 <div class="nav" id="nj"><button type="button" data-j="1" class="">Journée 1</button><button type="button" data-j="2" class="">Journée 2</button><button type="button" data-j="3" class="">Journée 3</button><button type="button" data-j="4" class="on">Journée 4</button></div><div class="nav sub" id="nd"><span class="ds" data-j="1" hidden><button type="button" data-j="1" data-d="all" class="on">Tout</button><button type="button" data-j="1" data-d="08">Mardi 8</button><button type="button" data-j="1" data-d="09">Mercredi 9</button><button type="button" data-j="1" data-d="10">Jeudi 10</button></span><span class="ds" data-j="2" hidden><button type="button" data-j="2" data-d="all" class="on">Tout</button><button type="button" data-j="2" data-d="13">Mardi 13</button><button type="button" data-j="2" data-d="14">Mercredi 14</button></span><span class="ds" data-j="3" hidden><button type="button" data-j="3" data-d="all" class="on">Tout</button><button type="button" data-j="3" data-d="20">Mardi 20</button><button type="button" data-j="3" data-d="21">Mercredi 21</button></span><span class="ds" data-j="4"><button type="button" data-j="4" data-d="all" class="on">Tout</button><button type="button" data-j="4" data-d="03">Mardi 3</button><button type="button" data-j="4" data-d="04">Mercredi 4</button><button type="button" data-j="4" data-d="live">● En direct</button></span></div><p id="lmsg" style="margin:0 0 10px;color:var(--mut);font-size:16px"></p><div id="livebox" hidden></div><div id="nolive" hidden style="font-size:26px;font-weight:800;padding:30px 0;text-align:center">Aucun match en cours</div><div id="cur"><h2 class="day" data-d="03">Mardi 3 novembre</h2><div class="grid" data-d="03"><div class="card" data-g="432-134" data-h="432" data-a="134" data-fav="0" data-t="dc" data-day="03" data-en="Galatasaray|VfB Stuttgart" data-pw="0.4131" data-pdc="0.6501" data-ow="1.860" data-odc="1.324">
 <div class="ctop"><span class="t">18:45</span><span class="res"></span></div>
 <div class="teams"><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/432.png" alt="" onerror="this.style.visibility='hidden'"><b>Galatasaray</b></div><div class="mid"><span class="live"></span><span class="pv">1-0</span></div><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/134.png" alt="" onerror="this.style.visibility='hidden'"><b>Stuttgart</b></div></div>
@@ -242,9 +242,21 @@ document.addEventListener('click',function(e){var sg=e.target.closest('.seg butt
 document.addEventListener('change',function(e){if(!e.target.classList.contains('cod'))return;var v=parseFloat(String(e.target.value).replace(',','.'));var OD={};try{OD=JSON.parse(localStorage.getItem('ldc_j4_odds')||'{}')||{}}catch(x){}if(v>1)OD[e.target.dataset.k]=v;else delete OD[e.target.dataset.k];try{localStorage.setItem('ldc_j4_odds',JSON.stringify(OD))}catch(x){}e.target.blur();paint();});
 document.addEventListener('change',function(e){var tr=e.target.closest('[data-g]');if(!tr)return;if(e.target.checked)B[tr.dataset.g]=(tr.dataset.t==='win'?'w':'p');else delete B[tr.dataset.g];save();paint();});
 function lab(st){var n=(st.type&&st.type.name)||'';if(n==='STATUS_HALFTIME')return 'Mi-temps';if(st.type&&st.type.state==='post')return 'Terminé';return st.displayClock||'';}
+var UM={'52319':'510','2609356':'21922','52277':'175','79946':'2572','52498':'494','52280':'359','2603790':'11420','52919':'382','50062':'148','50043':'570','50064':'437','50136':'114','52758':'124','52265':'244','50129':'887','50051':'86','52692':'436','7889':'364','63405':'4411','52797':'521','70691':'102','52747':'160','59333':'2980','75797':'166','52749':'142','50138':'110','52682':'360','50137':'104','50124':'1068','50037':'132','50080':'83','52683':'362','50067':'432','50107':'134','52707':'493','50149':'2250'};
+async function uefa(){
+  var u='https://match.uefa.com/v5/matches?competitionId=1&fromDate=2026-11-03&toDate=2026-11-04&limit=30&offset=0&_='+Date.now(),j=null;
+  var CH=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.CapacitorHttp;
+  try{if(CH){var rr=await CH.get({url:u});j=(typeof rr.data==='string')?JSON.parse(rr.data):rr.data;}else{var r=await fetch(u,{cache:'no-store'});if(!r.ok)return null;j=await r.json();}}catch(e){return null}
+  if(!Array.isArray(j)||!j.length)return null;
+  var out={};j.forEach(function(m){var h=UM[m.homeTeam&&m.homeTeam.id],a=UM[m.awayTeam&&m.awayTeam.id];if(!h||!a)return;var t=(m.score&&m.score.total)||{home:0,away:0},st=m.status==='LIVE'?'in':(m.status==='FINISHED'?'post':'pre');
+    var tx='';if(st==='in'){tx=m.phase==='HALF_TIME'?'Mi-temps':((m.minute&&m.minute.normal!=null?m.minute.normal:'')+(m.minute&&m.minute.injuryTime?'+'+m.minute.injuryTime:'')+"'");}else if(st==='post')tx='Terminé';
+    out[h+'-'+a]={h:+t.home||0,a:+t.away||0,state:st,txt:tx};});
+  return out;
+}
 async function tick(){
-  var out={},ok=false;
-  for(const d of ['20261103','20261104']){
+  var out={},ok=false,src='ESPN';
+  var uo=await uefa();if(uo){out=uo;ok=true;src='UEFA';}
+  if(!ok)for(const d of ['20261103','20261104']){
     try{var u='https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates='+d+'&_='+Date.now(),j=null;var CH=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.CapacitorHttp;if(CH){try{var rr=await CH.get({url:u});j=(typeof rr.data==='string')?JSON.parse(rr.data):rr.data;}catch(x){j=null}}if(!j){var r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;j=await r.json();}ok=true;
       (j.events||[]).forEach(function(e){var c=e.competitions[0],h=c.competitors.find(x=>x.homeAway==='home'),a=c.competitors.find(x=>x.homeAway==='away');
         out[h.team.id+'-'+a.team.id]={h:+h.score||0,a:+a.score||0,state:e.status.type.state,txt:lab(e.status)};});
@@ -252,7 +264,7 @@ async function tick(){
   }
   if(ok){L=out;window.LIVE=out;try{localStorage.setItem('ldc_j4_live',JSON.stringify(L))}catch(e){}}
   var t=new Date().toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'});
-  document.getElementById('lmsg').textContent=ok?'Scores ESPN · '+t:'Scores indisponibles';
+  document.getElementById('lmsg').textContent=ok?'Scores '+src+' · '+t:'Scores indisponibles';
   paint();
 }
 
