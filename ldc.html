@@ -55,7 +55,7 @@ h2.day{margin:26px 0 12px;font-size:22px;color:var(--gold);display:flex;align-it
 @media(max-width:600px){.mg{grid-template-columns:1fr}}
 
 .o{display:block;font-size:15px;color:var(--mut);margin-top:5px;white-space:nowrap}
-</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 21:25</p>
+</style></head><body><div class="wrap"><h1>Ligue des champions · Journée 4</h1><p class="upd">Mis à jour le mercredi 4 novembre à 21:29</p>
 <div class="nav" id="nj"><button type="button" data-j="1" class="">Journée 1</button><button type="button" data-j="2" class="">Journée 2</button><button type="button" data-j="3" class="">Journée 3</button><button type="button" data-j="4" class="on">Journée 4</button></div><div class="nav sub" id="nd"><span class="ds" data-j="1" hidden><button type="button" data-j="1" data-d="all" class="on">Tout</button><button type="button" data-j="1" data-d="08">Mardi 8</button><button type="button" data-j="1" data-d="09">Mercredi 9</button><button type="button" data-j="1" data-d="10">Jeudi 10</button></span><span class="ds" data-j="2" hidden><button type="button" data-j="2" data-d="all" class="on">Tout</button><button type="button" data-j="2" data-d="13">Mardi 13</button><button type="button" data-j="2" data-d="14">Mercredi 14</button></span><span class="ds" data-j="3" hidden><button type="button" data-j="3" data-d="all" class="on">Tout</button><button type="button" data-j="3" data-d="20">Mardi 20</button><button type="button" data-j="3" data-d="21">Mercredi 21</button></span><span class="ds" data-j="4"><button type="button" data-j="4" data-d="all" class="on">Tout</button><button type="button" data-j="4" data-d="03">Mardi 3</button><button type="button" data-j="4" data-d="04">Mercredi 4</button><button type="button" data-j="4" data-d="live">● En direct</button></span></div><p id="lmsg" style="margin:0 0 10px;color:var(--mut);font-size:16px"></p><div id="livebox" hidden></div><div id="nolive" hidden style="font-size:26px;font-weight:800;padding:30px 0;text-align:center">Aucun match en cours</div><div id="cur"><h2 class="day" data-d="03">Mardi 3 novembre</h2><div class="grid" data-d="03"><div class="card" data-g="432-134" data-h="432" data-a="134" data-fav="0" data-t="dc" data-day="03" data-en="Galatasaray|VfB Stuttgart" data-pw="0.4131" data-pdc="0.6501" data-ow="1.860" data-odc="1.324">
 <div class="ctop"><span class="t">18:45</span><span class="res"></span></div>
 <div class="teams"><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/432.png" alt="" onerror="this.style.visibility='hidden'"><b>Galatasaray</b></div><div class="mid"><span class="live"></span><span class="pv">1-0</span></div><div class="tm"><img src="https://a.espncdn.com/i/teamlogos/soccer/500/134.png" alt="" onerror="this.style.visibility='hidden'"><b>Stuttgart</b></div></div>
@@ -210,10 +210,13 @@ function paint(){
 
   var OD={};try{OD=JSON.parse(localStorage.getItem('ldc_j4_odds')||'{}')||{}}catch(e){}
   var CM='all';try{CM=localStorage.getItem('ldc_j4_cm')||'all'}catch(e){}
+  var FZ={},fzd=false;try{FZ=JSON.parse(localStorage.getItem('ldc_j4_frz')||'{}')||{}}catch(e){}
+  Object.keys(FZ).forEach(function(k){if(!B[k]){delete FZ[k];fzd=true}});
   var C=[];document.querySelectorAll('[data-g]').forEach(function(tr){var g=tr.dataset.g;if(!B[g])return;if(CM!=='all'&&tr.dataset.day!==CM)return;var sec=(B[g]==='w')||(B[g]===1&&tr.dataset.t==='win');
-    var p=+(sec?tr.dataset.pw:tr.dataset.pdc),od=+(sec?tr.dataset.ow:tr.dataset.odc),ok2=g+(sec?'w':'p'),l=L[g],r=null;if(OD[ok2])od=OD[ok2];
+    var p=+(sec?tr.dataset.pw:tr.dataset.pdc),od=+(sec?tr.dataset.ow:tr.dataset.odc),ok2=g+(sec?'w':'p'),l=L[g],r=null;if(!FZ[g]&&tr.dataset.ow){FZ[g]={ow:tr.dataset.ow,odc:tr.dataset.odc};fzd=true;}if(FZ[g])od=+(sec?FZ[g].ow:FZ[g].odc);if(OD[ok2])od=OD[ok2];
     if(l&&l.state==='post'){var o=l.h>l.a?0:(l.h===l.a?1:2),f=+tr.dataset.fav;r=sec?o===f:o!==(f===0?2:0);}
     var nm=tr.querySelectorAll('.tm b'),fv=nm[+tr.dataset.fav===0?0:1].textContent;C.push({k:ok2,man:!!OD[ok2],lab:(sec?'Victoire '+fv:fv+' ou nul'),p:p,od:od,r:r,m:nm[0].textContent+' – '+nm[1].textContent});});
+  if(fzd){try{localStorage.setItem('ldc_j4_frz',JSON.stringify(FZ))}catch(x){}}
   var cb=document.getElementById('combo');
   var seg='<div class="seg">'+[['03','Mardi'],['04','Mercredi'],['all','Les deux jours']].map(function(x){return '<button type="button" data-cm="'+x[0]+'" class="'+(CM===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>';
   if(document.activeElement&&(document.activeElement.id==='mise'||document.activeElement.id==='boost'||document.activeElement.classList.contains('cod'))){}else if(!n){cb.innerHTML='';}else if(C.length<2){cb.innerHTML='<h2>Combiné</h2>'+seg+'<div style="color:var(--mut);font-size:17px">Coche au moins 2 matchs</div>';}else{
@@ -285,7 +288,7 @@ async function odds(){
   if(!OKEY)return;
   try{var r=await fetch('https://api.the-odds-api.com/v4/sports/soccer_uefa_champs_league/odds/?regions=fr&markets=h2h&oddsFormat=decimal&bookmakers=winamax_fr&apiKey='+OKEY,{cache:'no-store'});if(!r.ok)return;var j=await r.json();
     var by={};j.forEach(function(e){var b=(e.bookmakers||[]).find(function(x){return x.key==='winamax_fr'});if(!b)return;var m=b.markets.find(function(x){return x.key==='h2h'});if(!m)return;var o={};m.outcomes.forEach(function(x){o[x.name]=x.price});by[e.home_team+'|'+e.away_team]=[o[e.home_team],o.Draw,o[e.away_team]];});
-    document.querySelectorAll('[data-en]').forEach(function(c){var p=c.dataset.en.split('|'),k=nm(p[0])+'|'+nm(p[1]),o=by[k];if(!o||!o[0])return;
+    document.querySelectorAll('[data-en]').forEach(function(c){if(c.dataset.g&&B[c.dataset.g])return;var p=c.dataset.en.split('|'),k=nm(p[0])+'|'+nm(p[1]),o=by[k];if(!o||!o[0])return;
       var f=+c.dataset.fav,ow=f===0?o[0]:o[2],odc=1.035/(1/ow+1/o[1]);c.dataset.ow=ow.toFixed(3);c.dataset.odc=odc.toFixed(3);
       c.querySelectorAll('.w[data-k]').forEach(function(w){var v=w.dataset.k==='Sec'?ow:odc,g=v>=1/(+w.dataset.p);w.className='w '+(g?'good':'bad');w.textContent=(w.dataset.k==='Sec'?'':'≈')+v.toFixed(2).replace('.',',')+' '+(g?'✓':'✗');});
       var oe=c.querySelector('.o');if(oe)oe.textContent=o.map(function(v){return v.toFixed(2).replace('.',',')}).join(' · ');});
