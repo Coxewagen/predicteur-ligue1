@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p ldc-build && cd ldc-build
           npm init -y
-          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest @capacitor/local-notifications@latest
 
       - name: Générer le projet Capacitor
         working-directory: ldc-build
