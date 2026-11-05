@@ -1,12 +1,14 @@
 {
- "updatedAt": "2026-11-04T08:45:48Z",
+ "updatedAt": "2026-11-05T08:45:30Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 48,
+ "count": 51,
  "teams": {
   "Olympique Lyonnais": [
    "Tyler Morton",
    "Pavel Sulc",
-   "Loïs Openda"
+   "Loïs Openda",
+   "Nicolás Tagliafico",
+   "Mohamed Ouédraogo"
   ],
   "Angers SCO": [
    "Oumar Pona",
@@ -24,10 +26,6 @@
    "Ismaëlo Ganiou",
    "Abdallah Sima",
    "Maik Nawrocki"
-  ],
-  "Stade Rennais": [
-   "Brice Samba",
-   "Estéban Lepaul"
   ],
   "Paris FC": [
    "Luca Koleosho",
@@ -52,6 +50,9 @@
    "Nuno Mendes",
    "Alessandro Longoni"
   ],
+  "Stade Rennais": [
+   "Estéban Lepaul"
+  ],
   "RC Strasbourg": [
    "Fábio Baldé",
    "Joaquín Panichelli"
@@ -68,9 +69,16 @@
   ],
   "Le Havre AC": [
    "Elias Jelert",
+   "Timothée Pembélé",
    "Lionel Mpasi-Nzau",
    "Felix Mambimbi",
    "Stephan Zagadou"
+  ],
+  "ES Troyes AC": [
+   "Anis Ouzenadji",
+   "Yacouba Koné",
+   "Yvann Titi",
+   "Ismaël Boura"
   ],
   "Olympique de Marseille": [
    "Derek Cornelius"
@@ -78,11 +86,6 @@
   "Stade Brestois": [
    "Raphaël Le Guen",
    "Brendan Chardonnet"
-  ],
-  "ES Troyes AC": [
-   "Yacouba Koné",
-   "Yvann Titi",
-   "Ismaël Boura"
   ],
   "FC Lorient": [
    "Bandiougou Fadiga"
