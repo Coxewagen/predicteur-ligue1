@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-11-05T08:45:30Z",
+ "updatedAt": "2026-11-06T08:46:00Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 51,
+ "count": 50,
  "teams": {
   "Olympique Lyonnais": [
    "Tyler Morton",
@@ -47,8 +47,7 @@
    "Marquinhos",
    "Ousmane Dembélé",
    "Khvicha Kvaratskhelia",
-   "Nuno Mendes",
-   "Alessandro Longoni"
+   "Nuno Mendes"
   ],
   "Stade Rennais": [
    "Estéban Lepaul"
