@@ -616,7 +616,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 9, updatedAt: "2026-11-08T18:52:22", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-08T22:58:19", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -1324,41 +1324,41 @@ let MATCHDAY_HISTORY = {
     {
       "home": "Le Mans FC",
       "away": "AS Monaco",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false,
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true,
       "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "Stade Brestois",
       "away": "Olympique Lyonnais",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false,
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true,
       "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "Le Havre AC",
       "away": "FC Lorient",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false,
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true,
       "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "Angers SCO",
       "away": "OGC Nice",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false,
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true,
       "kickoff": "2026-11-08T16:15:00Z"
     },
     {
       "home": "RC Lens",
       "away": "Olympique de Marseille",
-      "homeScore": null,
-      "awayScore": null,
-      "played": false,
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true,
       "kickoff": "2026-11-08T19:45:00Z"
     }
   ],
@@ -3145,24 +3145,24 @@ let MATCHDAY_HISTORY = {
 // est terminée, les 18 clubs ont chacun 1 match réel (chiffres à prendre avec
 // précaution vu le petit échantillon — normal en tout début de saison).
 let TEAMS = [
-  { id:532, name:"Angers SCO", scored:1.0, conceded:1.889, form:1.11, played:9, wins:2, draws:2, goalsFor:9, goalsAgainst:17, recentForm:1, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent confirmé (liste officielle L1 : B. Diatta, poste non confirmé, non compté ; Zinga incertain ; Lefort et O. Camara de retour)", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:519, name:"AJ Auxerre", scored:1.444, conceded:2.556, form:1.67, played:9, wins:3, draws:1, goalsFor:13, goalsAgainst:23, recentForm:2, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Labeau-Lascary (att., quadriceps, ~1 mois), Okoh et S. Fofana (déf.) absents ; Dioussé aussi (poste non confirmé, non compté) ; Siwe et Senaya incertains ; Mandengue de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:512, name:"Stade Brestois", scored:1.778, conceded:1.333, form:1.67, played:9, wins:3, draws:3, goalsFor:16, goalsAgainst:12, recentForm:2, streakType:"win", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Chardonnet (capitaine, déf., mollet) et Le Guen (déf., péroné) absents ; Sa. Diop (cheville, poste non confirmé, non compté) ; Baldé de retour ; Versini cité absent par ligue1.com mais sur le banc selon Le Télégramme", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:533, name:"Le Havre AC", scored:1.0, conceded:2.222, form:0.0, played:9, wins:0, draws:2, goalsFor:9, goalsAgainst:20, recentForm:0, streakType:"lose", streakLen:5, restDays:3, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"Mpasi (gardien n°1, tendon d'Achille), Pembélé (genou), Jelert (cuisse) et Zagadou (déf.) absents ; Mambimbi (ailier remplaçant) non compté ; Seko de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:535, name:"Le Mans FC", scored:1.222, conceded:2.0, form:0.56, played:9, wins:1, draws:4, goalsFor:11, goalsAgainst:18, recentForm:1, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"Bourabaa (att., 3 buts, 2e meilleur buteur) absent ; Colas, Voyer et Torrente incertains", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:546, name:"RC Lens", scored:1.778, conceded:1.444, form:2.22, played:9, wins:4, draws:1, goalsFor:16, goalsAgainst:13, recentForm:3, streakType:"lose", streakLen:1, restDays:3, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Sima (att.), Nawrocki et Ganiou (déf., genou, opéré) absents ; Gradit incertain (de retour à l'entraînement) ; Baidoo et Udol de retour", absenceUpdatedAt:"2026-10-23T16:54:21", newCoachBoostFrom:6 },
-  { id:521, name:"LOSC Lille", scored:1.333, conceded:0.667, form:2.78, played:9, wins:5, draws:3, goalsFor:12, goalsAgainst:6, recentForm:2, streakType:"win", streakLen:1, restDays:3, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Ueda et Igamane (att.) et T. Santos (déf.) absents ; Sahraoui incertain ; Özer et Alexsandro de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:525, name:"FC Lorient", scored:0.778, conceded:0.889, form:1.67, played:9, wins:3, draws:3, goalsFor:7, goalsAgainst:8, recentForm:2, streakType:"lose", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:false, absenceReason:"Katseris (déf., adducteurs, longue absence) absent ; Semedo, M. Bamba et Fadiga incertains ; Mbamba et I. Jensen de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:523, name:"Olympique Lyonnais", scored:1.667, conceded:0.778, form:2.78, played:9, wins:5, draws:2, goalsFor:15, goalsAgainst:7, recentForm:3, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"K. Nakamura (att., suspendu), Openda (att., péroné, jusqu'à la trêve de novembre) et Tagliafico (déf.) absents ; Ouédraogo (ligaments croisés, poste non confirmé, non compté) ; Sulc et Kango incertains", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:516, name:"Olympique de Marseille", scored:2.222, conceded:1.444, form:2.78, played:9, wins:5, draws:0, goalsFor:20, goalsAgainst:13, recentForm:4, streakType:"win", streakLen:4, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:8, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:false, absenceReason:"Cornelius (déf., hanche, absent jusqu'à la trêve hivernale) absent ; Koum aussi (poste non confirmé, non compté) ; Moumbagna incertain ; Højbjerg de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:548, name:"AS Monaco", scored:1.333, conceded:1.111, form:2.22, played:9, wins:4, draws:3, goalsFor:12, goalsAgainst:10, recentForm:1, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:6, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Dier (déf., cuisse) et Idumbo (att., dos) absents ; Benzahra (poste non confirmé, non compté) ; Brunner et Soubeir de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:522, name:"OGC Nice", scored:1.444, conceded:1.333, form:2.22, played:9, wins:4, draws:2, goalsFor:13, goalsAgainst:12, recentForm:4, streakType:"win", streakLen:2, restDays:3, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"Abdi (quadriceps), Bombito (tibia) et A. Mendy (ligaments croisés) absents ; Abergel, Abdul Samed et Everton aussi absents (postes non comptés)", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:1045, name:"Paris FC", scored:1.778, conceded:1.111, form:2.78, played:9, wins:5, draws:2, goalsFor:16, goalsAgainst:10, recentForm:3, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"Ikoné (att.) absent ; Sangui aussi (poste non confirmé, non compté)", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:524, name:"Paris Saint-Germain", scored:2.333, conceded:1.111, form:3.33, played:9, wins:6, draws:2, goalsFor:21, goalsAgainst:10, recentForm:5, streakType:"win", streakLen:6, restDays:3, playedEurope:false, europeLevel:null, worldCupPlayers:16, absentAttackers:2, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Dembélé (cuisse) et Kvaratskhelia (ligaments croisés, plusieurs mois) ; Nuno Mendes et Marquinhos (cuisse) absents ; Mayulu de retour ; match reporté au lundi 26/10 20h30", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:529, name:"Stade Rennais", scored:2.222, conceded:2.111, form:2.78, played:9, wins:5, draws:1, goalsFor:20, goalsAgainst:19, recentForm:2, streakType:"lose", streakLen:1, restDays:3, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent (liste officielle L1) ; Lepaul (att., cheville) incertain", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:576, name:"RC Strasbourg", scored:1.889, conceded:2.111, form:1.67, played:9, wins:3, draws:1, goalsFor:17, goalsAgainst:19, recentForm:1, streakType:"win", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Panichelli et Nanasi (att.) et I. Doukouré (déf.) absents ; F. Baldé et Washington aussi (postes non confirmés, non comptés) ; Godo et Kellyman de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:511, name:"Toulouse FC", scored:1.333, conceded:1.444, form:1.11, played:9, wins:2, draws:4, goalsFor:12, goalsAgainst:13, recentForm:2, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent ; Oppong et A. Francis incertains ; Azizi de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
-  { id:531, name:"ES Troyes AC", scored:0.778, conceded:1.778, form:1.11, played:9, wins:2, draws:2, goalsFor:7, goalsAgainst:16, recentForm:1, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"Titi, I. Boura et Ouzenadji (déf.) absents longue durée ; Y. Koné aussi (poste non confirmé, non compté) ; Gozzi incertain", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:532, name:"Angers SCO", scored:0.9, conceded:1.9, form:1.0, played:10, wins:2, draws:2, goalsFor:9, goalsAgainst:19, recentForm:0, streakType:"lose", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent confirmé (liste officielle L1 : B. Diatta, poste non confirmé, non compté ; Zinga incertain ; Lefort et O. Camara de retour)", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:519, name:"AJ Auxerre", scored:1.3, conceded:2.4, form:1.5, played:10, wins:3, draws:1, goalsFor:13, goalsAgainst:24, recentForm:1, streakType:"lose", streakLen:2, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Labeau-Lascary (att., quadriceps, ~1 mois), Okoh et S. Fofana (déf.) absents ; Dioussé aussi (poste non confirmé, non compté) ; Siwe et Senaya incertains ; Mandengue de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:512, name:"Stade Brestois", scored:1.8, conceded:1.2, form:2.0, played:10, wins:4, draws:3, goalsFor:18, goalsAgainst:12, recentForm:3, streakType:"win", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Chardonnet (capitaine, déf., mollet) et Le Guen (déf., péroné) absents ; Sa. Diop (cheville, poste non confirmé, non compté) ; Baldé de retour ; Versini cité absent par ligue1.com mais sur le banc selon Le Télégramme", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:533, name:"Le Havre AC", scored:0.9, conceded:2.2, form:0.0, played:10, wins:0, draws:2, goalsFor:9, goalsAgainst:22, recentForm:0, streakType:"lose", streakLen:6, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:true, keyPlayerOut:true, absenceReason:"Mpasi (gardien n°1, tendon d'Achille), Pembélé (genou), Jelert (cuisse) et Zagadou (déf.) absents ; Mambimbi (ailier remplaçant) non compté ; Seko de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:535, name:"Le Mans FC", scored:1.2, conceded:1.9, form:0.5, played:10, wins:1, draws:5, goalsFor:12, goalsAgainst:19, recentForm:0, streakType:"unbeaten", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"Bourabaa (att., 3 buts, 2e meilleur buteur) absent ; Colas, Voyer et Torrente incertains", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:546, name:"RC Lens", scored:1.7, conceded:1.5, form:2.0, played:10, wins:4, draws:1, goalsFor:17, goalsAgainst:15, recentForm:3, streakType:"lose", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Sima (att.), Nawrocki et Ganiou (déf., genou, opéré) absents ; Gradit incertain (de retour à l'entraînement) ; Baidoo et Udol de retour", absenceUpdatedAt:"2026-10-23T16:54:21", newCoachBoostFrom:6 },
+  { id:521, name:"LOSC Lille", scored:1.4, conceded:0.7, form:3.0, played:10, wins:6, draws:3, goalsFor:14, goalsAgainst:7, recentForm:3, streakType:"win", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Ueda et Igamane (att.) et T. Santos (déf.) absents ; Sahraoui incertain ; Özer et Alexsandro de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:525, name:"FC Lorient", scored:0.9, conceded:0.8, form:2.0, played:10, wins:4, draws:3, goalsFor:9, goalsAgainst:8, recentForm:3, streakType:"win", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:false, absenceReason:"Katseris (déf., adducteurs, longue absence) absent ; Semedo, M. Bamba et Fadiga incertains ; Mbamba et I. Jensen de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:523, name:"Olympique Lyonnais", scored:1.5, conceded:0.9, form:2.5, played:10, wins:5, draws:2, goalsFor:15, goalsAgainst:9, recentForm:2, streakType:"lose", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"K. Nakamura (att., suspendu), Openda (att., péroné, jusqu'à la trêve de novembre) et Tagliafico (déf.) absents ; Ouédraogo (ligaments croisés, poste non confirmé, non compté) ; Sulc et Kango incertains", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:516, name:"Olympique de Marseille", scored:2.2, conceded:1.4, form:3.0, played:10, wins:6, draws:0, goalsFor:22, goalsAgainst:14, recentForm:5, streakType:"win", streakLen:5, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:8, absentAttackers:0, absentDefenders:1, gkOut:false, keyPlayerOut:false, absenceReason:"Cornelius (déf., hanche, absent jusqu'à la trêve hivernale) absent ; Koum aussi (poste non confirmé, non compté) ; Moumbagna incertain ; Højbjerg de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:548, name:"AS Monaco", scored:1.3, conceded:1.1, form:2.0, played:10, wins:4, draws:4, goalsFor:13, goalsAgainst:11, recentForm:0, streakType:"unbeaten", streakLen:1, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:6, absentAttackers:1, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Dier (déf., cuisse) et Idumbo (att., dos) absents ; Benzahra (poste non confirmé, non compté) ; Brunner et Soubeir de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:522, name:"OGC Nice", scored:1.5, conceded:1.2, form:2.5, played:10, wins:5, draws:2, goalsFor:15, goalsAgainst:12, recentForm:4, streakType:"win", streakLen:3, restDays:0, playedEurope:false, europeLevel:null, worldCupPlayers:7, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:false, absenceReason:"Abdi (quadriceps), Bombito (tibia) et A. Mendy (ligaments croisés) absents ; Abergel, Abdul Samed et Everton aussi absents (postes non comptés)", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:1045, name:"Paris FC", scored:1.7, conceded:1.0, form:3.0, played:10, wins:6, draws:2, goalsFor:17, goalsAgainst:10, recentForm:3, streakType:"win", streakLen:2, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:1, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"Ikoné (att.) absent ; Sangui aussi (poste non confirmé, non compté)", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:524, name:"Paris Saint-Germain", scored:2.2, conceded:1.0, form:3.5, played:10, wins:7, draws:2, goalsFor:22, goalsAgainst:10, recentForm:5, streakType:"win", streakLen:7, restDays:1, playedEurope:false, europeLevel:null, worldCupPlayers:16, absentAttackers:2, absentDefenders:2, gkOut:false, keyPlayerOut:true, absenceReason:"Dembélé (cuisse) et Kvaratskhelia (ligaments croisés, plusieurs mois) ; Nuno Mendes et Marquinhos (cuisse) absents ; Mayulu de retour ; match reporté au lundi 26/10 20h30", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:529, name:"Stade Rennais", scored:2.1, conceded:2.1, form:2.5, played:10, wins:5, draws:1, goalsFor:21, goalsAgainst:21, recentForm:2, streakType:"lose", streakLen:2, restDays:0, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent (liste officielle L1) ; Lepaul (att., cheville) incertain", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:576, name:"RC Strasbourg", scored:1.8, conceded:2.2, form:1.5, played:10, wins:3, draws:1, goalsFor:18, goalsAgainst:22, recentForm:1, streakType:"lose", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:2, absentDefenders:1, gkOut:false, keyPlayerOut:true, absenceReason:"Panichelli et Nanasi (att.) et I. Doukouré (déf.) absents ; F. Baldé et Washington aussi (postes non confirmés, non comptés) ; Godo et Kellyman de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:511, name:"Toulouse FC", scored:1.5, conceded:1.4, form:1.5, played:10, wins:3, draws:4, goalsFor:15, goalsAgainst:14, recentForm:2, streakType:"win", streakLen:1, restDays:2, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:0, gkOut:false, keyPlayerOut:false, absenceReason:"aucun absent ; Oppong et A. Francis incertains ; Azizi de retour", absenceUpdatedAt:"2026-10-23T16:54:21" },
+  { id:531, name:"ES Troyes AC", scored:0.7, conceded:1.7, form:1.0, played:10, wins:2, draws:2, goalsFor:7, goalsAgainst:17, recentForm:1, streakType:"lose", streakLen:1, restDays:1, playedEurope:false, europeLevel:null, absentAttackers:0, absentDefenders:3, gkOut:false, keyPlayerOut:true, absenceReason:"Titi, I. Boura et Ouzenadji (déf.) absents longue durée ; Y. Koné aussi (poste non confirmé, non compté) ; Gozzi incertain", absenceUpdatedAt:"2026-10-23T16:54:21" },
 ];
 
 // Photo des stats "officielles" telles qu'écrites par update_stats.py, AVANT toute
