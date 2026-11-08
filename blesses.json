@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-11-07T08:46:08Z",
+ "updatedAt": "2026-11-08T08:45:43Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 53,
+ "count": 49,
  "teams": {
   "RC Strasbourg": [
    "Jeyland Mitchell",
@@ -39,18 +39,17 @@
    "Abdallah Sima",
    "Maik Nawrocki"
   ],
-  "Paris FC": [
-   "Luca Koleosho",
-   "Adama Camara",
-   "Jonathan Ikoné",
-   "Nhoa Sangui"
-  ],
   "Toulouse FC": [
    "Rafik Messali"
   ],
   "Le Mans FC": [
    "Djibril Sidibé",
    "Adil Bourabaa"
+  ],
+  "Paris FC": [
+   "Adama Camara",
+   "Jonathan Ikoné",
+   "Nhoa Sangui"
   ],
   "AS Monaco": [
    "Ansu Fati",
@@ -64,11 +63,6 @@
    "Tiago Santos",
    "Hamza Igamane"
   ],
-  "AJ Auxerre": [
-   "Rémy Labeau Lascary",
-   "Assane Dioussé",
-   "Bryan Okoh"
-  ],
   "Le Havre AC": [
    "Elias Jelert",
    "Timothée Pembélé",
@@ -78,9 +72,7 @@
   ],
   "ES Troyes AC": [
    "Anis Ouzenadji",
-   "Yacouba Koné",
-   "Yvann Titi",
-   "Ismaël Boura"
+   "Yacouba Koné"
   ],
   "Olympique de Marseille": [
    "Derek Cornelius"
@@ -91,6 +83,10 @@
   ],
   "FC Lorient": [
    "Bandiougou Fadiga"
+  ],
+  "AJ Auxerre": [
+   "Assane Dioussé",
+   "Bryan Okoh"
   ]
  }
 }
