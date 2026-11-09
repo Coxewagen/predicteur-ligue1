@@ -1,8 +1,27 @@
 {
- "updatedAt": "2026-11-08T08:45:43Z",
+ "updatedAt": "2026-11-09T08:46:01Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 49,
+ "count": 50,
  "teams": {
+  "Le Havre AC": [
+   "Rassoul Ndiaye",
+   "Elias Jelert",
+   "Timothée Pembélé",
+   "Lionel Mpasi-Nzau",
+   "Felix Mambimbi",
+   "Stephan Zagadou"
+  ],
+  "FC Lorient": [
+   "Ibrahima Baldé",
+   "Bandiougou Fadiga"
+  ],
+  "RC Lens": [
+   "Franjo Ivanović",
+   "Odsonne Édouard",
+   "Ismaëlo Ganiou",
+   "Abdallah Sima",
+   "Maik Nawrocki"
+  ],
   "RC Strasbourg": [
    "Jeyland Mitchell",
    "Fábio Baldé",
@@ -15,29 +34,18 @@
    "Khvicha Kvaratskhelia",
    "Nuno Mendes"
   ],
+  "Olympique de Marseille": [
+   "Emerson",
+   "Derek Cornelius"
+  ],
   "Olympique Lyonnais": [
    "Tyler Morton",
    "Pavel Sulc",
    "Loïs Openda",
-   "Nicolás Tagliafico",
    "Mohamed Ouédraogo"
   ],
   "Angers SCO": [
-   "Oumar Pona",
    "Amine El Ouazzani"
-  ],
-  "OGC Nice": [
-   "Axel Witsel",
-   "Ali Abdi",
-   "Antoine Mendy",
-   "Laurent Abergel",
-   "Moïse Bombito"
-  ],
-  "RC Lens": [
-   "Odsonne Édouard",
-   "Ismaëlo Ganiou",
-   "Abdallah Sima",
-   "Maik Nawrocki"
   ],
   "Toulouse FC": [
    "Rafik Messali"
@@ -58,31 +66,24 @@
   "Stade Rennais": [
    "Estéban Lepaul"
   ],
+  "OGC Nice": [
+   "Ali Abdi",
+   "Antoine Mendy",
+   "Laurent Abergel",
+   "Moïse Bombito"
+  ],
   "LOSC Lille": [
    "Ayase Ueda",
    "Tiago Santos",
    "Hamza Igamane"
   ],
-  "Le Havre AC": [
-   "Elias Jelert",
-   "Timothée Pembélé",
-   "Lionel Mpasi-Nzau",
-   "Felix Mambimbi",
-   "Stephan Zagadou"
-  ],
   "ES Troyes AC": [
    "Anis Ouzenadji",
    "Yacouba Koné"
   ],
-  "Olympique de Marseille": [
-   "Derek Cornelius"
-  ],
   "Stade Brestois": [
    "Raphaël Le Guen",
    "Brendan Chardonnet"
-  ],
-  "FC Lorient": [
-   "Bandiougou Fadiga"
   ],
   "AJ Auxerre": [
    "Assane Dioussé",
