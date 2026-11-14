@@ -1,8 +1,14 @@
 {
- "updatedAt": "2026-11-10T08:45:39Z",
+ "updatedAt": "2026-11-14T08:45:08Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 50,
+ "count": 51,
  "teams": {
+  "RC Strasbourg": [
+   "Karim Coulibaly",
+   "Jeyland Mitchell",
+   "Fábio Baldé",
+   "Joaquín Panichelli"
+  ],
   "Le Havre AC": [
    "Rassoul Ndiaye",
    "Elias Jelert",
@@ -21,11 +27,6 @@
    "Ismaëlo Ganiou",
    "Abdallah Sima",
    "Maik Nawrocki"
-  ],
-  "RC Strasbourg": [
-   "Jeyland Mitchell",
-   "Fábio Baldé",
-   "Joaquín Panichelli"
   ],
   "Paris Saint-Germain": [
    "Maghnes Akliouche",
