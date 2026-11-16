@@ -1,8 +1,15 @@
 {
- "updatedAt": "2026-11-15T08:45:51Z",
+ "updatedAt": "2026-11-16T08:45:16Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 51,
+ "count": 53,
  "teams": {
+  "OGC Nice": [
+   "Hicham Boudaoui",
+   "Ali Abdi",
+   "Antoine Mendy",
+   "Laurent Abergel",
+   "Moïse Bombito"
+  ],
   "RC Strasbourg": [
    "Karim Coulibaly",
    "Jeyland Mitchell",
@@ -35,6 +42,12 @@
    "Khvicha Kvaratskhelia",
    "Nuno Mendes"
   ],
+  "Paris FC": [
+   "Samir Chergui",
+   "Adama Camara",
+   "Jonathan Ikoné",
+   "Nhoa Sangui"
+  ],
   "Olympique de Marseille": [
    "Emerson",
    "Derek Cornelius"
@@ -55,23 +68,12 @@
    "Djibril Sidibé",
    "Adil Bourabaa"
   ],
-  "Paris FC": [
-   "Adama Camara",
-   "Jonathan Ikoné",
-   "Nhoa Sangui"
-  ],
   "AS Monaco": [
    "Ansu Fati",
    "Stanis Idumbo"
   ],
   "Stade Rennais": [
    "Estéban Lepaul"
-  ],
-  "OGC Nice": [
-   "Ali Abdi",
-   "Antoine Mendy",
-   "Laurent Abergel",
-   "Moïse Bombito"
   ],
   "LOSC Lille": [
    "Ayase Ueda",
