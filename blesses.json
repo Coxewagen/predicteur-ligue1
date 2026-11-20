@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-11-19T08:45:30Z",
+ "updatedAt": "2026-11-20T08:45:23Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 53,
+ "count": 54,
  "teams": {
   "OGC Nice": [
    "Hicham Boudaoui",
@@ -16,10 +16,15 @@
    "Fábio Baldé",
    "Joaquín Panichelli"
   ],
+  "AS Monaco": [
+   "Aleksandr Golovin",
+   "Ansu Fati",
+   "Stanis Idumbo"
+  ],
   "Le Havre AC": [
    "Rassoul Ndiaye",
-   "Elias Jelert",
    "Timothée Pembélé",
+   "Elias Jelert",
    "Lionel Mpasi-Nzau",
    "Felix Mambimbi",
    "Stephan Zagadou"
@@ -37,8 +42,8 @@
   ],
   "Paris Saint-Germain": [
    "Maghnes Akliouche",
-   "Ousmane Dembélé",
    "Marquinhos",
+   "Ousmane Dembélé",
    "Khvicha Kvaratskhelia",
    "Nuno Mendes"
   ],
@@ -67,10 +72,6 @@
   "Le Mans FC": [
    "Djibril Sidibé",
    "Adil Bourabaa"
-  ],
-  "AS Monaco": [
-   "Ansu Fati",
-   "Stanis Idumbo"
   ],
   "Stade Rennais": [
    "Estéban Lepaul"
