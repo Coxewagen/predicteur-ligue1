@@ -1,6 +1,6 @@
 {
-  "name": "Predicteur Foot",
-  "short_name": "Predicteur Foot",
+  "name": "M1 Prédicteur Foot",
+  "short_name": "M1 Prédicteur Foot",
   "description": "Analyse de match Ligue 1 — modèle Poisson/Dixon-Coles",
   "start_url": "./index.html",
   "scope": "./",

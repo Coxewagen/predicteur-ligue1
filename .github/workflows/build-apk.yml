@@ -56,7 +56,7 @@ jobs:
           grep -q "const APP_VERSION = '${{ github.run_number }}'" www/index.html || { echo "Numéro de version non injecté"; exit 1; }
           cp -r icons www/icons
 
-          node_modules/.bin/cap init "Predicteur Foot" com.coxewagen.predicteurligue1 --web-dir=www
+          node_modules/.bin/cap init "M1 Prédicteur Foot" com.coxewagen.predicteurligue1 --web-dir=www
 
           # Le bouton "Mettre à jour les stats" (dans index.html) va chercher les
           # dernières données sur coxewagen.github.io — une origine DIFFÉRENTE de
@@ -172,7 +172,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: "Predicteur Foot — version ${{ github.run_number }} (appli Android)"
+          name: "M1 Prédicteur Foot — version ${{ github.run_number }} (appli Android)"
           body: |
             Version ${{ github.run_number }} — le même numéro s'affiche dans l'appli
             (en haut, à côté de « Saison 2026-2027 ») et dans Paramètres Android > Applications.
