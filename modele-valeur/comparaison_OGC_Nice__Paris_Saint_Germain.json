@@ -1,0 +1,204 @@
+{
+ "dom": "OGC Nice",
+ "ext": "Paris Saint-Germain",
+ "lignes": [
+  {
+   "poste": "G",
+   "dom": {
+    "nom": "Yehvann Diouf",
+    "poste": "G",
+    "valeur": 7,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Matvey Safonov",
+    "poste": "G",
+    "valeur": 30,
+    "absentRemplace": null
+   },
+   "ecart": 23
+  },
+  {
+   "poste": "DC",
+   "dom": {
+    "nom": "Youssouf Ndayishimiye",
+    "poste": "DC",
+    "valeur": 7,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Willian Pacho",
+    "poste": "DC",
+    "valeur": 80,
+    "absentRemplace": null
+   },
+   "ecart": 73
+  },
+  {
+   "poste": "DC",
+   "dom": {
+    "nom": "Alidu Seidu",
+    "poste": "DC",
+    "valeur": 5,
+    "absentRemplace": "Mohamed Abdelmonem (2.5 M€)"
+   },
+   "ext": {
+    "nom": "Ilya Zabarnyi",
+    "poste": "DC",
+    "valeur": 40,
+    "absentRemplace": null
+   },
+   "ecart": 35
+  },
+  {
+   "poste": "DL",
+   "dom": {
+    "nom": "Jonathan Clauss",
+    "poste": "DL",
+    "valeur": 4,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Nuno Mendes",
+    "poste": "DL",
+    "valeur": 80,
+    "absentRemplace": null
+   },
+   "ecart": 76
+  },
+  {
+   "poste": "DL",
+   "dom": {
+    "nom": "Niels Nkounkou",
+    "poste": "DL",
+    "valeur": 2.6,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Achraf Hakimi",
+    "poste": "DL",
+    "valeur": 80,
+    "absentRemplace": null
+   },
+   "ecart": 77.4
+  },
+  {
+   "poste": "MI",
+   "dom": {
+    "nom": "Sofiane Diop",
+    "poste": "AT",
+    "valeur": 15,
+    "absentRemplace": "Hicham Boudaoui (12 M€)"
+   },
+   "ext": {
+    "nom": "Vitinha",
+    "poste": "MI",
+    "valeur": 140,
+    "absentRemplace": null
+   },
+   "ecart": 125
+  },
+  {
+   "poste": "MI",
+   "dom": {
+    "nom": "Djibril Coulibaly",
+    "poste": "MI",
+    "valeur": 8,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "João Neves",
+    "poste": "MI",
+    "valeur": 140,
+    "absentRemplace": null
+   },
+   "ecart": 132
+  },
+  {
+   "poste": "MI",
+   "dom": {
+    "nom": "Xavier Mandza",
+    "poste": "MI",
+    "valeur": 5,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Warren Zaïre-Emery",
+    "poste": "MI",
+    "valeur": 80,
+    "absentRemplace": null
+   },
+   "ecart": 75
+  },
+  {
+   "poste": "AT",
+   "dom": {
+    "nom": "Mohamed Amoura",
+    "poste": "AT",
+    "valeur": 20,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Désiré Doué",
+    "poste": "AT",
+    "valeur": 120,
+    "absentRemplace": null
+   },
+   "ecart": 100
+  },
+  {
+   "poste": "AT",
+   "dom": {
+    "nom": "Nathan Ngoumou",
+    "poste": "AT",
+    "valeur": 3.5,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Maghnes Akliouche",
+    "poste": "AT",
+    "valeur": 50,
+    "absentRemplace": "Khvicha Kvaratskhelia (140 M€)"
+   },
+   "ecart": 46.5
+  },
+  {
+   "poste": "BU",
+   "dom": {
+    "nom": "Elye Wahi",
+    "poste": "BU",
+    "valeur": 18,
+    "absentRemplace": null
+   },
+   "ext": {
+    "nom": "Ousmane Dembélé",
+    "poste": "BU",
+    "valeur": 100,
+    "absentRemplace": null
+   },
+   "ecart": 82
+  }
+ ],
+ "valeurXIcompletDom": 89.6,
+ "valeurXIcompletExt": 1030,
+ "valeurXIjourDom": 95.1,
+ "valeurXIjourExt": 940,
+ "absentsDom": [
+  "Hicham Boudaoui",
+  "Mohamed Abdelmonem"
+ ],
+ "absentsExt": [
+  "Khvicha Kvaratskhelia"
+ ],
+ "horsXIdom": [
+  "Antoine Mendy",
+  "Moïse Bombito",
+  "Laurent Abergel"
+ ],
+ "horsXIext": [],
+ "niveauDom": 1496.4,
+ "niveauExt": 1735.6,
+ "malusDom": 0,
+ "malusExt": -9.7,
+ "bonusDomicile": 8.6
+}
