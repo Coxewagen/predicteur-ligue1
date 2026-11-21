@@ -878,7 +878,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:35:31", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:43:51", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -5162,7 +5162,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 8;         // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 9;         // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');
@@ -5332,7 +5332,64 @@ async function lsOverlay(){
   });
   return out;
 }
+// ----- Source testée en premier : FotMob (API publique non officielle, chrono à la seconde). livescore.com puis ESPN restent en secours automatique. -----
+// Dans l'appli Android la lecture passe par le code natif (pas de blocage CORS) ; dans un navigateur FotMob est refusé → on retombe sur livescore.
+const FM_API = 'https://www.fotmob.com/api/data/';
+const FM = {failUntil: 0, det: {}};       // det : id du match -> {at, sc, goals, reds} (buteurs/cartons, relus seulement quand le score change)
+async function fmGet(path){
+  const h = {'Accept': 'application/json', 'Accept-Language': 'fr-FR,fr;q=0.9'};
+  if(lcNative()) h['User-Agent'] = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36';
+  const r = await fetch(FM_API + path, {cache: 'no-store', headers: h});
+  if(!r.ok) throw new Error('fotmob HTTP ' + r.status);
+  return r.json();
+}
+function fmEvents(d){
+  const ev = (((d || {}).content || {}).matchFacts || {}).events, arr = (ev && ev.events) || [];
+  const goals = [], reds = [];
+  arr.forEach(function(x){
+    if(!x || x.isPenaltyShootoutEvent) return;
+    const nm = (x.player && x.player.name) || x.nameStr || '';
+    const min = (x.time || 0) + (x.overloadTime ? '+' + x.overloadTime : '') + "'";
+    if(x.type === 'Goal'){
+      const side = (x.newScore && x.newScore.length === 2) ? (x.newScore[0] > (Number(x.homeScore) || 0) ? 'home' : 'away') : (x.isHome ? 'home' : 'away');   // côté qui marque (même pour un csc)
+      goals.push({min: min, name: nm, side: side, pen: /pen/i.test(String(x.goalDescription || x.suffix || '')), og: !!x.ownGoal});
+    } else if(x.type === 'Card' && /red/i.test(String(x.card || ''))){
+      reds.push({min: min, name: nm, side: x.isHome ? 'home' : 'away'});
+    }
+  });
+  return {goals: goals, reds: reds};
+}
+async function fmOverlay(){
+  const day = PARIS_DAY_FMT.format(new Date()).replace(/-/g, '');
+  const j = await fmGet('matches?date=' + day + '&timezone=' + encodeURIComponent(PARIS_TZ) + '&ccode3=FRA');
+  const lg = (j.leagues || []).filter(function(l){ return l.primaryId === 53 || (l.name === 'Ligue 1' && l.ccode === 'FRA'); })[0];
+  if(!lg) throw new Error('fotmob : Ligue 1 absente');
+  const out = {}, jobs = [], now = Date.now();
+  (lg.matches || []).forEach(function(m){
+    const h = lsTeam(m.home && m.home.name), a = lsTeam(m.away && m.away.name), st = m.status || {};
+    if(!h || !a || st.cancelled) return;
+    const state = st.finished ? 'post' : (st.started ? 'in' : 'pre');
+    const lt = st.liveTime || {}, short = String(lt.short || '').replace(/[‎‏]/g, '').replace(/[’‘]/g, "'");
+    const hs = Number(m.home && m.home.score) || 0, as = Number(m.away && m.away.score) || 0;
+    const o = {goals: [], reds: [], state: state, name: state === 'pre' ? 'STATUS_SCHEDULED' : (state === 'post' ? 'STATUS_FULL_TIME' : (short === 'HT' ? 'STATUS_HALFTIME' : 'STATUS_IN_PROGRESS')),
+      completed: state === 'post', clock: (state === 'in' && short !== 'HT') ? short : '', home: hs, away: as, kickoff: st.utcTime ? new Date(st.utcTime).toISOString() : (m.timeTS ? new Date(m.timeTS).toISOString() : '')};
+    out[h + '|' + a] = o;
+    if(state !== 'in') return;
+    const c = FM.det[m.id], sc = hs + '-' + as;
+    const synced = c && c.goals.length === hs + as;                                   // buteurs à jour par rapport au score ?
+    if(!c || c.sc !== sc && now - c.at > 3000 || (!synced && now - c.at > 8000) || now - c.at > 60000){
+      jobs.push(fmGet('matchDetails?matchId=' + m.id).then(function(d){ const e = fmEvents(d); FM.det[m.id] = {at: Date.now(), sc: sc, goals: e.goals, reds: e.reds}; o.goals = e.goals; o.reds = e.reds; }).catch(function(){ if(c){ o.goals = c.goals; o.reds = c.reds; } }));
+    } else { o.goals = c.goals; o.reds = c.reds; }
+  });
+  await Promise.all(jobs);
+  return out;
+}
+const LIVE_SRC_NAMES = {fotmob: 'FotMob', livescore: 'livescore', espn: 'ESPN'};
 async function fetchLiveOverlay(){
+  if(Date.now() >= FM.failUntil){
+    try { const o = await fmOverlay(); LIVE_SRC = 'fotmob'; return o; }
+    catch(e){ FM.failUntil = Date.now() + 5 * 60 * 1000; }                         // FotMob indisponible : livescore (puis ESPN) pendant 5 min
+  }
   if(Date.now() >= LS.failUntil){
     try { const o = await lsOverlay(); LIVE_SRC = 'livescore'; return o; }
     catch(e){ LS.failUntil = Date.now() + 5 * 60 * 1000; LS.fix = null; }   // livescore indisponible : ESPN pendant 5 min
@@ -5413,7 +5470,7 @@ async function liveTick(){
     const soon = keys.some(function(k){
       return overlay[k].state === 'pre' && (new Date(overlay[k].kickoff).getTime() - Date.now()) < 20 * 60 * 1000;
     });
-    nextDelay = live.length ? (LIVE_SRC === 'livescore' ? 10 * 1000 : 30 * 1000) : (soon ? 60 * 1000 : 5 * 60 * 1000);
+    nextDelay = live.length ? ((LIVE_SRC === 'livescore' || LIVE_SRC === 'fotmob') ? 10 * 1000 : 30 * 1000) : (soon ? 60 * 1000 : 5 * 60 * 1000);
     if(LC_TAB === 'live') nextDelay = live.length ? 10 * 1000 : (soon ? 20 * 1000 : 30 * 1000);      // onglet « En direct » ouvert : quasi temps réel
 
     goalCheck(overlay);
@@ -5434,7 +5491,7 @@ async function liveTick(){
     renderLiveView();
 
     const hhmmss = new Date().toLocaleTimeString('fr-FR');
-    if (live.length) setLiveStatus('🔴 ' + live.length + ' match' + (live.length > 1 ? 's' : '') + ' en direct · actualisé à ' + hhmmss, 'on');
+    if (live.length) setLiveStatus('🔴 ' + live.length + ' match' + (live.length > 1 ? 's' : '') + ' en direct · actualisé à ' + hhmmss + ' · ' + (LIVE_SRC_NAMES[LIVE_SRC] || LIVE_SRC), 'on');
     else setLiveStatus('Aucun match en direct pour le moment · vérifié à ' + hhmmss, '');
   } catch (err) {
     nextDelay = 2 * 60 * 1000;
