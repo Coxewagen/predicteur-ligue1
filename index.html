@@ -480,6 +480,8 @@
   .lc-res.ko{background:#4a1010;color:#ffb3ad}
   .lc-res.lok{background:#2e2a0b;color:#ffc83d}
   .lc-res.lko{background:#4a1010;color:#ffb3ad}
+  .lc-pari{margin:6px 0 0;text-align:center;font-size:16px;font-weight:900;color:#ffc83d;background:rgba(255,200,61,.14);border:1px solid #ffc83d;border-radius:999px;padding:4px 12px}
+  .lc-tm b.pk{color:#ffc83d}
   #lcCombo,#lcRecap{margin-top:22px;background:linear-gradient(180deg,#10231a,#0c1c14);border:1px solid #244634;border-radius:18px;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#fff;font-size:18px}
   #lcCombo:empty,#lcRecap:empty{display:none}
   #lcCombo h2,#lcRecap h2{margin:0 0 10px;color:#ffc83d;font-size:24px}
@@ -538,6 +540,9 @@
   .lv-t img.pick{box-shadow:0 0 0 2px #ffc83d}
   .lv-n{display:flex;flex-direction:column;min-width:0}
   .lv-n b{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lv-n b.pk{color:#ffc83d}
+  .lv-pari{grid-column:1/-1;text-align:center;font-size:12px;font-weight:900;color:#ffc83d;background:rgba(255,200,61,.14);border-radius:999px;padding:1px 8px;margin-bottom:3px}
+  .lv-row.hp .lv-g{grid-row:3}
   .lv-n small{font-size:12px;font-weight:600;color:#c6d6cb}
   .lv-sc{display:flex;flex-direction:column;align-items:center;min-width:58px}
   .lv-sc b{font-size:21px;font-weight:900;letter-spacing:.03em;font-variant-numeric:tabular-nums}
@@ -863,7 +868,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T20:03:16", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:02:28", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -4763,7 +4768,11 @@ function lcCardHtml(md, m, info, lv){
   const ph = pr ? pr.pHomeWin : 0, pd = pr ? pr.pDraw : 0, pa = pr ? pr.pAwayWin : 0;
   const favSide = info ? info.fav : 0;
   const logo = function(n){ const id = LC_LOGO[n]; return id ? '<img src="https://a.espncdn.com/i/teamlogos/soccer/500/' + id + '.png" alt="" onerror="this.style.visibility=\'hidden\'">' : ''; };
-  const tm = function(n){ return '<div class="lc-tm">' + logo(n) + '<b>' + lcShort(n) + buildAbsenceBadgeHtml(n) + '</b></div>'; };
+  // Match en cours + « J'ai parié » coché : l'équipe choisie en jaune avec ✓ et un bandeau « Mon pari » au-dessus du score
+  const livePick = !!(bet && info && o && o.state === 'in');
+  const pkH = livePick && info.fav === 0, pkA = livePick && info.fav === 2;
+  const tm = function(n, pk){ return '<div class="lc-tm">' + logo(n) + '<b' + (pk ? ' class="pk"' : '') + '>' + (pk ? '✓ ' : '') + lcShort(n) + buildAbsenceBadgeHtml(n) + '</b></div>'; };
+  const pariHtml = livePick ? '<div class="lc-pari">Mon pari : ' + lcEsc(bet === 'w' ? 'Victoire ' + lcShort(favSide === 0 ? m.home : m.away) : lcShort(favSide === 0 ? m.home : m.away) + ' ou nul') + '</div>' : '';
   let pill = '', sub = '', cods = '';
   if(info){
     const favName = lcShort(favSide === 0 ? m.home : m.away);
@@ -4780,9 +4789,10 @@ function lcCardHtml(md, m, info, lv){
     + ' data-when="' + escA(fixtureWhenText(m)) + '" data-played="' + (m.played ? '1' : '0') + '"'
     + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
     + '<div class="lc-top"><span class="lc-t">' + tTxt + '</span><span class="lc-res' + resCls + '">' + resTxt + '</span></div>'
-    + '<div class="lc-teams">' + tm(m.home)
+    + pariHtml
+    + '<div class="lc-teams">' + tm(m.home, pkH)
     + '<div class="lc-mid"><span class="lc-live' + (o && o.state === 'post' ? ' ft' : '') + '">' + liveHtml + '</span><span class="lc-pv">' + (pr ? pr.i + '-' + pr.j : '—') + '</span></div>'
-    + tm(m.away) + '</div>'
+    + tm(m.away, pkA) + '</div>'
     + '<div class="lc-bar"><i class="' + (favSide === 0 && info ? 'f' : '') + '" style="width:' + (ph * 100).toFixed(1) + '%"></i><i class="d" style="width:' + (pd * 100).toFixed(1) + '%"></i><i class="' + (favSide === 2 && info ? 'f' : '') + '" style="width:' + (pa * 100).toFixed(1) + '%"></i></div>'
     + '<div class="lc-pcts"><span' + (favSide === 0 ? ' class="fav"' : '') + '>' + Math.round(ph * 100) + ' %</span><span>' + Math.round(pd * 100) + ' %</span><span' + (favSide === 2 ? ' class="fav"' : '') + '>' + Math.round(pa * 100) + ' %</span></div>'
     + '<div class="lc-bot"><div>' + pill + '<div class="lc-sub">' + sub + '</div></div><div class="lc-wx">' + cods + '</div></div>'
@@ -4931,12 +4941,17 @@ function lvRowHtml(md, m, lv){
   const pc = function(v){ return pr ? '<small>' + lcPc(v) + '</small>' : ''; };
   const clock = liveClockLabel(lv) === 'MI-TEMPS' ? 'MT' : liveClockLabel(lv);
   const gH = lvGoalsLine(lv, 'home'), gA = lvGoalsLine(lv, 'away');
-  return '<div class="lv-row' + (bet ? ' bet' : '') + '" data-key="' + lcEsc(key) + '" data-home="' + lcEsc(m.home) + '" data-away="' + lcEsc(m.away)
+  // « J'ai parié » coché : équipe choisie en jaune avec ✓ + bandeau « Mon pari » (pas d'indication si le pari n'est pas coché)
+  const favNm = info ? lcShort(info.fav === 0 ? m.home : m.away) : '';
+  const pariRow = (bet && info) ? '<div class="lv-pari">Mon pari : ' + lcEsc(bet === 'w' ? 'Victoire ' + favNm : favNm + ' ou nul') + '</div>' : '';
+  const nm = function(n, pk){ return '<b' + (pk ? ' class="pk"' : '') + '>' + (pk ? '✓ ' : '') + lcEsc(lcShort(n)) + '</b>'; };
+  return '<div class="lv-row' + (bet ? ' bet' : '') + (pariRow ? ' hp' : '') + '" data-key="' + lcEsc(key) + '" data-home="' + lcEsc(m.home) + '" data-away="' + lcEsc(m.away)
     + '" data-when="' + lcEsc(fixtureWhenText(m)) + '" data-played="0" data-hs="" data-as="">'
+    + pariRow
     + '<div class="lv-min">' + lcEsc(clock) + mark + '</div>'
-    + '<div class="lv-t lv-h">' + logo(m.home, pickH) + '<div class="lv-n"><b>' + lcEsc(lcShort(m.home)) + '</b>' + (pr ? pc(pr.pHomeWin) : '') + '</div></div>'
+    + '<div class="lv-t lv-h">' + logo(m.home, pickH) + '<div class="lv-n">' + nm(m.home, pickH) + (pr ? pc(pr.pHomeWin) : '') + '</div></div>'
     + '<div class="lv-sc"><b>' + (o ? o.h + ' - ' + o.a : '0 - 0') + '</b>' + (pr ? '<small' + (bet === 'p' ? ' class="pick"' : '') + '>nul ' + lcPc(pr.pDraw) + '</small>' : '') + '</div>'
-    + '<div class="lv-t lv-a"><div class="lv-n"><b>' + lcEsc(lcShort(m.away)) + '</b>' + (pr ? pc(pr.pAwayWin) : '') + '</div>' + logo(m.away, pickA) + '</div>'
+    + '<div class="lv-t lv-a"><div class="lv-n">' + nm(m.away, pickA) + (pr ? pc(pr.pAwayWin) : '') + '</div>' + logo(m.away, pickA) + '</div>'
     + (gH ? '<div class="lv-g h">' + gH + '</div>' : '') + (gA ? '<div class="lv-g a">' + gA + '</div>' : '')
     + '</div>';
 }
@@ -5137,7 +5152,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 3;          // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 4;         // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');
