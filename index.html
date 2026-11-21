@@ -509,6 +509,9 @@
   .lc-rl .s.ko{color:#ffb3ad}
   .lc-rl .s.wt{color:#c6d6cb}
   .lc-rl .s.lv{color:#ffc83d}
+  .lc-o{display:block;text-align:right;font-size:15px;color:#c6d6cb;margin-top:6px;white-space:nowrap}
+  #lcOddsInfo{margin:8px 0 2px;font-size:17px;font-weight:800;color:#ffc83d;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  #lcOddsInfo:empty{display:none}
   @media(max-width:600px){ #resultsRows{grid-template-columns:1fr} }
 </style>
 </head>
@@ -667,6 +670,7 @@
       <select class="results-select" id="matchdaySelect" onchange="userPickedMatchday=true;renderResultsForMatchday(this.value)"></select>
       <span id="resultsSummary"></span>
     </div>
+    <div id="lcOddsInfo"></div>
     <div id="lcNav"></div>
     <div id="resultsRows"></div>
     <div id="lcCombo"></div>
@@ -707,7 +711,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:23:59", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:32:07", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -4397,6 +4401,8 @@ function renderResultsForMatchday(matchday){
         .map(function(x){ return '<button type="button" data-d="' + x[0] + '" class="' + (filt === x[0] ? 'on' : '') + (x[0] === 'live' ? ' lv' : '') + '">' + x[1] + '</button>'; }).join('');
   }
   const items = sortedResults.map(function(m){ return {key: matchday + '|' + m.home + '|' + m.away, m: m, info: lcInfo(m), lv: liveOf(m)}; });
+  lcFreeze(items);
+  lcOddsInfo();
   const shown = items.filter(function(it){
     if(filt === 'all') return true;
     if(filt === 'live') return !!(it.lv && it.lv.state === 'in');
@@ -4424,6 +4430,11 @@ let LC_OD = lcLoad('l1_odds');      // cotes saisies à la main (clé du match +
 let LC_DAY = 'all';
 try { LC_DAY = localStorage.getItem('l1_day') || 'all'; } catch(e){}
 let lcDeferred = null;
+// Cotes Winamax (1 / N / 2), relevées toutes les 30 min dans cotes.json : affichage seulement, jamais dans le calcul.
+const LC_ODDS_URL = 'https://raw.githubusercontent.com/Coxewagen/predicteur-ligue1/main/cotes.json';
+let WINAMAX = lcLoad('l1_winamax');
+if(!WINAMAX.odds) WINAMAX = {updatedAt: null, odds: {}};
+let LC_FZ = lcLoad('l1_frz');       // cotes figées au moment où je coche « J'ai parié »
 const lcF2 = function(v){ return v.toFixed(2).replace('.', ','); };
 const lcPc = function(v){ return Math.round(v * 100) + ' %'; };
 function lcEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -4463,8 +4474,52 @@ function lcDayHeader(day, approx){
   }
   return '<h2 class="lc-day">' + label + (extra ? '<small>' + extra + '</small>' : '') + '</h2>';
 }
-function lcCodInput(k, p){
-  const v = LC_OD[k];
+// Cote Winamax 1 / N / 2 du match, ou null. « Sec » = cote du favori ; « Ou nul » estimée à partir de 1 et N.
+function lcWx(m){ const o = WINAMAX.odds[m.home + '|' + m.away]; return (o && o[0] > 1 && o[1] > 1 && o[2] > 1) ? o : null; }
+function lcAuto(m, info){
+  const o = info ? lcWx(m) : null;
+  if(!o) return null;
+  const ow = info.fav === 0 ? o[0] : o[2];
+  return {w: ow, p: 1.035 / (1 / ow + 1 / o[1])};
+}
+// Priorité : cote tapée à la main > cote figée (pari coché) > cote Winamax du moment.
+function lcCote(key, kind, m, info, bet){
+  if(LC_OD[key + kind]) return {v: LC_OD[key + kind], man: true};
+  if(bet && LC_FZ[key]) return {v: LC_FZ[key][kind], man: false};
+  const a = lcAuto(m, info);
+  return {v: a ? a[kind] : 0, man: false};
+}
+function lcFreeze(items){
+  let ch = false;
+  Object.keys(LC_FZ).forEach(function(k){ if(!LC_B[k]){ delete LC_FZ[k]; ch = true; } });
+  items.forEach(function(it){
+    if(!LC_B[it.key] || LC_FZ[it.key]) return;
+    const a = lcAuto(it.m, it.info);
+    if(a){ LC_FZ[it.key] = {w: a.w, p: a.p}; ch = true; }
+  });
+  if(ch) lcSave('l1_frz', LC_FZ);
+}
+function lcOddsInfo(){
+  const el = document.getElementById('lcOddsInfo');
+  if(!el) return;
+  if(!WINAMAX.updatedAt){ el.textContent = ''; return; }
+  const d = new Date(WINAMAX.updatedAt);
+  const dn = d.toLocaleDateString('fr-FR', {weekday: 'long'});
+  el.textContent = 'Cotes Winamax · ' + dn.charAt(0).toUpperCase() + dn.slice(1) + ' ' + d.getDate() + ' à ' + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+}
+async function lcFetchOdds(){
+  try {
+    const r = await fetch(LC_ODDS_URL + '?t=' + Date.now(), {cache: 'no-store'});
+    if(!r.ok) return;
+    const j = await r.json();
+    if(!j || !j.odds || !j.updatedAt) return;
+    WINAMAX = j; lcSave('l1_winamax', j);
+    const sel = document.getElementById('matchdaySelect');
+    if(sel && sel.value) lcRefresh();
+  } catch(e){ /* hors connexion : on garde les dernières cotes mémorisées */ }
+}
+function lcCodInput(k, p, c){
+  const v = c ? c.v : LC_OD[k];
   const cls = v ? (v >= 1 / p ? ' good' : ' bad') : '';
   return '<input class="lc-cod' + cls + '" data-k="' + lcEsc(k) + '" type="text" inputmode="decimal" placeholder="—" value="' + (v ? lcF2(v) : '') + '">';
 }
@@ -4493,8 +4548,10 @@ function lcCardHtml(md, m, info, lv){
     if(info.type === 'win'){ pill = '<span class="lc-pill win">Victoire ' + favName + '</span>'; sub = lcPc(info.pw) + ' · mini ' + lcF2(1 / info.pw); }
     else if(info.type === 'dc'){ pill = '<span class="lc-pill dc">' + favName + ' ou nul</span>'; sub = lcPc(info.pdc) + ' · mini ' + lcF2(1 / info.pdc); }
     else { pill = '<span class="lc-pill none">Trop serré</span>'; sub = lcPc(info.pdc) + ' · mini ' + lcF2(1 / info.pdc); }
-    cods = '<div class="lc-wl"><span class="lc-wn">Ou nul</span>' + lcCodInput(key + 'p', info.pdc) + '</div>'
-         + '<div class="lc-wl"><span class="lc-wn">Sec</span>' + lcCodInput(key + 'w', info.pw) + '</div>';
+    const cp = lcCote(key, 'p', m, info, bet), cw = lcCote(key, 'w', m, info, bet), wx = lcWx(m);
+    cods = '<div class="lc-wl"><span class="lc-wn">Ou nul' + (cp.v && !cp.man ? ' ≈' : '') + '</span>' + lcCodInput(key + 'p', info.pdc, cp) + '</div>'
+         + '<div class="lc-wl"><span class="lc-wn">Sec</span>' + lcCodInput(key + 'w', info.pw, cw) + '</div>'
+         + (wx ? '<span class="lc-o">' + wx.map(lcF2).join(' · ') + '</span>' : '');
   }
   const escA = lcEsc;
   return '<div class="lc-card' + (bet ? ' lc-betted' : '') + '" data-key="' + escA(key) + '" data-home="' + escA(m.home) + '" data-away="' + escA(m.away) + '"'
@@ -4540,7 +4597,7 @@ function lcRenderBottom(md, items, filt, days){
     if(filt !== 'all' && filt !== 'live' && fixtureDay(it.m) !== filt) return;
     const sec = bet === 'w', p = sec ? it.info.pw : it.info.pdc, k = it.key + (sec ? 'w' : 'p');
     const fv = lcShort(it.info.fav === 0 ? it.m.home : it.m.away), o = lcOutcome(it.m, it.lv);
-    C.push({k: k, lab: sec ? 'Victoire ' + fv : fv + ' ou nul', m: lcShort(it.m.home) + ' – ' + lcShort(it.m.away), p: p, od: LC_OD[k] || 0,
+    C.push({k: k, lab: sec ? 'Victoire ' + fv : fv + ' ou nul', m: lcShort(it.m.home) + ' – ' + lcShort(it.m.away), p: p, od: lcCote(it.key, sec ? 'w' : 'p', it.m, it.info, bet).v,
             r: (o && o.state === 'post') ? lcWon(o, it.info.fav, bet) : null});
   });
   if(!C.length){ cb.innerHTML = ''; return; }
@@ -4585,7 +4642,7 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
       const card = t.closest('.lc-card'); if(!card) return;
       const m = {home: card.dataset.home, away: card.dataset.away}, info = lcInfo(m);
       if(t.checked) LC_B[card.dataset.key] = (info && info.type === 'win') ? 'w' : 'p'; else delete LC_B[card.dataset.key];
-      lcSave('l1_bets', LC_B); lcRefresh();
+      lcSave('l1_bets', LC_B); lcRefresh();     // (la cote Winamax est figée au rendu suivant, défigée si on décoche)
     }
   });
   document.addEventListener('click', function(e){
@@ -4594,6 +4651,9 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
     const cbtn = e.target.closest('.lc-ch button');
     if(cbtn){ const card = cbtn.closest('.lc-card'); if(!card) return; LC_B[card.dataset.key] = cbtn.dataset.c; lcSave('l1_bets', LC_B); lcRefresh(); }
   });
+  lcFetchOdds();
+  setInterval(function(){ if(!document.hidden) lcFetchOdds(); }, 10 * 60 * 1000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) lcFetchOdds(); });
   // Si un re-rendu automatique (scores en direct) tombait pendant une saisie, on le rejoue juste après.
   document.addEventListener('focusout', function(){
     if(lcDeferred === null) return;
