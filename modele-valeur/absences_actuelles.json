@@ -1,0 +1,570 @@
+{
+ "etape": 4,
+ "C": 106,
+ "GKFLOOR": 15,
+ "CAP": 40,
+ "blessesTM": "2026-11-21T08:45:33Z",
+ "equipes": {
+  "Paris Saint-Germain": {
+   "valeurXI": 1030,
+   "perteTotale": 90,
+   "malusBrut": -9.7,
+   "malus": -9.7,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Khvicha Kvaratskhelia",
+     "poste": "AT",
+     "valeur": 140,
+     "source": "texte+TM",
+     "remplacant": "Maghnes Akliouche",
+     "valeurRemplacant": 50,
+     "perte": 90
+    }
+   ],
+   "absentsHorsXI": [],
+   "incertains": [],
+   "niveauSansAbsence": 1735.6,
+   "niveauAvecAbsences": 1725.9
+  },
+  "AS Monaco": {
+   "valeurXI": 205.5,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Ansu Fati",
+     "poste": "AT",
+     "valeur": 15,
+     "source": "texte+TM",
+     "remplacant": "Folarin Balogun",
+     "valeurRemplacant": 40,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [
+    "Stanis Idumbo"
+   ],
+   "incertains": [
+    "Christian Mawissa",
+    "Aleksandr Golovin"
+   ],
+   "niveauSansAbsence": 1574,
+   "niveauAvecAbsences": 1574
+  },
+  "RC Strasbourg": {
+   "valeurXI": 142,
+   "perteTotale": 13.6,
+   "malusBrut": -10.7,
+   "malus": -10.7,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Karim Coulibaly",
+     "poste": "DC",
+     "valeur": 28,
+     "source": "TM",
+     "remplacant": "Lucas Høgsberg",
+     "valeurRemplacant": 18,
+     "perte": 10
+    },
+    {
+     "joueur": "Oso",
+     "poste": "DL",
+     "valeur": 10,
+     "source": "TM",
+     "remplacant": "Jeyland Mitchell",
+     "valeurRemplacant": 6.4,
+     "perte": 3.6
+    }
+   ],
+   "absentsHorsXI": [
+    "Joaquín Panichelli",
+    "Maxi Oyedele"
+   ],
+   "incertains": [
+    "Filip Jørgensen",
+    "Jeyland Mitchell",
+    "Giovanni Reyna",
+    "Fábio Baldé"
+   ],
+   "niveauSansAbsence": 1525.7,
+   "niveauAvecAbsences": 1515
+  },
+  "Olympique Lyonnais": {
+   "valeurXI": 165,
+   "perteTotale": 35.4,
+   "malusBrut": -25.6,
+   "malus": -25.6,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Tyler Morton",
+     "poste": "MI",
+     "valeur": 30,
+     "source": "texte+TM",
+     "remplacant": "Mads Bidstrup",
+     "valeurRemplacant": 15,
+     "perte": 15
+    },
+    {
+     "joueur": "Loïs Openda",
+     "poste": "BU",
+     "valeur": 25,
+     "source": "texte",
+     "remplacant": "Ernest Nuamah",
+     "valeurRemplacant": 9.6,
+     "perte": 15.4
+    },
+    {
+     "joueur": "Pavel Sulc",
+     "poste": "MI",
+     "valeur": 20,
+     "source": "texte+TM",
+     "remplacant": "Khalis Merah",
+     "valeurRemplacant": 15,
+     "perte": 5
+    }
+   ],
+   "absentsHorsXI": [
+    "Mohamed Ouédraogo"
+   ],
+   "incertains": [
+    "Steeve Kango"
+   ],
+   "niveauSansAbsence": 1562.4,
+   "niveauAvecAbsences": 1536.8
+  },
+  "Stade Rennais": {
+   "valeurXI": 177,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [],
+   "absentsHorsXI": [
+    "Przemyslaw Frankowski"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1552.9,
+   "niveauAvecAbsences": 1552.9
+  },
+  "LOSC Lille": {
+   "valeurXI": 182,
+   "perteTotale": 7,
+   "malusBrut": -4.2,
+   "malus": -4.2,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Tiago Santos",
+     "poste": "DL",
+     "valeur": 10,
+     "source": "texte+TM",
+     "remplacant": "Loun Srdanovic",
+     "valeurRemplacant": 3,
+     "perte": 7
+    }
+   ],
+   "absentsHorsXI": [
+    "Hamza Igamane"
+   ],
+   "incertains": [
+    "Ayase Ueda"
+   ],
+   "niveauSansAbsence": 1573.8,
+   "niveauAvecAbsences": 1569.6
+  },
+  "RC Lens": {
+   "valeurXI": 150,
+   "perteTotale": 8.6,
+   "malusBrut": -6.3,
+   "malus": -6.3,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Ismaëlo Ganiou",
+     "poste": "DC",
+     "valeur": 30,
+     "source": "texte",
+     "remplacant": "Jean-Clair Todibo",
+     "valeurRemplacant": 22,
+     "perte": 8
+    },
+    {
+     "joueur": "Odsonne Édouard",
+     "poste": "BU",
+     "valeur": 12,
+     "source": "texte+TM",
+     "remplacant": "Franjo Ivanović",
+     "valeurRemplacant": 15,
+     "perte": 0
+    },
+    {
+     "joueur": "Abdallah Sima",
+     "poste": "AT",
+     "valeur": 7,
+     "source": "texte",
+     "remplacant": "Mezian Mesloub",
+     "valeurRemplacant": 6.4,
+     "perte": 0.6
+    }
+   ],
+   "absentsHorsXI": [
+    "Maik Nawrocki",
+    "Jhoanner Chávez"
+   ],
+   "incertains": [
+    "Andrija Bulatovic"
+   ],
+   "niveauSansAbsence": 1540.1,
+   "niveauAvecAbsences": 1533.8
+  },
+  "Paris FC": {
+   "valeurXI": 116.3,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [],
+   "absentsHorsXI": [],
+   "incertains": [
+    "Samir Chergui"
+   ],
+   "niveauSansAbsence": 1534.9,
+   "niveauAvecAbsences": 1534.9
+  },
+  "Olympique de Marseille": {
+   "valeurXI": 155.5,
+   "perteTotale": 3.4,
+   "malusBrut": -2.3,
+   "malus": -2.3,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Emerson",
+     "poste": "DL",
+     "valeur": 9,
+     "source": "texte+TM",
+     "remplacant": "Bamo Meïté",
+     "valeurRemplacant": 5.6,
+     "perte": 3.4
+    }
+   ],
+   "absentsHorsXI": [
+    "Derek Cornelius"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1564.9,
+   "niveauAvecAbsences": 1562.6
+  },
+  "OGC Nice": {
+   "valeurXI": 89.6,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Hicham Boudaoui",
+     "poste": "MI",
+     "valeur": 12,
+     "source": "TM",
+     "remplacant": "Sofiane Diop",
+     "valeurRemplacant": 12,
+     "perte": 0
+    },
+    {
+     "joueur": "Mohamed Abdelmonem",
+     "poste": "DC",
+     "valeur": 2.5,
+     "source": "texte+TM",
+     "remplacant": "Alidu Seidu",
+     "valeurRemplacant": 5,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [
+    "Antoine Mendy",
+    "Moïse Bombito",
+    "Laurent Abergel"
+   ],
+   "incertains": [
+    "Ali Abdi"
+   ],
+   "niveauSansAbsence": 1496.4,
+   "niveauAvecAbsences": 1496.4
+  },
+  "Toulouse FC": {
+   "valeurXI": 80,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Rafik Messali",
+     "poste": "DL",
+     "valeur": 1.5,
+     "source": "texte+TM",
+     "remplacant": "Seny Koumbassa",
+     "valeurRemplacant": 4,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [],
+   "incertains": [
+    "Thomas Jørgensen"
+   ],
+   "niveauSansAbsence": 1480.4,
+   "niveauAvecAbsences": 1480.4
+  },
+  "FC Lorient": {
+   "valeurXI": 74.5,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [],
+   "absentsHorsXI": [
+    "Isaak Touré",
+    "Panos Katseris"
+   ],
+   "incertains": [
+    "Bandiougou Fadiga"
+   ],
+   "niveauSansAbsence": 1470.4,
+   "niveauAvecAbsences": 1470.4
+  },
+  "AJ Auxerre": {
+   "valeurXI": 48.5,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [],
+   "absentsHorsXI": [
+    "Bryan Okoh",
+    "Sékou Fofana",
+    "Assane Dioussé"
+   ],
+   "incertains": [
+    "Danny Namaso"
+   ],
+   "niveauSansAbsence": 1402,
+   "niveauAvecAbsences": 1402
+  },
+  "Stade Brestois": {
+   "valeurXI": 62.5,
+   "perteTotale": 14,
+   "malusBrut": -27,
+   "malus": -27,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Raphaël Le Guen",
+     "poste": "DC",
+     "valeur": 15,
+     "source": "texte+TM",
+     "remplacant": "Luck Zogbé",
+     "valeurRemplacant": 1,
+     "perte": 14
+    }
+   ],
+   "absentsHorsXI": [
+    "Brendan Chardonnet"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1474.4,
+   "niveauAvecAbsences": 1447.4
+  },
+  "Angers SCO": {
+   "valeurXI": 49.7,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Jordan Lefort",
+     "poste": "DC",
+     "valeur": 1,
+     "source": "texte",
+     "remplacant": "Emmanuel Biumla",
+     "valeurRemplacant": 2.5,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [
+    "Bané Diatta",
+    "Oumar Pona"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1405.3,
+   "niveauAvecAbsences": 1405.3
+  },
+  "Le Havre AC": {
+   "valeurXI": 41.9,
+   "perteTotale": 4,
+   "malusBrut": -10.6,
+   "malus": -10.6,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Rassoul Ndiaye",
+     "poste": "MI",
+     "valeur": 8,
+     "source": "texte+TM",
+     "remplacant": "Amir Richardson",
+     "valeurRemplacant": 4,
+     "perte": 4
+    },
+    {
+     "joueur": "Felix Mambimbi",
+     "poste": "AT",
+     "valeur": 0.5,
+     "source": "TM",
+     "remplacant": "Josh Maja",
+     "valeurRemplacant": 3.6,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [
+    "Lionel Mpasi-Nzau",
+    "Stephan Zagadou",
+    "Timothée Pembélé",
+    "Sota Nakamura",
+    "Daren Mosengo",
+    "Joan Tincrès"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1383.7,
+   "niveauAvecAbsences": 1373.1
+  },
+  "ES Troyes AC": {
+   "valeurXI": 30,
+   "perteTotale": 0,
+   "malusBrut": 0,
+   "malus": 0,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Paolo Gozzi",
+     "poste": "DC",
+     "valeur": 1.2,
+     "source": "texte+TM",
+     "remplacant": "Ismaël Boura",
+     "valeurRemplacant": 3.2,
+     "perte": 0
+    }
+   ],
+   "absentsHorsXI": [
+    "Yacouba Koné"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1374.8,
+   "niveauAvecAbsences": 1374.8
+  },
+  "Le Mans FC": {
+   "valeurXI": 21.6,
+   "perteTotale": 2.8,
+   "malusBrut": -14.7,
+   "malus": -14.7,
+   "gardienSansRemplacant": false,
+   "absentsXI": [
+    {
+     "joueur": "Adil Bourabaa",
+     "poste": "MI",
+     "valeur": 3.5,
+     "source": "texte+TM",
+     "remplacant": "Jean Vercruysse",
+     "valeurRemplacant": 0.7,
+     "perte": 2.8
+    }
+   ],
+   "absentsHorsXI": [
+    "Samuel Yohou",
+    "Djibril Sidibé"
+   ],
+   "incertains": [],
+   "niveauSansAbsence": 1348.6,
+   "niveauAvecAbsences": 1333.9
+  }
+ },
+ "matchsJ11": [
+  {
+   "match": "OGC Nice - Paris Saint-Germain",
+   "heure": "sam. 17h15",
+   "malusDom": 0,
+   "malusExt": -9.7,
+   "ecartAvant": -189.2,
+   "ecartApres": -179.5,
+   "variation": 9.7
+  },
+  {
+   "match": "AS Monaco - AJ Auxerre",
+   "heure": "sam. 20h45",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": 222,
+   "ecartApres": 222,
+   "variation": 0
+  },
+  {
+   "match": "LOSC Lille - Olympique Lyonnais",
+   "heure": "sam. 20h45",
+   "malusDom": -4.2,
+   "malusExt": -25.6,
+   "ecartAvant": 61.4,
+   "ecartApres": 82.8,
+   "variation": 21.4
+  },
+  {
+   "match": "RC Lens - Toulouse FC",
+   "heure": "sam. 20h45",
+   "malusDom": -6.3,
+   "malusExt": 0,
+   "ecartAvant": 109.7,
+   "ecartApres": 103.4,
+   "variation": -6.3
+  },
+  {
+   "match": "RC Strasbourg - Stade Brestois",
+   "heure": "sam. 20h45",
+   "malusDom": -10.7,
+   "malusExt": -27,
+   "ecartAvant": 101.3,
+   "ecartApres": 117.6,
+   "variation": 16.3
+  },
+  {
+   "match": "Paris FC - Angers SCO",
+   "heure": "dim. 15h00",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": 179.6,
+   "ecartApres": 179.6,
+   "variation": 0
+  },
+  {
+   "match": "FC Lorient - Stade Rennais",
+   "heure": "dim. 17h15",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": -32.5,
+   "ecartApres": -32.5,
+   "variation": 0
+  },
+  {
+   "match": "Olympique de Marseille - Le Mans FC",
+   "heure": "dim. 20h45",
+   "malusDom": -2.3,
+   "malusExt": -14.7,
+   "ecartAvant": 266.3,
+   "ecartApres": 278.7,
+   "variation": 12.4
+  }
+ ]
+}

@@ -1,114 +1,114 @@
 {
  "etape": 3,
- "lambda": 20,
+ "lambda": 50,
  "matchsJoues": 91,
  "niveaux": {
   "Paris Saint-Germain": {
    "depart": 1747.5,
-   "ajustement": -23.8,
-   "niveau": 1723.7,
+   "ajustement": -11.9,
+   "niveau": 1735.6,
    "matchs": 10
   },
   "AS Monaco": {
    "depart": 1576.7,
-   "ajustement": -5.4,
-   "niveau": 1571.3,
+   "ajustement": -2.7,
+   "niveau": 1574,
    "matchs": 10
   },
   "RC Strasbourg": {
    "depart": 1537.5,
-   "ajustement": -23.6,
-   "niveau": 1513.9,
+   "ajustement": -11.8,
+   "niveau": 1525.7,
    "matchs": 10
   },
   "Olympique Lyonnais": {
    "depart": 1553.4,
-   "ajustement": 18,
-   "niveau": 1571.4,
+   "ajustement": 9,
+   "niveau": 1562.4,
    "matchs": 10
   },
   "Stade Rennais": {
    "depart": 1560.8,
-   "ajustement": -15.8,
-   "niveau": 1545,
+   "ajustement": -7.9,
+   "niveau": 1552.9,
    "matchs": 10
   },
   "LOSC Lille": {
    "depart": 1563.8,
-   "ajustement": 20,
-   "niveau": 1583.8,
+   "ajustement": 10,
+   "niveau": 1573.8,
    "matchs": 10
   },
   "RC Lens": {
    "depart": 1543.3,
-   "ajustement": -6.4,
-   "niveau": 1536.9,
+   "ajustement": -3.2,
+   "niveau": 1540.1,
    "matchs": 10
   },
   "Paris FC": {
    "depart": 1516.3,
-   "ajustement": 37.3,
-   "niveau": 1553.6,
+   "ajustement": 18.6,
+   "niveau": 1534.9,
    "matchs": 10
   },
   "Olympique de Marseille": {
    "depart": 1547.1,
-   "ajustement": 35.6,
-   "niveau": 1582.7,
+   "ajustement": 17.8,
+   "niveau": 1564.9,
    "matchs": 10
   },
   "OGC Nice": {
    "depart": 1488.7,
-   "ajustement": 15.4,
-   "niveau": 1504.1,
+   "ajustement": 7.7,
+   "niveau": 1496.4,
    "matchs": 10
   },
   "Toulouse FC": {
    "depart": 1476.7,
-   "ajustement": 7.4,
-   "niveau": 1484.1,
+   "ajustement": 3.7,
+   "niveau": 1480.4,
    "matchs": 10
   },
   "FC Lorient": {
    "depart": 1469.1,
-   "ajustement": 2.6,
-   "niveau": 1471.7,
+   "ajustement": 1.3,
+   "niveau": 1470.4,
    "matchs": 10
   },
   "AJ Auxerre": {
    "depart": 1423.6,
-   "ajustement": -43.2,
-   "niveau": 1380.4,
+   "ajustement": -21.6,
+   "niveau": 1402,
    "matchs": 10
   },
   "Stade Brestois": {
    "depart": 1450.5,
-   "ajustement": 47.8,
-   "niveau": 1498.3,
+   "ajustement": 23.9,
+   "niveau": 1474.4,
    "matchs": 10
   },
   "Angers SCO": {
    "depart": 1426.2,
-   "ajustement": -41.7,
-   "niveau": 1384.5,
+   "ajustement": -20.9,
+   "niveau": 1405.3,
    "matchs": 10
   },
   "Le Havre AC": {
    "depart": 1408.1,
-   "ajustement": -48,
-   "niveau": 1360.1,
+   "ajustement": -24.4,
+   "niveau": 1383.7,
    "matchs": 11
   },
   "ES Troyes AC": {
    "depart": 1372.7,
-   "ajustement": 4.1,
-   "niveau": 1376.8,
+   "ajustement": 2.1,
+   "niveau": 1374.8,
    "matchs": 11
   },
   "Le Mans FC": {
    "depart": 1337.9,
-   "ajustement": 21.3,
-   "niveau": 1359.2,
+   "ajustement": 10.7,
+   "niveau": 1348.6,
    "matchs": 10
   }
  }
