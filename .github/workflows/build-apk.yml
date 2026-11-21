@@ -40,7 +40,7 @@ jobs:
       - name: Install Capacitor
         run: |
           [ -f package.json ] || npm init -y
-          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest @capacitor/local-notifications@latest
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest @capacitor/local-notifications@latest @capacitor/haptics@latest
 
       - name: Générer le projet Capacitor (le site est embarqué tel quel dans l'appli)
         # Contrairement à l'ancienne appli TWA (qui ouvrait l'URL en ligne dans un

@@ -543,6 +543,9 @@
   .lv-n b.pk{color:#ffc83d}
   .lv-pari{grid-column:1/-1;text-align:center;font-size:12px;font-weight:900;color:#ffc83d;background:rgba(255,200,61,.14);border-radius:999px;padding:1px 8px;margin-bottom:3px}
   .lv-row.hp .lv-g{grid-row:3}
+  #goalFlash{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#ffc83d;opacity:0;pointer-events:none;z-index:99999}
+  #goalFlash.on{display:block;animation:gflash .45s ease-out 3}
+  @keyframes gflash{0%{opacity:0}15%{opacity:.9}60%,100%{opacity:0}}
   .lv-n small{font-size:12px;font-weight:600;color:#c6d6cb}
   .lv-sc{display:flex;flex-direction:column;align-items:center;min-width:58px}
   .lv-sc b{font-size:21px;font-weight:900;letter-spacing:.03em;font-variant-numeric:tabular-nums}
@@ -868,7 +871,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:17:32", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:24:05", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -5152,7 +5155,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 5;         // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 6;         // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');
@@ -5363,17 +5366,33 @@ function goalNotify(k, o, side){
     }]})).catch(function(){});
   } catch(e){}
 }
+// Onglet « En direct » ouvert et écran allumé : l'écran flashe 3 fois en jaune et le téléphone vibre 3 fois (appli Android seulement)
+function goalAlert(){
+  try {
+    if(!lcNative() || document.hidden || LC_TAB !== 'live') return;
+    let f = document.getElementById('goalFlash');
+    if(!f){ f = document.createElement('div'); f.id = 'goalFlash'; document.body.appendChild(f); }
+    f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+    setTimeout(function(){ f.classList.remove('on'); }, 1500);
+    const HP = window.Capacitor.Plugins.Haptics;
+    [0, 450, 900].forEach(function(t){
+      setTimeout(function(){ try { if(HP && HP.vibrate) HP.vibrate({duration: 300}); else if(navigator.vibrate) navigator.vibrate(300); } catch(e){} }, t);
+    });
+  } catch(e){}
+}
 function goalCheck(overlay){
   const N = goalNotifyAvailable();
+  let goal = false;
   Object.keys(overlay).forEach(function(k){
     const o = overlay[k];
     if(o.state === 'pre'){ if(!GOAL_MAX[k]) GOAL_MAX[k] = [0, 0]; return; }        // avant le coup d'envoi : on part de 0-0
     if(o.state !== 'in'){ delete GOAL_MAX[k]; return; }                           // match terminé
     const m = GOAL_MAX[k];
     if(!m){ GOAL_MAX[k] = [o.home, o.away]; return; }                             // premier relevé d'un match déjà commencé : pas de notification
-    if(o.home > m[0]){ m[0] = o.home; if(N) goalNotify(k, o, 'home'); }
-    if(o.away > m[1]){ m[1] = o.away; if(N) goalNotify(k, o, 'away'); }
+    if(o.home > m[0]){ m[0] = o.home; goal = true; if(N) goalNotify(k, o, 'home'); }
+    if(o.away > m[1]){ m[1] = o.away; goal = true; if(N) goalNotify(k, o, 'away'); }
   });
+  if(goal) goalAlert();
 }
 
 async function liveTick(){
