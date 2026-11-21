@@ -559,6 +559,11 @@
   @media(max-width:600px){ #resultsRows{grid-template-columns:1fr} }
   /* ===== Affichage léger (version téléphone) : tailles réduites, cartes compactes ===== */
   body{padding:8px 8px 16px;font-size:13px}
+  /* Appli Android : la page s'affiche sous la barre d'état du téléphone (heure, batterie) → on décale tout vers le bas de sa hauteur (0 dans un navigateur) */
+  :root{--sat:max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px))}
+  body{padding-top:calc(8px + var(--sat))}
+  .match-modal-overlay{padding-top:calc(18px + var(--sat))}
+  .match-modal{max-height:calc(100vh - 36px - var(--sat))}
   .masthead{margin-bottom:6px}
   .masthead h1{font-size:16px;margin:2px 0}
   .masthead p{font-size:11px;margin-top:2px}
@@ -871,7 +876,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:24:05", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:28:14", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -5155,7 +5160,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 6;         // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 7;         // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');

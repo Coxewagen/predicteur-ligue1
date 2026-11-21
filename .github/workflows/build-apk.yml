@@ -68,7 +68,7 @@ jobs:
             const fs = require('fs');
             const cfg = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
             // LocalNotifications : notifications de but (petite icône ballon = android-icons/drawable/ic_stat_ball.xml)
-            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true }, LocalNotifications: { smallIcon: 'ic_stat_ball', iconColor: '#14803C' } });
+            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true }, LocalNotifications: { smallIcon: 'ic_stat_ball', iconColor: '#14803C' }, SystemBars: { style: 'DARK', initialViewportFitValueHint: 'cover' } });
             fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));
           "
           cat capacitor.config.json
