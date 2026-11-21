@@ -737,7 +737,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:46:22", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T14:09:11", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -3662,6 +3662,8 @@ function openMatchModal(homeName, awayName, playedInfo){
   titleEl.textContent = homeName + ' — ' + awayName;
 
   const info = predictScoreDetailed(homeName, awayName);
+  const fz = playedInfo && playedInfo.frozen;          // pari coché : pourcentages et score du moment du pari
+  if(info && fz){ info.pHomeWin = fz.pHomeWin; info.pDraw = fz.pDraw; info.pAwayWin = fz.pAwayWin; info.best = {i: fz.i, j: fz.j, p: fz.p}; }
   if(!info){
     bodyEl.innerHTML = '<p class="empty-state">Données insuffisantes pour ce match.</p>';
   } else {
@@ -4426,7 +4428,7 @@ function renderResultsForMatchday(matchday){
         .concat(anyLive ? [['live', 'En direct']] : [])
         .map(function(x){ return '<button type="button" data-d="' + x[0] + '" class="' + (filt === x[0] ? 'on' : '') + (x[0] === 'live' ? ' lv' : '') + '">' + x[1] + '</button>'; }).join('');
   }
-  const items = sortedResults.map(function(m){ return {key: matchday + '|' + m.home + '|' + m.away, m: m, info: lcInfo(m), lv: liveOf(m)}; });
+  const items = sortedResults.map(function(m){ return {key: matchday + '|' + m.home + '|' + m.away, m: m, info: lcInfo(m, matchday + '|' + m.home + '|' + m.away), lv: liveOf(m)}; });
   lcFreeze(items);
   lcOddsInfo();
   const shown = items.filter(function(it){
@@ -4462,13 +4464,15 @@ const LC_ODDS_URL = 'https://raw.githubusercontent.com/Coxewagen/predicteur-ligu
 let WINAMAX = lcLoad('l1_winamax');
 if(!WINAMAX.odds) WINAMAX = {updatedAt: null, odds: {}};
 let LC_FZ = lcLoad('l1_frz');       // cotes figées au moment où je coche « J'ai parié »
+let LC_MZ = lcLoad('l1_mfz');       // pourcentages + score prévu figés au même moment
 const lcF2 = function(v){ return v.toFixed(2).replace('.', ','); };
 const lcPc = function(v){ return Math.round(v * 100) + ' %'; };
 function lcEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 // Victoire sèche si le favori est à 60 % ou plus ; sinon « ou nul » si favori + nul >= 70 % ; sinon trop serré.
-function lcInfo(m){
-  const pr = predictScoreQuick(m.home, m.away);
+function lcFrozenPr(key){ return (key && LC_B[key] && LC_MZ[key]) ? LC_MZ[key] : null; }
+function lcInfo(m, key){
+  const pr = lcFrozenPr(key) || predictScoreQuick(m.home, m.away);     // pari coché : on garde les chiffres du moment
   if(!pr) return null;
   const fav = pr.pHomeWin >= pr.pAwayWin ? 0 : 2;                 // 0 = domicile, 2 = extérieur
   const pw = fav === 0 ? pr.pHomeWin : pr.pAwayWin;
@@ -4517,14 +4521,22 @@ function lcCote(key, kind, m, info, bet){
   return {v: a ? a[kind] : 0, man: false};
 }
 function lcFreeze(items){
-  let ch = false;
+  let ch = false, cm = false;
   Object.keys(LC_FZ).forEach(function(k){ if(!LC_B[k]){ delete LC_FZ[k]; ch = true; } });
+  Object.keys(LC_MZ).forEach(function(k){ if(!LC_B[k]){ delete LC_MZ[k]; cm = true; } });
   items.forEach(function(it){
-    if(!LC_B[it.key] || LC_FZ[it.key]) return;
-    const a = lcAuto(it.m, it.info);
-    if(a){ LC_FZ[it.key] = {w: a.w, p: a.p}; ch = true; }
+    if(!LC_B[it.key]) return;
+    if(!LC_MZ[it.key] && it.info){
+      const q = it.info.pr;
+      LC_MZ[it.key] = {i: q.i, j: q.j, p: q.p, pHomeWin: q.pHomeWin, pDraw: q.pDraw, pAwayWin: q.pAwayWin}; cm = true;
+    }
+    const wx = lcWx(it.m), a = lcAuto(it.m, it.info);
+    if(!LC_FZ[it.key]){
+      if(a){ LC_FZ[it.key] = {w: a.w, p: a.p, o: wx.slice()}; ch = true; }
+    }else if(!LC_FZ[it.key].o && wx){ LC_FZ[it.key].o = wx.slice(); ch = true; }
   });
   if(ch) lcSave('l1_frz', LC_FZ);
+  if(cm) lcSave('l1_mfz', LC_MZ);
 }
 function lcOddsInfo(){
   const el = document.getElementById('lcOddsInfo');
@@ -4627,7 +4639,7 @@ function lcCardHtml(md, m, info, lv){
     if(info.type === 'win'){ pill = '<span class="lc-pill win">Victoire ' + favName + '</span>'; sub = lcPc(info.pw) + ' · mini ' + lcF2(1 / info.pw); }
     else if(info.type === 'dc'){ pill = '<span class="lc-pill dc">' + favName + ' ou nul</span>'; sub = lcPc(info.pdc) + ' · mini ' + lcF2(1 / info.pdc); }
     else { pill = '<span class="lc-pill none">Trop serré</span>'; sub = lcPc(info.pdc) + ' · mini ' + lcF2(1 / info.pdc); }
-    const cp = lcCote(key, 'p', m, info, bet), cw = lcCote(key, 'w', m, info, bet), wx = lcWx(m);
+    const cp = lcCote(key, 'p', m, info, bet), cw = lcCote(key, 'w', m, info, bet), wx = (bet && LC_FZ[key] && LC_FZ[key].o) || lcWx(m);
     cods = '<div class="lc-wl"><span class="lc-wn">Ou nul' + (cp.v && !cp.man ? ' ≈' : '') + '</span>' + lcCodInput(key + 'p', info.pdc, cp) + '</div>'
          + '<div class="lc-wl"><span class="lc-wn">Sec</span>' + lcCodInput(key + 'w', info.pw, cw) + '</div>'
          + (wx ? '<span class="lc-o">' + wx.map(lcF2).join(' · ') + '</span>' : '');
@@ -4719,7 +4731,7 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
     }
     if(t.matches && t.matches('.lc-bet input')){
       const card = t.closest('.lc-card'); if(!card) return;
-      const m = {home: card.dataset.home, away: card.dataset.away}, info = lcInfo(m);
+      const m = {home: card.dataset.home, away: card.dataset.away}, info = lcInfo(m, card.dataset.key);
       if(t.checked) LC_B[card.dataset.key] = (info && info.type === 'win') ? 'w' : 'p'; else delete LC_B[card.dataset.key];
       lcSave('l1_bets', LC_B); lcRefresh();     // (la cote Winamax est figée au rendu suivant, défigée si on décoche)
     }
@@ -4765,7 +4777,7 @@ function lvCardHtml(md, m){
   const o = lcOutcome(m, lv);
   const kt = fixtureTime(m);
   const state = (lv && lv.state === 'in') ? 'live' : (o ? 'ft' : 'pre');
-  const key = md + '|' + m.home + '|' + m.away, bet = LC_B[key] || null, info = bet ? lcInfo(m) : null;
+  const key = md + '|' + m.home + '|' + m.away, bet = LC_B[key] || null, info = bet ? lcInfo(m, key) : null;
   let st;
   if(state === 'live') st = liveClockLabel(lv);
   else if(state === 'ft') st = 'Terminé' + (kt !== null ? ' · ' + timeParis(kt) : '');
@@ -4781,7 +4793,7 @@ function lvCardHtml(md, m){
   const centre = o ? (o.h + ' - ' + o.a) : (kt !== null ? timeParis(kt) : '—');
   const gH = lvGoalsHtml(lvAny, 'home'), gA = lvGoalsHtml(lvAny, 'away');
   const goals = (state === 'pre' || (!gH && !gA)) ? '' : '<div>' + gH + '</div><div class="r">' + gA + '</div>';
-  return '<div class="lv-card lv-' + state + '" data-home="' + lcEsc(m.home) + '" data-away="' + lcEsc(m.away) + '" data-when="' + lcEsc(fixtureWhenText(m)) + '" data-played="' + (m.played ? '1' : '0') + '"'
+  return '<div class="lv-card lv-' + state + '" data-key="' + lcEsc(key) + '" data-home="' + lcEsc(m.home) + '" data-away="' + lcEsc(m.away) + '" data-when="' + lcEsc(fixtureWhenText(m)) + '" data-played="' + (m.played ? '1' : '0') + '"'
     + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
     + '<div class="lv-top"><span class="lv-st">' + st + '</span><span class="lc-res' + resCls + '">' + resTxt + '</span></div>'
     + '<div class="lv-teams">' + tm(m.home) + '<div class="lv-sc">' + centre + '</div>' + tm(m.away) + '</div>'
@@ -4811,7 +4823,8 @@ function renderLiveView(){
     if(tb){ lcSetTab(tb.dataset.tab); return; }
     const card = e.target.closest('#liveView .lv-card');
     if(card) openMatchModal(card.getAttribute('data-home'), card.getAttribute('data-away'), {
-      played: card.getAttribute('data-played') === '1', homeScore: card.getAttribute('data-hs'), awayScore: card.getAttribute('data-as'), when: card.getAttribute('data-when') || ''
+      played: card.getAttribute('data-played') === '1', homeScore: card.getAttribute('data-hs'), awayScore: card.getAttribute('data-as'), when: card.getAttribute('data-when') || '',
+      frozen: lcFrozenPr(card.getAttribute('data-key'))
     });
   });
 })();
@@ -5106,7 +5119,8 @@ if(!FS_ACCESS_SUPPORTED){
         played: row.getAttribute('data-played') === '1',
         homeScore: row.getAttribute('data-hs'),
         awayScore: row.getAttribute('data-as'),
-        when: row.getAttribute('data-when') || ''
+        when: row.getAttribute('data-when') || '',
+        frozen: lcFrozenPr(row.getAttribute('data-key'))
       });
     });
   }
