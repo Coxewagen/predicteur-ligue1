@@ -1,27 +1,24 @@
 {
- "updatedAt": "2026-11-20T08:45:23Z",
+ "updatedAt": "2026-11-21T08:45:33Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 54,
+ "count": 60,
  "teams": {
-  "OGC Nice": [
-   "Hicham Boudaoui",
-   "Ali Abdi",
-   "Antoine Mendy",
-   "Laurent Abergel",
-   "Moïse Bombito"
-  ],
   "RC Strasbourg": [
+   "Oso",
    "Karim Coulibaly",
+   "Giovanni Reyna",
    "Jeyland Mitchell",
    "Fábio Baldé",
    "Joaquín Panichelli"
   ],
-  "AS Monaco": [
-   "Aleksandr Golovin",
-   "Ansu Fati",
-   "Stanis Idumbo"
+  "Stade Rennais": [
+   "Przemyslaw Frankowski",
+   "Estéban Lepaul"
   ],
   "Le Havre AC": [
+   "Joan Tincrès",
+   "Daren Mosengo",
+   "Sota Nakamura",
    "Rassoul Ndiaye",
    "Timothée Pembélé",
    "Elias Jelert",
@@ -30,20 +27,37 @@
    "Stephan Zagadou"
   ],
   "FC Lorient": [
+   "Isaak Touré",
    "Ibrahima Baldé",
    "Bandiougou Fadiga"
   ],
+  "ES Troyes AC": [
+   "Paolo Gozzi",
+   "Yacouba Koné"
+  ],
   "RC Lens": [
+   "Andrija Bulatovic",
    "Franjo Ivanović",
    "Odsonne Édouard",
-   "Ismaëlo Ganiou",
-   "Abdallah Sima",
    "Maik Nawrocki"
+  ],
+  "OGC Nice": [
+   "Hicham Boudaoui",
+   "Mohamed Abdelmonem",
+   "Ali Abdi",
+   "Antoine Mendy",
+   "Laurent Abergel",
+   "Moïse Bombito"
+  ],
+  "AS Monaco": [
+   "Aleksandr Golovin",
+   "Ansu Fati",
+   "Stanis Idumbo"
   ],
   "Paris Saint-Germain": [
    "Maghnes Akliouche",
-   "Marquinhos",
    "Ousmane Dembélé",
+   "Marquinhos",
    "Khvicha Kvaratskhelia",
    "Nuno Mendes"
   ],
@@ -60,7 +74,6 @@
   "Olympique Lyonnais": [
    "Tyler Morton",
    "Pavel Sulc",
-   "Loïs Openda",
    "Mohamed Ouédraogo"
   ],
   "Angers SCO": [
@@ -73,17 +86,10 @@
    "Djibril Sidibé",
    "Adil Bourabaa"
   ],
-  "Stade Rennais": [
-   "Estéban Lepaul"
-  ],
   "LOSC Lille": [
    "Ayase Ueda",
    "Tiago Santos",
    "Hamza Igamane"
-  ],
-  "ES Troyes AC": [
-   "Anis Ouzenadji",
-   "Yacouba Koné"
   ],
   "Stade Brestois": [
    "Raphaël Le Guen",
