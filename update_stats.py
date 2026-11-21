@@ -802,6 +802,81 @@ def refresh_schedule(html_path: Path):
         print(f"⚠️  Horaires : mise à jour ignorée ({type(e).__name__}: {e})")
 
 
+def _history_kickoff(r):
+    """Date/heure (UTC) d'un match de l'historique : heure confirmée, sinon date de référence (20:45 Paris ≈ 19:45 UTC)."""
+    k = r.get("kickoff")
+    try:
+        if k:
+            return datetime.fromisoformat(k.replace("Z", "+00:00"))
+        if r.get("date"):
+            return datetime.fromisoformat(r["date"] + "T19:45:00+00:00")
+    except ValueError:
+        pass
+    return None
+
+
+def refresh_rest_days(html_path: Path):
+    """Recalcule les « jours de repos » de chaque équipe : temps réel entre son dernier match joué
+    et son PROCHAIN match prévu (et non plus entre son dernier match et l'heure de la mise à jour,
+    qui donnait 0-2 jours pour tout le monde pendant la trêve). Les équipes marquées « a joué en
+    Coupe d'Europe » gardent leur valeur (saisie à la main avec la fatigue européenne).
+    Ne touche à rien d'autre ; ne bloque jamais le reste de la mise à jour."""
+    try:
+        content = html_path.read_text(encoding="utf-8")
+        history = read_matchday_history(html_path)
+        if not history:
+            return
+        last, nxt = {}, {}
+        for md in history:
+            for r in history[md]:
+                t = _history_kickoff(r)
+                if t is None:
+                    continue
+                for team in (r.get("home"), r.get("away")):
+                    if r.get("played"):
+                        if team not in last or t > last[team]:
+                            last[team] = t
+                    elif not r.get("postponed"):
+                        if team not in nxt or t < nxt[team]:
+                            nxt[team] = t
+        changes = []
+
+        def fix(line_match):
+            line = line_match.group(0)
+            name = re.search(r'name:"([^"]+)"', line)
+            cur = re.search(r"restDays:(\d+)", line)
+            if not name or not cur or "playedEurope:true" in line:
+                return line
+            team = name.group(1)
+            if team not in last or team not in nxt:
+                return line
+            days = max(int((nxt[team] - last[team]).total_seconds() // 86400), 0)
+            if days == int(cur.group(1)):
+                return line
+            changes.append(f"  {team} : {cur.group(1)} -> {days} j")
+            return line.replace(f"restDays:{cur.group(1)}", f"restDays:{days}", 1)
+
+        block = re.search(r"let TEAMS = \[.*?\n\];", content, re.DOTALL)
+        if not block:
+            return
+        new_block = re.sub(r"^  \{ id:.*\},$", fix, block.group(0), flags=re.MULTILINE)
+        if not changes:
+            print("Repos : jours de repos déjà à jour.")
+            return
+        print(f"Repos : {len(changes)} équipe(s) recalculée(s) (dernier match → prochain match) :")
+        for line in changes[:20]:
+            print(line)
+        new_content = content.replace(block.group(0), new_block, 1)
+        new_content = re.sub(r'(let LAST_UPDATE = \{[^}]*?updatedAt:\s*")[^"]*(")',
+                             lambda mm: mm.group(1) + now_paris_iso() + mm.group(2),
+                             new_content, count=1)
+        shutil.copy2(html_path, html_path.with_suffix(html_path.suffix + ".bak"))
+        html_path.write_text(new_content, encoding="utf-8")
+        print("✅ Jours de repos mis à jour.")
+    except Exception as e:  # jamais bloquant
+        print(f"⚠️  Repos : recalcul ignoré ({type(e).__name__}: {e})")
+
+
 def update_html_file(html_path: Path, teams, matchday, updated_at_iso, note="", results=None, force=False):
     content = html_path.read_text(encoding="utf-8")
 
@@ -909,6 +984,7 @@ def run_full_update(html_path: Path, quick: bool, prefetched=None, force_matchda
 
     force = (force_matchday is not None and force_matchday == matchday)
     update_html_file(html_path, teams, matchday, now_paris_iso(), note, results, force=force)
+    refresh_rest_days(html_path)
     print(f"\nTerminé — {datetime.now().strftime('%d/%m/%Y à %H:%M')}")
 
 
@@ -924,6 +1000,11 @@ def read_current_matchday(html_path: Path):
 
 
 def run_if_ready(html_path: Path, quick: bool, force_matchday=None):
+    _run_if_ready(html_path, quick, force_matchday)
+    refresh_rest_days(html_path)   # repos = dernier match -> prochain match (à chaque passage, 0 requête API)
+
+
+def _run_if_ready(html_path: Path, quick: bool, force_matchday=None):
     """Ne met à jour que si la journée en cours est terminée côté API (tous les
     matchs ont un score). Sinon, ne fait rien et se termine silencieusement —
     pensé pour être lancé plusieurs fois par jour par une tâche planifiée, sans
