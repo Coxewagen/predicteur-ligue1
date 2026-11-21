@@ -622,21 +622,62 @@
   .lv-row{padding:4px 8px}
   .lv-status{font-size:11px;margin:0 0 2px}
   .lv-empty{font-size:14px;padding:12px 8px}
+  /* ===== Présentation « M3 » : en-tête, ligne de journée, pastilles ===== */
+  #m3Head{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#fff;margin-bottom:6px}
+  body.live-on #m3Head{display:none}
+  .m3-brand{display:flex;align-items:center;gap:10px;padding:2px 2px 10px;border-bottom:1px solid #244634}
+  .m3-logo{width:36px;height:36px;border-radius:50%;border:2px solid #ffc83d;display:flex;align-items:center;justify-content:center;font-size:19px;background:#0c1c14;flex:none}
+  .m3-eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c6d6cb}
+  .m3-brand h1{margin:1px 0 0;font-size:20px;font-weight:800;color:#ffc83d;text-transform:none;letter-spacing:0}
+  .m3-weekrow{display:flex;align-items:center;gap:10px;margin:12px 0 6px}
+  .m3-cal{width:30px;height:30px;border-radius:8px;background:#274690;display:flex;align-items:center;justify-content:center;flex:none}
+  .m3-weekrow h2{flex:1;margin:0;font-size:17px;font-weight:800;color:#fff}
+  .m3-pager{display:flex;gap:8px}
+  .m3-pager button{width:28px;height:28px;border-radius:50%;border:0;background:#1a3326;color:#fff;font-size:17px;line-height:1;cursor:pointer;padding:0}
+  .m3-pager button:disabled{opacity:.35;cursor:default}
+  #updateInfo.update-info{display:block;text-align:left;background:none;border:0;padding:0;margin:0 0 8px;font-size:12px;font-weight:500;color:#c6d6cb}
+  #updateInfo.update-info.stale{color:#e08c84}
+  .m3-btnrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+  .m3-main{background:#ffc83d;color:#241a02;border:0;border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+  .m3-main:disabled{opacity:.6;cursor:wait}
+  #updateStatsStatus.update-status{margin:0;text-align:left;max-width:none;min-height:0;font-size:12px;font-weight:700;color:#7dffb0}
+  #updateStatsStatus.update-status.err{color:#e08c84}
+  .m3-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .m3-chip{display:inline-block;padding:5px 11px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid #244634;background:#0c1c14;color:#fff;margin:0}
+  #lcOddsInfo.m3-chip{background:#ffc83d;border-color:#ffc83d;color:#241a02}
+  #lcOddsInfo.m3-chip:empty{display:none}
+  #m3Head .live-status{text-align:left;margin:0;max-width:none}
+  .lc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+  .lc-tabs button{flex:none;font-size:14px;font-weight:800;padding:7px 14px;border:2px solid #ffc83d;border-radius:999px;background:transparent;color:#fff}
+  .lc-tabs button.on{background:#ffc83d;border-color:#ffc83d;color:#241a02}
+  body.live-on .lc-tabs{margin:2px 0 6px}
+  body.live-on .lc-tabs button{font-size:14px;padding:7px 14px}
+  .results-title-row{justify-content:flex-start;padding:0 0 4px}
+  .results-title-row::before{content:none}
+  #matchdaySelect{display:none}
+  #resultsSummary{font-size:12px;color:#c6d6cb}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="masthead">
-    <h1>⚽ PRÉDICTEUR LIGUE 1</h1>
-    <p class="subtitle">Saison 2026-2027 · <span id="appVersion" style="font-weight:700;color:#ffffff;"></span></p>
+  <div id="m3Head">
+    <div class="m3-brand">
+      <span class="m3-logo">⚽</span>
+      <div><div class="m3-eyebrow">Saison 2026-2027 · <span id="m3MdTxt">Journée</span></div><h1>Prédicteur Ligue 1</h1></div>
+    </div>
+    <div class="m3-weekrow">
+      <span class="m3-cal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+      <h2 id="m3WeekTitle">Matchs de la journée</h2>
+      <span class="m3-pager"><button type="button" id="mdPrev" aria-label="Journée précédente">‹</button><button type="button" id="mdNext" aria-label="Journée suivante">›</button></span>
+    </div>
     <div class="update-info" id="updateInfo">Chargement...</div>
-    <button type="button" class="update-btn" id="updateStatsBtn" onclick="updateStatsFromLive()" style="margin-top:8px;">🔄 Mettre à jour les stats</button>
-    <div class="update-status" id="updateStatsStatus" style="margin:4px auto 0;"></div>
+    <div class="m3-btnrow"><button type="button" class="m3-main" id="updateStatsBtn" onclick="updateStatsFromLive()">⟳ Mettre à jour</button><span class="update-status" id="updateStatsStatus"></span></div>
+    <div class="m3-chips"><span class="m3-chip" id="lcOddsInfo"></span><span class="m3-chip" id="appVersion"></span></div>
     <div class="live-status" id="liveStatus"></div>
   </div>
 
-  <div class="lc-tabs" id="lcTabs"><button type="button" data-tab="matchs" class="on">Matchs</button><button type="button" data-tab="live" id="lcTabLive">En direct</button></div>
+  <div class="lc-tabs" id="lcTabs"><button type="button" data-tab="fav" id="lcFavBtn">☆ Favoris à 60 % et plus seulement</button><button type="button" data-tab="live" id="lcTabLive">En direct</button></div>
   <div id="liveView" hidden></div>
 
   <div class="matchup">
@@ -782,7 +823,6 @@
       <select class="results-select" id="matchdaySelect" onchange="userPickedMatchday=true;renderResultsForMatchday(this.value)"></select>
       <span id="resultsSummary"></span>
     </div>
-    <div id="lcOddsInfo"></div>
     <div id="lcNav"></div>
     <div id="resultsRows"></div>
     <div id="lcCombo"></div>
@@ -823,7 +863,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T17:58:00", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T18:02:04", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -4478,6 +4518,12 @@ function renderResultsForMatchday(matchday){
   const rowsEl = document.getElementById('resultsRows');
   const summaryEl = document.getElementById('resultsSummary');
   if(!rowsEl || !summaryEl) return;
+  { const wt = document.getElementById('m3WeekTitle'), me = document.getElementById('m3MdTxt'), pv = document.getElementById('mdPrev'), nx = document.getElementById('mdNext');
+    if(wt) wt.textContent = 'Matchs de la journée ' + matchday;
+    if(me) me.textContent = 'Journée ' + matchday;
+    const has = function(n){ return typeof MATCHDAY_HISTORY !== 'undefined' && !!MATCHDAY_HISTORY[n]; };
+    if(pv) pv.disabled = !has(Number(matchday) - 1);
+    if(nx) nx.disabled = !has(Number(matchday) + 1); }
   { const ae = document.activeElement; if(ae && ae.matches && ae.matches('.lc-cod,#lcMise,#lcBoost')){ lcDeferred = matchday; return; } }
 
   const results = (typeof MATCHDAY_HISTORY !== 'undefined' && MATCHDAY_HISTORY[matchday]) ? MATCHDAY_HISTORY[matchday] : [];
@@ -4506,24 +4552,23 @@ function renderResultsForMatchday(matchday){
   sortedResults.forEach(function(m){ const d = fixtureDay(m); if(d && days.indexOf(d) < 0) days.push(d); });
   const anyLive = liveCount > 0;
   let filt = LC_DAY;
-  if(filt === 'live' ? !anyLive : (filt !== 'all' && days.indexOf(filt) < 0)) filt = 'all';
+  if(filt === 'live' || (filt !== 'all' && days.indexOf(filt) < 0)) filt = 'all';
   const navEl = document.getElementById('lcNav');
   if(navEl){
-    navEl.innerHTML = (days.length < 2 && !anyLive) ? '' :
+    navEl.innerHTML = (days.length < 2) ? '' :
       [['all', 'Tout']].concat(days.map(function(d){ return [d, dayLabelParis(d).replace(/ (janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)$/i, '')]; }))
-        .concat(anyLive ? [['live', 'En direct']] : [])
         .map(function(x){ return '<button type="button" data-d="' + x[0] + '" class="' + (filt === x[0] ? 'on' : '') + (x[0] === 'live' ? ' lv' : '') + '">' + x[1] + '</button>'; }).join('');
   }
   const items = sortedResults.map(function(m){ return {key: matchday + '|' + m.home + '|' + m.away, m: m, info: lcInfo(m, matchday + '|' + m.home + '|' + m.away), lv: liveOf(m)}; });
   lcFreeze(items);
   lcOddsInfo();
   const shown = items.filter(function(it){
+    if(LC_FAV && !(it.info && it.info.type === 'win')) return false;
     if(filt === 'all') return true;
-    if(filt === 'live') return !!(it.lv && it.lv.state === 'in');
     return fixtureDay(it.m) === filt;
   });
   let lastDay = null;
-  rowsEl.innerHTML = shown.map(function(it){
+  rowsEl.innerHTML = (!shown.length && LC_FAV) ? '<div class="lv-empty" style="grid-column:1/-1">Aucun favori à 60 % et plus.</div>' : shown.map(function(it){
     const day = fixtureDay(it.m);
     let dayHeader = '';
     if(day !== null && day !== lastDay){ dayHeader = lcDayHeader(day, fixtureTime(it.m) === null); lastDay = day; }
@@ -4630,7 +4675,7 @@ function lcOddsInfo(){
   if(!WINAMAX.updatedAt){ el.textContent = ''; return; }
   const d = new Date(WINAMAX.updatedAt);
   const dn = d.toLocaleDateString('fr-FR', {weekday: 'long'});
-  el.textContent = 'Cotes Winamax · ' + dn.charAt(0).toUpperCase() + dn.slice(1) + ' ' + d.getDate() + ' à ' + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+  el.textContent = 'Cotes : Winamax · ' + dn.slice(0, 3) + '. ' + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
 }
 // Lecture directe de winamax.fr dans l'appli Android (module HTTP natif, depuis ton téléphone en France).
 const LC_WX_URL = 'https://www.winamax.fr/paris-sportifs/sports/1/7/4';   // Football > France > Ligue 1
@@ -4840,10 +4885,25 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
 
 
 // ===== Onglet « En direct » : les matchs du jour avec scores, minute et buteurs en quasi temps réel =====
-let LC_TAB = 'matchs', LC_STATUS = '';
+let LC_TAB = 'matchs', LC_STATUS = '', LC_FAV = false;
+try { LC_FAV = localStorage.getItem('l1_fav') === '1'; } catch(e){}
+function lcSyncPills(){
+  document.querySelectorAll('#lcTabs button').forEach(function(b){
+    const on = b.dataset.tab === 'live' ? LC_TAB === 'live' : LC_FAV;
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const fb = document.getElementById('lcFavBtn'); if(fb) fb.textContent = (LC_FAV ? '★ ' : '☆ ') + 'Favoris à 60 % et plus seulement';
+}
+function mdStep(dir){
+  const sel = document.getElementById('matchdaySelect'); if(!sel) return;
+  const nums = Array.from(sel.options).map(function(o){ return Number(o.value); }).filter(function(n){ return n > 0; }).sort(function(a, b){ return a - b; });
+  const n = nums[nums.indexOf(Number(sel.value)) + dir];
+  if(n === undefined) return;
+  userPickedMatchday = true; sel.value = String(n); renderResultsForMatchday(String(n));
+}
 function lcSetTab(t){
   LC_TAB = t;
-  document.querySelectorAll('#lcTabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  lcSyncPills();
   const lv = document.getElementById('liveView'), rl = document.querySelector('.results-list'), me = document.querySelector('.manual-entry');
   if(lv) lv.hidden = (t !== 'live');
   if(rl) rl.style.display = (t === 'live') ? 'none' : '';
@@ -4910,15 +4970,25 @@ function renderLiveView(){
   });
   items.sort(function(x, y){ return (Date.parse(x.lv.kickoff) - Date.parse(y.lv.kickoff)) || (x.m.home < y.m.home ? -1 : 1); });
   const nxt = lvNextText();
-  const rows = items.length ? items.map(function(x){ return lvRowHtml(x.md, x.m, x.lv); }).join('')
-    : '<div class="lv-empty">Aucun match en direct pour le moment.' + (nxt ? '<small>' + lcEsc(nxt) + '</small>' : '') + '</div>';
+  const list = !LC_FAV ? items : items.filter(function(x){ const i = lcInfo(x.m, x.md + '|' + x.m.home + '|' + x.m.away); return i && i.type === 'win'; });
+  const rows = list.length ? list.map(function(x){ return lvRowHtml(x.md, x.m, x.lv); }).join('')
+    : '<div class="lv-empty">' + (LC_FAV && items.length ? 'Aucun favori à 60 % en direct pour le moment.' : 'Aucun match en direct pour le moment.') + (nxt && !items.length ? '<small>' + lcEsc(nxt) + '</small>' : '') + '</div>';
   if(rows !== lvLastRows){ document.getElementById('lvRows').innerHTML = rows; lvLastRows = rows; }
   const st = document.getElementById('lvStatus'); if(st) st.textContent = versionLabel() + (LC_STATUS ? ' · ' + LC_STATUS : '');
 }
+lcSyncPills();
 (function(){
   document.addEventListener('click', function(e){
     const tb = e.target.closest('#lcTabs button');
-    if(tb){ lcSetTab(tb.dataset.tab); return; }
+    if(tb){
+      if(tb.dataset.tab === 'fav'){
+        LC_FAV = !LC_FAV; try { localStorage.setItem('l1_fav', LC_FAV ? '1' : '0'); } catch(x){}
+        lcSyncPills(); lcRefresh(); renderLiveView();
+      } else lcSetTab(LC_TAB === 'live' ? 'matchs' : 'live');
+      return;
+    }
+    if(e.target.closest('#mdPrev')){ mdStep(-1); return; }
+    if(e.target.closest('#mdNext')){ mdStep(1); return; }
     const card = e.target.closest('#liveView .lv-row');
     if(card) openMatchModal(card.getAttribute('data-home'), card.getAttribute('data-away'), {
       played: card.getAttribute('data-played') === '1', homeScore: card.getAttribute('data-hs'), awayScore: card.getAttribute('data-as'), when: card.getAttribute('data-when') || '',
@@ -4945,13 +5015,12 @@ function renderUpdateInfo(){
   const daysSince = (Date.now() - updatedDate.getTime()) / (1000*60*60*24);
   const isStale = daysSince > 9; // plus d'une semaine et demie : probablement une journée de retard
 
-  let shortTxt = '🕒 Mis à jour : '+dayCap+' '+dateStr+' à '+timeStr+' (heure de Paris) — Journée '+LAST_UPDATE.matchday;
+  let shortTxt = 'Mis à jour le ' + updatedDate.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + ' à ' + updatedDate.toLocaleTimeString('fr-FR', {hour:'numeric', minute:'2-digit'}).replace(':', ' h ');
   // Résultats d'une journée plus récente, encore en cours : classement/forme
   // ne sont recalculés qu'à la fin de la journée, mais les scores sont déjà là.
   const lp = latestPlayedMatchday(MATCHDAY_HISTORY);
   if (lp !== null && lp > LAST_UPDATE.matchday) {
     const r = MATCHDAY_HISTORY[lp];
-    shortTxt += ' · Résultats J' + lp + ' : ' + r.filter(function(m){ return m.played; }).length + '/' + r.length;
   }
   el.textContent = shortTxt;
   el.classList.toggle('stale', isStale);
@@ -5068,7 +5137,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 1;          // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 2;          // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');
