@@ -750,7 +750,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T17:30:08", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T17:51:26", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -5070,20 +5070,122 @@ function setLiveStatus(text, cls){
   const lvs = document.getElementById('lvStatus'); if(lvs) lvs.textContent = text;
 }
 
+// ----- Source rapide : livescore.com (API publique non officielle, retard de quelques secondes). ESPN reste en secours. -----
+const LS_API = 'https://prod-cdn-public-api.livescore.com/v1/api/app/';
+let LIVE_SRC = '';
+const LS = {fix: null, at: 0, last: {}, failUntil: 0};
+function lsTeam(n){
+  const s = String(n || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  if(/germain|\bpsg\b/.test(s)) return 'Paris Saint-Germain';
+  if(s.indexOf('paris') >= 0) return 'Paris FC';
+  const k = [['auxerre','AJ Auxerre'],['monaco','AS Monaco'],['angers','Angers SCO'],['brest','Stade Brestois'],['havre','Le Havre AC'],['mans','Le Mans FC'],['lens','RC Lens'],['lille','LOSC Lille'],['lorient','FC Lorient'],['lyon','Olympique Lyonnais'],['marseille','Olympique de Marseille'],['nice','OGC Nice'],['rennes','Stade Rennais'],['rennais','Stade Rennais'],['strasbourg','RC Strasbourg'],['toulouse','Toulouse FC'],['troyes','ES Troyes AC']];
+  for(let i = 0; i < k.length; i++) if(s.indexOf(k[i][0]) >= 0) return k[i][1];
+  return null;
+}
+function lsState(eps){
+  const e = String(eps || '').trim();
+  if(e === 'NS') return {state: 'pre'};
+  if(e === 'HT') return {state: 'in', name: 'STATUS_HALFTIME', clock: "45'"};
+  if(/^\d+(\+\d+)?'?$/.test(e)) return {state: 'in', name: 'STATUS_IN_PROGRESS', clock: e.indexOf("'") < 0 ? e + "'" : e};
+  if(/^(FT|AET|AP)/i.test(e)) return {state: 'post', name: 'STATUS_FULL_TIME', clock: ''};
+  return null;                                   // reporté, interrompu… : ignoré
+}
+async function lsGet(path){
+  const r = await fetch(LS_API + path, {cache: 'no-store'});
+  if(!r.ok) throw new Error('livescore HTTP ' + r.status);
+  return r.json();
+}
+function lsParisOffset(){
+  try {
+    const v = new Intl.DateTimeFormat('en-US', {timeZone: PARIS_TZ, timeZoneName: 'shortOffset'}).formatToParts(new Date()).filter(function(x){ return x.type === 'timeZoneName'; })[0].value;
+    const m = /GMT([+-]\d+)/.exec(v);
+    if(m) return Number(m[1]);
+  } catch(e){}
+  return 1;
+}
+function lsKick(esd, off){                       // 20261121171500 (heure de Paris) -> ms UTC
+  const s = String(esd || '');
+  if(s.length < 12) return null;
+  return Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8), +s.slice(8, 10), +s.slice(10, 12), +(s.slice(12, 14) || 0)) - off * 3600000;
+}
+async function lsDiscover(){
+  const off = lsParisOffset();
+  const day = PARIS_DAY_FMT.format(new Date()).replace(/-/g, '');
+  const j = await lsGet('date/soccer/' + day + '/' + off + '?countryCode=FR&locale=en');
+  const fix = {};
+  (j.Stages || []).forEach(function(st){
+    if(st.Snm !== 'Ligue 1' || st.Cnm !== 'France') return;
+    (st.Events || []).forEach(function(e){
+      const h = lsTeam(e.T1 && e.T1[0] && e.T1[0].Nm), a = lsTeam(e.T2 && e.T2[0] && e.T2[0].Nm);
+      if(h && a) fix[h + '|' + a] = {eid: e.Eid, kick: lsKick(e.Esd, off), ev: e};
+    });
+  });
+  LS.fix = fix; LS.at = Date.now();
+}
+function lsGoals(inc){
+  const out = [];
+  let prev = [0, 0];
+  Object.keys(inc || {}).sort(function(a, b){ return Number(a) - Number(b); }).forEach(function(h){
+    (inc[h] || []).forEach(function(x){
+      if(!x.Sc) return;                                              // ne garde que les buts
+      const side = x.Sc[0] > prev[0] ? 'home' : (x.Sc[1] > prev[1] ? 'away' : (x.Nm === 2 ? 'away' : 'home'));
+      prev = x.Sc;
+      const who = x.Pn ? x : ((x.Incs || []).filter(function(y){ return y.IT !== 63; })[0] || x);   // 63 = passeur
+      out.push({min: x.Min + (x.MinEx ? '+' + x.MinEx : '') + "'", name: who.Pn || who.Ln || '', side: side, pen: false, og: false});
+    });
+  });
+  return out;
+}
+async function lsOverlay(){
+  const now = Date.now();
+  if(!LS.fix || now - LS.at > 180000) await lsDiscover();            // liste des matchs du jour : toutes les 3 min
+  const jobs = [];
+  let fails = 0;
+  Object.keys(LS.fix).forEach(function(k){
+    const f = LS.fix[k], last = LS.last[f.eid];
+    const e0 = (last && last.at >= LS.at) ? last.e : f.ev;
+    const st = lsState(e0.Eps);
+    const due = st && (st.state === 'in' || (st.state === 'pre' && f.kick && f.kick - now < 5 * 60000 && now - f.kick < 3 * 3600000));
+    if(due) jobs.push(lsGet('scoreboard/soccer/' + f.eid + '?locale=en').then(function(d){
+      LS.last[f.eid] = {e: d, goals: lsGoals(d['Incs-s'] || d.Incs), at: Date.now()};
+    }).catch(function(){ fails++; }));                              // lecture détaillée (score, minute, buteurs) : toutes les 10 s
+  });
+  await Promise.all(jobs);
+  if(jobs.length && fails === jobs.length) throw new Error('livescore : lecture impossible');
+  const out = {};
+  Object.keys(LS.fix).forEach(function(k){
+    const f = LS.fix[k], last = LS.last[f.eid];
+    const fresh = last && last.at >= LS.at;
+    const e = fresh ? last.e : f.ev, st = lsState(e.Eps);
+    if(!st) return;
+    out[k] = {goals: fresh ? last.goals : [], reds: [], state: st.state, name: st.name || 'STATUS_SCHEDULED', completed: st.state === 'post', clock: st.clock || '',
+      home: Number(e.Tr1) || 0, away: Number(e.Tr2) || 0, kickoff: f.kick ? new Date(f.kick).toISOString() : ''};
+  });
+  return out;
+}
+async function fetchLiveOverlay(){
+  if(Date.now() >= LS.failUntil){
+    try { const o = await lsOverlay(); LIVE_SRC = 'livescore'; return o; }
+    catch(e){ LS.failUntil = Date.now() + 5 * 60 * 1000; LS.fix = null; }   // livescore indisponible : ESPN pendant 5 min
+  }
+  LIVE_SRC = 'espn';
+  const resp = await fetch(LIVE_SCORES_URL, { cache: 'no-store' });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return parseEspnScoreboard(await resp.json());
+}
+
 async function liveTick(){
   clearTimeout(liveTimer);
   autoRefreshOfficial();                            // résultats/classement officiels : toutes les 10 min au plus
   let nextDelay = 5 * 60 * 1000;                    // rien de spécial : on revérifie dans 5 min
   try {
-    const resp = await fetch(LIVE_SCORES_URL, { cache: 'no-store' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const overlay = parseEspnScoreboard(await resp.json());
+    const overlay = await fetchLiveOverlay();
     const keys = Object.keys(overlay);
     const live = keys.filter(function(k){ return overlay[k].state === 'in'; });
     const soon = keys.some(function(k){
       return overlay[k].state === 'pre' && (new Date(overlay[k].kickoff).getTime() - Date.now()) < 20 * 60 * 1000;
     });
-    nextDelay = live.length ? 30 * 1000 : (soon ? 60 * 1000 : 5 * 60 * 1000);
+    nextDelay = live.length ? (LIVE_SRC === 'livescore' ? 10 * 1000 : 30 * 1000) : (soon ? 60 * 1000 : 5 * 60 * 1000);
     if(LC_TAB === 'live') nextDelay = live.length ? 10 * 1000 : (soon ? 20 * 1000 : 30 * 1000);      // onglet « En direct » ouvert : quasi temps réel
 
     const signature = JSON.stringify(overlay);
