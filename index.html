@@ -512,7 +512,30 @@
   .lc-o{display:block;text-align:right;font-size:15px;color:#c6d6cb;margin-top:6px;white-space:nowrap}
   #lcOddsInfo{margin:8px 0 2px;font-size:17px;font-weight:800;color:#ffc83d;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
   #lcOddsInfo:empty{display:none}
-  @media(max-width:600px){ #resultsRows{grid-template-columns:1fr} }
+  .matchup{display:none!important}
+  .lc-tabs{display:flex;gap:10px;margin:14px 0 6px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .lc-tabs button{flex:1;font:inherit;font-size:20px;font-weight:900;padding:12px 16px;border-radius:999px;border:2px solid #244634;background:transparent;color:#fff;cursor:pointer}
+  .lc-tabs button.on{background:#ffc83d;border-color:#ffc83d;color:#241a02}
+  .lc-tabs button.lv:before{content:"";display:inline-block;width:11px;height:11px;border-radius:50%;background:#ff6b61;margin-right:9px;animation:lvp 1.2s infinite}
+  @keyframes lvp{50%{opacity:.25}}
+  #liveView{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#fff}
+  #liveView[hidden]{display:none}
+  .lv-status{grid-column:1/-1;font-size:16px;color:#c6d6cb;margin-top:4px}
+  .lv-card{background:linear-gradient(180deg,#10231a,#0c1c14);border:1px solid #244634;border-radius:18px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer;font-size:18px;line-height:1.35}
+  .lv-card.lv-live{border-color:#ff6b61;box-shadow:0 0 0 1px #ff6b61,0 0 18px rgba(255,107,97,.3)}
+  .lv-top{display:flex;justify-content:space-between;align-items:center;min-height:30px}
+  .lv-st{font-weight:900;font-size:17px;padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.06);color:#c6d6cb}
+  .lv-live .lv-st{background:#4a1010;color:#ffb3ad}
+  .lv-ft .lv-st{background:#0f2218;color:#c6d6cb}
+  .lv-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 6px}
+  .lv-sc{font-size:42px;font-weight:900;letter-spacing:.04em;text-align:center;min-width:110px;font-variant-numeric:tabular-nums}
+  .lv-pre .lv-sc{font-size:30px;color:#ffc83d}
+  .lv-goals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid #244634;font-size:16px;color:#c6d6cb}
+  .lv-goals:empty{display:none}
+  .lv-goals .r{text-align:right}
+  .lv-goals div div{margin:2px 0}
+  .lv-empty{grid-column:1/-1;padding:20px;color:#c6d6cb;font-size:18px}
+  @media(max-width:600px){ #resultsRows,#liveView{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -526,6 +549,9 @@
     <div class="update-status" id="updateStatsStatus" style="margin:4px auto 0;"></div>
     <div class="live-status" id="liveStatus"></div>
   </div>
+
+  <div class="lc-tabs" id="lcTabs"><button type="button" data-tab="matchs" class="on">Matchs</button><button type="button" data-tab="live" id="lcTabLive">En direct</button></div>
+  <div id="liveView" hidden></div>
 
   <div class="matchup">
     <div class="team-card home">
@@ -711,7 +737,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:36:31", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:46:22", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -4416,6 +4442,7 @@ function renderResultsForMatchday(matchday){
     return dayHeader + lcCardHtml(matchday, it.m, it.info, it.lv);
   }).join('');
   lcRenderBottom(matchday, items, filt, days);
+  renderLiveView();
 }
 
 // ===== Présentation « Ligue des champions » : cartes, « J'ai parié », combiné =====
@@ -4713,6 +4740,82 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
   });
 })();
 
+
+// ===== Onglet « En direct » : les matchs du jour avec scores, minute et buteurs en quasi temps réel =====
+let LC_TAB = 'matchs', LC_STATUS = '';
+function lcSetTab(t){
+  LC_TAB = t;
+  document.querySelectorAll('#lcTabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  const lv = document.getElementById('liveView'), rl = document.querySelector('.results-list'), me = document.querySelector('.manual-entry');
+  if(lv) lv.hidden = (t !== 'live');
+  if(rl) rl.style.display = (t === 'live') ? 'none' : '';
+  if(me) me.style.display = (t === 'live') ? 'none' : '';
+  if(t === 'live'){ renderLiveView(); liveTick(); }
+}
+function lvGoalsHtml(lv, side){
+  if(!lv) return '';
+  const rows = [];
+  (lv.goals || []).forEach(function(g){ if(g.side === side) rows.push('<div>⚽ ' + lcEsc(g.name) + ' ' + lcEsc(g.min) + (g.pen ? ' (pen.)' : '') + (g.og ? ' (csc)' : '') + '</div>'); });
+  (lv.reds || []).forEach(function(g){ if(g.side === side) rows.push('<div>🟥 ' + lcEsc(g.name) + ' ' + lcEsc(g.min) + '</div>'); });
+  return rows.join('');
+}
+function lvCardHtml(md, m){
+  const lv = m.played ? null : LIVE_OVERLAY[m.home + '|' + m.away];
+  const lvAny = LIVE_OVERLAY[m.home + '|' + m.away];          // buteurs : disponibles aussi une fois le match officiellement terminé
+  const o = lcOutcome(m, lv);
+  const kt = fixtureTime(m);
+  const state = (lv && lv.state === 'in') ? 'live' : (o ? 'ft' : 'pre');
+  const key = md + '|' + m.home + '|' + m.away, bet = LC_B[key] || null, info = bet ? lcInfo(m) : null;
+  let st;
+  if(state === 'live') st = liveClockLabel(lv);
+  else if(state === 'ft') st = 'Terminé' + (kt !== null ? ' · ' + timeParis(kt) : '');
+  else st = m.postponed ? 'Reporté' : 'À venir';
+  let resTxt = '', resCls = '';
+  if(bet && o && info){
+    const w = lcWon(o, info.fav, bet);
+    if(o.state === 'post'){ resTxt = w ? '✓ Gagné' : '✗ Perdu'; resCls = w ? ' ok' : ' ko'; }
+    else { resTxt = w ? '● En bonne voie' : '● Mal parti'; resCls = w ? ' lok' : ' lko'; }
+  }
+  const logo = function(n){ const id = LC_LOGO[n]; return id ? '<img src="https://a.espncdn.com/i/teamlogos/soccer/500/' + id + '.png" alt="" onerror="this.style.visibility=\'hidden\'">' : ''; };
+  const tm = function(n){ return '<div class="lc-tm">' + logo(n) + '<b>' + lcShort(n) + '</b></div>'; };
+  const centre = o ? (o.h + ' - ' + o.a) : (kt !== null ? timeParis(kt) : '—');
+  const gH = lvGoalsHtml(lvAny, 'home'), gA = lvGoalsHtml(lvAny, 'away');
+  const goals = (state === 'pre' || (!gH && !gA)) ? '' : '<div>' + gH + '</div><div class="r">' + gA + '</div>';
+  return '<div class="lv-card lv-' + state + '" data-home="' + lcEsc(m.home) + '" data-away="' + lcEsc(m.away) + '" data-when="' + lcEsc(fixtureWhenText(m)) + '" data-played="' + (m.played ? '1' : '0') + '"'
+    + ' data-hs="' + (m.played ? m.homeScore : '') + '" data-as="' + (m.played ? m.awayScore : '') + '">'
+    + '<div class="lv-top"><span class="lv-st">' + st + '</span><span class="lc-res' + resCls + '">' + resTxt + '</span></div>'
+    + '<div class="lv-teams">' + tm(m.home) + '<div class="lv-sc">' + centre + '</div>' + tm(m.away) + '</div>'
+    + '<div class="lv-goals">' + goals + '</div></div>';
+}
+function renderLiveView(){
+  const el = document.getElementById('liveView');
+  if(!el || typeof MATCHDAY_HISTORY === 'undefined') return;
+  const nLive = Object.keys(LIVE_OVERLAY).filter(function(k){ return LIVE_OVERLAY[k].state === 'in'; }).length;
+  const tab = document.getElementById('lcTabLive');
+  if(tab){ tab.classList.toggle('lv', nLive > 0); tab.textContent = nLive > 0 ? 'En direct (' + nLive + ')' : 'En direct'; }
+  if(LC_TAB !== 'live') return;
+  const today = PARIS_DAY_FMT.format(new Date());
+  const all = [];
+  Object.keys(MATCHDAY_HISTORY).forEach(function(md){
+    (MATCHDAY_HISTORY[md] || []).forEach(function(m){ const d = m.postponed ? null : fixtureDay(m); if(d) all.push({md: Number(md), m: m, day: d}); });
+  });
+  const days = all.map(function(x){ return x.day; }).filter(function(d, i, a){ return a.indexOf(d) === i; }).sort();
+  const day = days.indexOf(today) >= 0 ? today : (days.filter(function(d){ return d > today; })[0] || days[days.length - 1]);
+  const items = all.filter(function(x){ return x.day === day; }).sort(function(a, b){ return (fixtureTime(a.m) || 0) - (fixtureTime(b.m) || 0); });
+  el.innerHTML = (day ? lcDayHeader(day, false) : '') + '<div class="lv-status" id="lvStatus">' + lcEsc(LC_STATUS) + '</div>'
+    + (items.length ? items.map(function(x){ return lvCardHtml(x.md, x.m); }).join('') : '<div class="lv-empty">Aucun match à afficher</div>');
+}
+(function(){
+  document.addEventListener('click', function(e){
+    const tb = e.target.closest('#lcTabs button');
+    if(tb){ lcSetTab(tb.dataset.tab); return; }
+    const card = e.target.closest('#liveView .lv-card');
+    if(card) openMatchModal(card.getAttribute('data-home'), card.getAttribute('data-away'), {
+      played: card.getAttribute('data-played') === '1', homeScore: card.getAttribute('data-hs'), awayScore: card.getAttribute('data-as'), when: card.getAttribute('data-when') || ''
+    });
+  });
+})();
+
 function renderUpdateInfo(){
   const el = document.getElementById('updateInfo');
   if(!el) return;
@@ -4884,7 +4987,16 @@ function parseEspnScoreboard(data){
       const hn = ESPN_TEAM_MAP[h.team.displayName], an = ESPN_TEAM_MAP[a.team.displayName];
       if (!hn || !an) return;                       // club inconnu : on ignore ce match
       const st = ev.status.type;
+      const goals = [], reds = [];
+      (comp.details || []).forEach(function(d){
+        const who = (d.athletesInvolved && d.athletesInvolved[0]) ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName || '') : '';
+        const side = (d.team && String(d.team.id) === String(h.id)) ? 'home' : 'away';
+        const min = (d.clock && d.clock.displayValue) || '';
+        if(d.scoringPlay && !d.shootout) goals.push({min: min, name: who, side: side, pen: !!d.penaltyKick, og: !!d.ownGoal});
+        else if(d.redCard) reds.push({min: min, name: who, side: side});
+      });
       out[hn + '|' + an] = {
+        goals: goals, reds: reds,
         state: st.state,                            // pre / in / post
         name: st.name,                              // ex. STATUS_FIRST_HALF, STATUS_HALFTIME
         completed: !!st.completed,
@@ -4916,6 +5028,8 @@ function setLiveStatus(text, cls){
   if (!el) return;
   el.textContent = text;
   el.className = 'live-status' + (cls ? ' ' + cls : '');
+  LC_STATUS = text;
+  const lvs = document.getElementById('lvStatus'); if(lvs) lvs.textContent = text;
 }
 
 async function liveTick(){
@@ -4932,6 +5046,7 @@ async function liveTick(){
       return overlay[k].state === 'pre' && (new Date(overlay[k].kickoff).getTime() - Date.now()) < 20 * 60 * 1000;
     });
     nextDelay = live.length ? 30 * 1000 : (soon ? 60 * 1000 : 5 * 60 * 1000);
+    if(LC_TAB === 'live') nextDelay = live.length ? 15 * 1000 : 30 * 1000;      // onglet « En direct » ouvert : quasi temps réel
 
     const signature = JSON.stringify(overlay);
     const changed = signature !== liveSignature;
@@ -4947,6 +5062,7 @@ async function liveTick(){
       if (md !== null && Number(sel.value) < md && MATCHDAY_HISTORY[md]) sel.value = String(md);
     }
     if (changed && sel) renderResultsForMatchday(sel.value);
+    renderLiveView();
 
     const hhmmss = new Date().toLocaleTimeString('fr-FR');
     if (live.length) setLiveStatus('🔴 ' + live.length + ' match' + (live.length > 1 ? 's' : '') + ' en direct · actualisé à ' + hhmmss, 'on');
