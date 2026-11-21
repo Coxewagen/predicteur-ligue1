@@ -1,0 +1,217 @@
+{
+ "dom": "OGC Nice",
+ "ext": "Paris Saint-Germain",
+ "lignes": [
+  {
+   "poste": "Gardien",
+   "dom": {
+    "poste": "G",
+    "nom": "Yehvann Diouf",
+    "fbref": "Yehvann Diouf",
+    "minutes": 900,
+    "points": 57.2,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "G",
+    "nom": "Matvey Safonov",
+    "fbref": "Matvei Safonov",
+    "minutes": 900,
+    "points": 56.1,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Défenseur central",
+   "dom": {
+    "poste": "DC",
+    "nom": "Alidu Seidu",
+    "fbref": "Alidu Seidu",
+    "minutes": 223,
+    "points": 47.7,
+    "remplace": "Mohamed Abdelmonem (2.5 M€)"
+   },
+   "ext": {
+    "poste": "DC",
+    "nom": "Ilya Zabarnyi",
+    "fbref": "Illia Zabarnyi",
+    "minutes": 450,
+    "points": 69.3,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Défenseur central",
+   "dom": {
+    "poste": "DC",
+    "nom": "Youssouf Ndayishimiye",
+    "fbref": "Youssouf Ndayishimiye",
+    "minutes": 867,
+    "points": 41.2,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "DC",
+    "nom": "Willian Pacho",
+    "fbref": "Willian Pacho",
+    "minutes": 630,
+    "points": 42.8,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Latéral",
+   "dom": {
+    "poste": "DL",
+    "nom": "Jonathan Clauss",
+    "fbref": "Jonathan Clauss",
+    "minutes": 832,
+    "points": 68.7,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "DL",
+    "nom": "Achraf Hakimi",
+    "fbref": "Achraf Hakimi",
+    "minutes": 567,
+    "points": 82.7,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Latéral",
+   "dom": {
+    "poste": "DL",
+    "nom": "Niels Nkounkou",
+    "fbref": "Niels Nkounkou",
+    "minutes": 670,
+    "points": 48.6,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "DL",
+    "nom": "Nuno Mendes",
+    "fbref": "Nuno Mendes",
+    "minutes": 218,
+    "points": 49.0,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Milieu",
+   "dom": {
+    "poste": "MI",
+    "nom": "Sofiane Diop",
+    "fbref": "Sofiane Diop",
+    "minutes": 443,
+    "points": 74.3,
+    "remplace": "Hicham Boudaoui (12 M€)"
+   },
+   "ext": {
+    "poste": "MI",
+    "nom": "Vitinha",
+    "fbref": "Vitinha",
+    "minutes": 677,
+    "points": 53.4,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Milieu",
+   "dom": {
+    "poste": "MI",
+    "nom": "Djibril Coulibaly",
+    "fbref": "Djibril Coulibaly",
+    "minutes": 627,
+    "points": 41.2,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "MI",
+    "nom": "João Neves",
+    "fbref": "João Neves",
+    "minutes": 525,
+    "points": 49.2,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Milieu",
+   "dom": {
+    "poste": "MI",
+    "nom": "Xavier Mandza",
+    "fbref": "Xavier Mandza Tsiendi",
+    "minutes": 758,
+    "points": 40.6,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "MI",
+    "nom": "Warren Zaïre-Emery",
+    "fbref": "Warren Zaïre-Emery",
+    "minutes": 745,
+    "points": 41.5,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Attaquant",
+   "dom": {
+    "poste": "AT",
+    "nom": "Mohamed Amoura",
+    "fbref": "Mohamed Amoura",
+    "minutes": 622,
+    "points": 53.8,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "AT",
+    "nom": "Désiré Doué",
+    "fbref": "Désiré Doué",
+    "minutes": 526,
+    "points": 55.0,
+    "remplace": null
+   }
+  },
+  {
+   "poste": "Attaquant",
+   "dom": {
+    "poste": "AT",
+    "nom": "Nathan Ngoumou",
+    "fbref": "Nathan N'Goumou",
+    "minutes": 173,
+    "points": 44.9,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "AT",
+    "nom": "Maghnes Akliouche",
+    "fbref": "Maghnes Akliouche",
+    "minutes": 549,
+    "points": 44.5,
+    "remplace": "Khvicha Kvaratskhelia (140 M€)"
+   }
+  },
+  {
+   "poste": "Avant-centre",
+   "dom": {
+    "poste": "BU",
+    "nom": "Elye Wahi",
+    "fbref": "Elye Wahi",
+    "minutes": 690,
+    "points": 60.5,
+    "remplace": null
+   },
+   "ext": {
+    "poste": "BU",
+    "nom": "Ousmane Dembélé",
+    "fbref": "Ousmane Dembélé",
+    "minutes": 238,
+    "points": 66.9,
+    "remplace": null
+   }
+  }
+ ],
+ "moyenneDom": 52.6,
+ "moyenneExt": 55.5
+}
