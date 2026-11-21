@@ -1,0 +1,347 @@
+{
+ "date": "2026-11-01",
+ "source": "Transfermarkt (via elo.html)",
+ "equipes": {
+  "Paris Saint-Germain": {
+   "valeurXI": 1030,
+   "valeurEffectif": 1362.3,
+   "nbJoueurs": 24,
+   "xi": [
+    "Matvey Safonov (G, 30 M€)",
+    "Willian Pacho (DC, 80 M€)",
+    "Ilya Zabarnyi (DC, 40 M€)",
+    "Nuno Mendes (DL, 80 M€)",
+    "Achraf Hakimi (DL, 80 M€)",
+    "Vitinha (MI, 140 M€)",
+    "João Neves (MI, 140 M€)",
+    "Warren Zaïre-Emery (MI, 80 M€)",
+    "Khvicha Kvaratskhelia (AT, 140 M€)",
+    "Désiré Doué (AT, 120 M€)",
+    "Ousmane Dembélé (BU, 100 M€)"
+   ],
+   "indexLn": 2.335
+  },
+  "AS Monaco": {
+   "valeurXI": 205.5,
+   "valeurEffectif": 377.7,
+   "nbJoueurs": 26,
+   "xi": [
+    "Lukas Hradecky (G, 1.5 M€)",
+    "Sadibou Sané (DC, 12 M€)",
+    "Eric Dier (DC, 4 M€)",
+    "Vanderson (DL, 18 M€)",
+    "Nazinho (DL, 10 M€)",
+    "Lamine Camara (MI, 55 M€)",
+    "Denis Zakaria (MI, 25 M€)",
+    "Mamadou Coulibaly (MI, 20 M€)",
+    "Mathys Detourbet (AT, 20 M€)",
+    "Ansu Fati (AT, 15 M€)",
+    "Matthis Abline (BU, 25 M€)"
+   ],
+   "indexLn": 0.723
+  },
+  "RC Strasbourg": {
+   "valeurXI": 142,
+   "valeurEffectif": 320.9,
+   "nbJoueurs": 30,
+   "xi": [
+    "Filip Jørgensen (G, 15 M€)",
+    "Karim Coulibaly (DC, 28 M€)",
+    "Ismaël Doukouré (DC, 20 M€)",
+    "Oso (DL, 10 M€)",
+    "Mateo Del Blanco (DL, 5 M€)",
+    "Dário Essugo (MI, 15 M€)",
+    "Diogo Sousa (MI, 10 M€)",
+    "Pape Demba Diop (MI, 9 M€)",
+    "Sebastian Nanasi (AT, 15 M€)",
+    "Samuel Amo-Ameyaw (AT, 8 M€)",
+    "Jacobo Ortega (BU, 7 M€)"
+   ],
+   "indexLn": 0.354
+  },
+  "Olympique Lyonnais": {
+   "valeurXI": 165,
+   "valeurEffectif": 254.5,
+   "nbJoueurs": 28,
+   "xi": [
+    "Dominik Greif (G, 9 M€)",
+    "Moussa Niakhaté (DC, 15 M€)",
+    "Felix Bacher (DC, 6 M€)",
+    "Zachary Athekame (DL, 15 M€)",
+    "Abner (DL, 10 M€)",
+    "Tyler Morton (MI, 30 M€)",
+    "Pavel Sulc (MI, 20 M€)",
+    "Noah Nartey (MI, 15 M€)",
+    "Kaïl Boudache (AT, 8 M€)",
+    "Keito Nakamura (AT, 12 M€)",
+    "Loïs Openda (BU, 25 M€)"
+   ],
+   "indexLn": 0.504
+  },
+  "Stade Rennais": {
+   "valeurXI": 177,
+   "valeurEffectif": 253.4,
+   "nbJoueurs": 26,
+   "xi": [
+    "Brice Samba (G, 7 M€)",
+    "Charlie Cresswell (DC, 25 M€)",
+    "Abdelhamid Ait Boudlal (DC, 20 M€)",
+    "Quentin Merlin (DL, 15 M€)",
+    "Mahamadou Nagida (DL, 10 M€)",
+    "Sebastian Szymański (MI, 15 M€)",
+    "Mahdi Camara (MI, 12 M€)",
+    "Valentin Rongier (MI, 8 M€)",
+    "Ludovic Blas (AT, 10 M€)",
+    "Mousa Al-Tamari (AT, 10 M€)",
+    "Estéban Lepaul (BU, 45 M€)"
+   ],
+   "indexLn": 0.574
+  },
+  "LOSC Lille": {
+   "valeurXI": 182,
+   "valeurEffectif": 253.3,
+   "nbJoueurs": 26,
+   "xi": [
+    "Berke Özer (G, 12 M€)",
+    "Nathan Ngoy (DC, 25 M€)",
+    "Alexsandro (DC, 15 M€)",
+    "Tiago Santos (DL, 10 M€)",
+    "Romain Perraud (DL, 7 M€)",
+    "Hákon Arnar Haraldsson (MI, 30 M€)",
+    "Ngal'ayel Mukau (MI, 15 M€)",
+    "Maurits Kjærgaard (MI, 8 M€)",
+    "Dilane Bakwa (AT, 28 M€)",
+    "Ethan Mbappé (AT, 12 M€)",
+    "Ayase Ueda (BU, 20 M€)"
+   ],
+   "indexLn": 0.602
+  },
+  "RC Lens": {
+   "valeurXI": 150,
+   "valeurEffectif": 243,
+   "nbJoueurs": 29,
+   "xi": [
+    "Robin Risser (G, 30 M€)",
+    "Ismaëlo Ganiou (DC, 30 M€)",
+    "Samson Baidoo (DC, 25 M€)",
+    "Saud Abdulhamid (DL, 9 M€)",
+    "Matthieu Udol (DL, 8 M€)",
+    "Yacine Titraoui (MI, 9 M€)",
+    "Andrija Bulatovic (MI, 8 M€)",
+    "Michaël Cuisance (MI, 6 M€)",
+    "Abdallah Sima (AT, 7 M€)",
+    "Michal Skoras (AT, 6 M€)",
+    "Odsonne Édouard (BU, 12 M€)"
+   ],
+   "indexLn": 0.409
+  },
+  "Paris FC": {
+   "valeurXI": 116.3,
+   "valeurEffectif": 193.6,
+   "nbJoueurs": 25,
+   "xi": [
+    "Kevin Trapp (G, 1.8 M€)",
+    "Diego Coppola (DC, 20 M€)",
+    "Moustapha Mbow (DC, 10 M€)",
+    "Adama Camara (DL, 4 M€)",
+    "Hamari Traoré (DL, 1.5 M€)",
+    "Rudy Matondo (MI, 20 M€)",
+    "Pablo Pagis (MI, 20 M€)",
+    "Maxime Lopez (MI, 5 M€)",
+    "Ilan Kebbal (AT, 12 M€)",
+    "Moses Simon (AT, 7 M€)",
+    "Lassine Sinayoko (BU, 15 M€)"
+   ],
+   "indexLn": 0.154
+  },
+  "Olympique de Marseille": {
+   "valeurXI": 155.5,
+   "valeurEffectif": 190.4,
+   "nbJoueurs": 25,
+   "xi": [
+    "Jeffrey de Lange (G, 2.5 M€)",
+    "Nayef Aguerd (DC, 15 M€)",
+    "CJ Egan-Riley (DC, 9 M€)",
+    "Timothy Weah (DL, 20 M€)",
+    "Emerson (DL, 9 M€)",
+    "Pierre-Emile Højbjerg (MI, 15 M€)",
+    "Angel Gomes (MI, 10 M€)",
+    "Himad Abdelli (MI, 5 M€)",
+    "Igor Paixão (AT, 35 M€)",
+    "Keyliane Abdallah (AT, 5 M€)",
+    "Amine Gouiri (BU, 30 M€)"
+   ],
+   "indexLn": 0.445
+  },
+  "OGC Nice": {
+   "valeurXI": 89.6,
+   "valeurEffectif": 150.3,
+   "nbJoueurs": 29,
+   "xi": [
+    "Yehvann Diouf (G, 7 M€)",
+    "Youssouf Ndayishimiye (DC, 7 M€)",
+    "Mohamed Abdelmonem (DC, 2.5 M€)",
+    "Jonathan Clauss (DL, 4 M€)",
+    "Niels Nkounkou (DL, 2.6 M€)",
+    "Hicham Boudaoui (MI, 12 M€)",
+    "Djibril Coulibaly (MI, 8 M€)",
+    "Xavier Mandza (MI, 5 M€)",
+    "Mohamed Amoura (AT, 20 M€)",
+    "Nathan Ngoumou (AT, 3.5 M€)",
+    "Elye Wahi (BU, 18 M€)"
+   ],
+   "indexLn": -0.107
+  },
+  "Toulouse FC": {
+   "valeurXI": 80,
+   "valeurEffectif": 123.9,
+   "nbJoueurs": 24,
+   "xi": [
+    "Guillaume Restes (G, 18 M€)",
+    "Mark McKenzie (DC, 7 M€)",
+    "Rasmus Nicolaisen (DC, 5 M€)",
+    "Christ Tapé (DL, 3.5 M€)",
+    "Rafik Messali (DL, 1.5 M€)",
+    "Alexis Vossah (MI, 15 M€)",
+    "Cristian Cásseres Jr. (MI, 12 M€)",
+    "Thomas Jørgensen (MI, 7.5 M€)",
+    "Ilyas Azizi (AT, 2 M€)",
+    "Aron Dønnum (AT, 5 M€)",
+    "Casper Tengstedt (BU, 3.5 M€)"
+   ],
+   "indexLn": -0.22
+  },
+  "FC Lorient": {
+   "valeurXI": 74.5,
+   "valeurEffectif": 99.1,
+   "nbJoueurs": 26,
+   "xi": [
+    "Yvon Mvogo (G, 2.5 M€)",
+    "Montassar Talbi (DC, 8 M€)",
+    "Nathaniel Adjei (DC, 1.5 M€)",
+    "Arsène Kouassi (DL, 15 M€)",
+    "Dembo Sylla (DL, 1.5 M€)",
+    "Arthur Avom (MI, 20 M€)",
+    "Noah Cadiou (MI, 7 M€)",
+    "Jean-Victor Makengo (MI, 6 M€)",
+    "Théo Le Bris (AT, 5 M€)",
+    "Isak Jensen (AT, 5 M€)",
+    "Ibrahima Baldé (BU, 3 M€)"
+   ],
+   "indexLn": -0.291
+  },
+  "AJ Auxerre": {
+   "valeurXI": 48.5,
+   "valeurEffectif": 96.2,
+   "nbJoueurs": 32,
+   "xi": [
+    "Mamadou Diop (G, 2 M€)",
+    "Clément Akpa (DC, 9 M€)",
+    "Sinaly Diomandé (DC, 6 M€)",
+    "Lamine Sy (DL, 2.5 M€)",
+    "Fredrik Oppegård (DL, 1.5 M€)",
+    "Arthur Piedfort (MI, 5 M€)",
+    "Romain Faivre (MI, 4 M€)",
+    "Naouirou Ahamada (MI, 3 M€)",
+    "Danny Namaso (AT, 6 M€)",
+    "Aristide Zossou (AT, 2.5 M€)",
+    "Cameron Archer (BU, 7 M€)"
+   ],
+   "indexLn": -0.721
+  },
+  "Stade Brestois": {
+   "valeurXI": 62.5,
+   "valeurEffectif": 87.9,
+   "nbJoueurs": 24,
+   "xi": [
+    "Egil Selvik (G, 1.5 M€)",
+    "Raphaël Le Guen (DC, 15 M€)",
+    "Gautier Lloris (DC, 3 M€)",
+    "Bradley Locko (DL, 6 M€)",
+    "Kenny Lala (DL, 1.5 M€)",
+    "Kamory Doumbia (MI, 12 M€)",
+    "Joris Chotard (MI, 7 M€)",
+    "Hugo Magnetti (MI, 6 M€)",
+    "Pathé Mboup (AT, 2.5 M€)",
+    "Giovani Versini (AT, 5 M€)",
+    "Mama Baldé (BU, 3 M€)"
+   ],
+   "indexLn": -0.467
+  },
+  "Angers SCO": {
+   "valeurXI": 49.7,
+   "valeurEffectif": 65.8,
+   "nbJoueurs": 23,
+   "xi": [
+    "Anthony Lopes (G, 0.9 M€)",
+    "Ousmane Camara (DC, 8 M€)",
+    "Jordan Lefort (DC, 1 M€)",
+    "Lilian Raolisoa (DL, 4 M€)",
+    "Joseph Kalulu (DL, 2 M€)",
+    "Louis Mouton (MI, 4 M€)",
+    "Haris Belkebla (MI, 1.8 M€)",
+    "Yassin Belkhdim (MI, 7 M€)",
+    "Amine Sbaï (AT, 6 M€)",
+    "Anthony Bermont (AT, 3 M€)",
+    "Prosper Peter (BU, 12 M€)"
+   ],
+   "indexLn": -0.696
+  },
+  "Le Havre AC": {
+   "valeurXI": 41.9,
+   "valeurEffectif": 63.2,
+   "nbJoueurs": 28,
+   "xi": [
+    "Gauthier Gallon (G, 0.6 M€)",
+    "Ayumu Seko (DC, 5 M€)",
+    "Ahmed Touba (DC, 2.5 M€)",
+    "Elias Jelert (DL, 5 M€)",
+    "Enzo Koffi (DL, 1.8 M€)",
+    "Rassoul Ndiaye (MI, 8 M€)",
+    "Junior Mwanga (MI, 6 M€)",
+    "Simon Ebonog (MI, 4.5 M€)",
+    "Felix Mambimbi (AT, 0.5 M€)",
+    "Rayan Fofana (BU, 8 M€)"
+   ],
+   "indexLn": -0.867
+  },
+  "ES Troyes AC": {
+   "valeurXI": 30,
+   "valeurEffectif": 44.2,
+   "nbJoueurs": 28,
+   "xi": [
+    "Patrick Beach (G, 2 M€)",
+    "Junior Diaz (DC, 6 M€)",
+    "Paolo Gozzi (DC, 1.2 M€)",
+    "Anis Ouzenadji (DL, 2.5 M€)",
+    "Lucas Maronnier (DL, 0.8 M€)",
+    "Mouhamed Diop (MI, 4 M€)",
+    "Antoine Mille (MI, 2.5 M€)",
+    "Dermane Karim (MI, 2.5 M€)",
+    "Hugo Picard (AT, 3 M€)",
+    "Merwan Ifnaoui (AT, 2.5 M€)",
+    "Jérémy Le Douaron (BU, 3 M€)"
+   ],
+   "indexLn": -1.201
+  },
+  "Le Mans FC": {
+   "valeurXI": 21.6,
+   "valeurEffectif": 33.5,
+   "nbJoueurs": 29,
+   "xi": [
+    "Nicolas Kocik (G, 1.5 M€)",
+    "Noa Boissé (DC, 3 M€)",
+    "Raúl Torrente (DC, 2.5 M€)",
+    "Lucas Calodat (DL, 3 M€)",
+    "Yasser Larouci (DL, 1.5 M€)",
+    "Adil Bourabaa (MI, 3.5 M€)",
+    "Lucas Bretelle (MI, 1.2 M€)",
+    "Alexandre Lauray (MI, 0.8 M€)",
+    "Billal Brahimi (AT, 1 M€)",
+    "Erwan Colas (AT, 0.6 M€)",
+    "Habib Diallo (BU, 3 M€)"
+   ],
+   "indexLn": -1.529
+  }
+ }
+}
