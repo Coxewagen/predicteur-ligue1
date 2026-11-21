@@ -1,0 +1,7 @@
+{
+ "date": "2026-11-21",
+ "source": "fotmob.com, Ligue 1 2026/27, page « FotMob rating » par équipe (https://www.fotmob.com/leagues/53/stats/season/1000001834/players/rating/team/<id>/<equipe>), Nice id 9831, PSG id 9847. Les joueurs avec trop peu de matchs ne sont pas classés (n.c.).",
+ "Nice": {"Clauss": 7.62, "Amoura": 7.44, "Diop": 7.40, "Wahi": 7.37, "Nkounkou": 7.26, "Abdelmonem": 7.23, "Boudaoui": 7.16, "Diouf": 7.15, "Mandza": 7.04, "Ndayishimiye": 6.98, "Hein": 6.92, "Witsel": 6.80, "Coulibaly": 6.52},
+ "PSG": {"Zabarnyi": 7.78, "Vitinha": 7.67, "Fabián Ruiz": 7.46, "Hakimi": 7.41, "Marquinhos": 7.37, "Doué": 7.28, "Safonov": 7.25, "Godts": 7.20, "Akliouche": 7.20, "Dembélé": 7.19, "Kvaratskhelia": 7.19, "Ferran Torres": 7.15, "João Neves": 7.13, "Zaïre-Emery": 7.11, "Pacho": 7.04, "Lucas Hernández": 7.04, "Beraldo": 6.80, "Dro Fernández": 6.75},
+ "footystats": "Clé test : seulement England Premier League (jusqu'à 2024/25) et Mexico Liga MX 2019/20 ; Ligue 1 refusée (« League is not chosen by the user »). Champs par joueur : matchs, minutes, buts, passes, cartons, clean sheets, buts encaissés, penalties — ni tirs, ni xG, ni tacles."
+}
