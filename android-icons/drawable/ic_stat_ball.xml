@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Petite icône (blanc sur transparent) des notifications de but : un ballon de foot simple -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M2,12 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 z M4,12 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,9 L14.85,11.07 L13.76,14.43 L10.24,14.43 L9.15,11.07 Z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:pathData="M12,9 L12,4 M14.85,11.07 L19.6,9.5 M13.76,14.43 L16.7,18.5 M10.24,14.43 L7.3,18.5 M9.15,11.07 L4.4,9.5" />
+</vector>

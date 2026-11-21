@@ -868,7 +868,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:02:28", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T22:17:32", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -5152,7 +5152,7 @@ function autoRefreshOfficial(){
 // génération de l'APK (même numéro que sur la page de téléchargement et dans les
 // paramètres Android). Sur le site web, il reste tel quel et on affiche « web ».
 const APP_VERSION = '__APP_VERSION__';
-const PAGE_VERSION = 4;         // version de la page web : à augmenter de 1 à chaque modification du fichier
+const PAGE_VERSION = 5;         // version de la page web : à augmenter de 1 à chaque modification du fichier
 function versionLabel(){ return /^\d+$/.test(APP_VERSION) ? 'version ' + APP_VERSION : 'version web ' + PAGE_VERSION; }
 (function(){
   const el = document.getElementById('appVersion');
@@ -5333,6 +5333,49 @@ async function fetchLiveOverlay(){
   return parseEspnScoreboard(await resp.json());
 }
 
+// ----- Notifications de but (appli Android seulement) : une notification à chaque but de n'importe quel match en direct -----
+let GOAL_MAX = {};     // « domicile|extérieur » -> [buts domicile, buts extérieur] déjà vus (un but n'est notifié qu'une fois, même si la source recule puis rattrape)
+function goalNotifyAvailable(){
+  try { return lcNative() && !!window.Capacitor.Plugins.LocalNotifications; } catch(e){ return false; }
+}
+async function goalNotifInit(){
+  if(!goalNotifyAvailable()) return;
+  try {
+    const LN = window.Capacitor.Plugins.LocalNotifications;
+    await LN.createChannel({id: 'buts', name: 'Buts en direct', description: 'Une notification à chaque but de Ligue 1', importance: 5, visibility: 1, vibration: true});
+    const p = await LN.checkPermissions();
+    if(p.display !== 'granted') await LN.requestPermissions();      // Android 13+ : demande l'autorisation au premier lancement
+  } catch(e){ /* sans autorisation, pas de notification : le reste de l'appli fonctionne normalement */ }
+}
+function goalNotify(k, o, side){
+  try {
+    const LN = window.Capacitor.Plugins.LocalNotifications, p = k.split('|'), H = lcShort(p[0]), A = lcShort(p[1]);
+    const team = side === 'home' ? H : A, n = side === 'home' ? o.home : o.away;
+    const gs = (o.goals || []).filter(function(g){ return g.side === side; });
+    const last = gs.length ? gs[gs.length - 1] : null;
+    const who = (last && last.name && gs.length === n) ? ' · ' + last.name + ' ' + last.min : '';      // buteur affiché seulement s'il est bien à jour
+    const clk = liveClockLabel(o), c = (clk && clk !== 'EN COURS') ? ' (' + clk + ')' : '';
+    Promise.resolve(LN.schedule({notifications: [{
+      id: Math.floor(Math.random() * 2000000000) + 1,
+      title: '⚽ But ! ' + team,
+      body: H + ' ' + o.home + ' - ' + o.away + ' ' + A + c + who,
+      channelId: 'buts'
+    }]})).catch(function(){});
+  } catch(e){}
+}
+function goalCheck(overlay){
+  const N = goalNotifyAvailable();
+  Object.keys(overlay).forEach(function(k){
+    const o = overlay[k];
+    if(o.state === 'pre'){ if(!GOAL_MAX[k]) GOAL_MAX[k] = [0, 0]; return; }        // avant le coup d'envoi : on part de 0-0
+    if(o.state !== 'in'){ delete GOAL_MAX[k]; return; }                           // match terminé
+    const m = GOAL_MAX[k];
+    if(!m){ GOAL_MAX[k] = [o.home, o.away]; return; }                             // premier relevé d'un match déjà commencé : pas de notification
+    if(o.home > m[0]){ m[0] = o.home; if(N) goalNotify(k, o, 'home'); }
+    if(o.away > m[1]){ m[1] = o.away; if(N) goalNotify(k, o, 'away'); }
+  });
+}
+
 async function liveTick(){
   clearTimeout(liveTimer);
   autoRefreshOfficial();                            // résultats/classement officiels : toutes les 10 min au plus
@@ -5347,6 +5390,7 @@ async function liveTick(){
     nextDelay = live.length ? (LIVE_SRC === 'livescore' ? 10 * 1000 : 30 * 1000) : (soon ? 60 * 1000 : 5 * 60 * 1000);
     if(LC_TAB === 'live') nextDelay = live.length ? 10 * 1000 : (soon ? 20 * 1000 : 30 * 1000);      // onglet « En direct » ouvert : quasi temps réel
 
+    goalCheck(overlay);
     const signature = JSON.stringify(overlay);
     const changed = signature !== liveSignature;
     liveSignature = signature;
@@ -5370,10 +5414,10 @@ async function liveTick(){
     nextDelay = 2 * 60 * 1000;
     setLiveStatus('⚠️ Scores en direct indisponibles (' + err.message + ')', 'err');
   }
-  if (!document.hidden) liveTimer = setTimeout(liveTick, nextDelay);
+  if (!document.hidden || lcNative()) liveTimer = setTimeout(liveTick, nextDelay);     // appli Android : on continue en arrière-plan pour les notifications de but
 }
 document.addEventListener('visibilitychange', function(){
-  if (document.hidden) clearTimeout(liveTimer); else liveTick();   // reprise immédiate au retour dans l'appli
+  if (document.hidden){ if(!lcNative()) clearTimeout(liveTimer); } else liveTick();   // reprise immédiate au retour dans l'appli
 });
 
 recomputeTeamsWithManualData();
@@ -5385,6 +5429,7 @@ renderUpdateInfo();
 populateMatchdaySelect();
 renderResultsForMatchday(document.getElementById('matchdaySelect').value);
 liveTick();   // scores en direct : première lecture tout de suite, puis rafraîchissement automatique
+goalNotifInit();   // appli Android : canal + autorisation des notifications de but
 buildManualRows();
 loadManualMatchday(document.getElementById('manualMatchday').value);
 if(!FS_ACCESS_SUPPORTED){

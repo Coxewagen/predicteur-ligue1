@@ -40,7 +40,7 @@ jobs:
       - name: Install Capacitor
         run: |
           [ -f package.json ] || npm init -y
-          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest @capacitor/local-notifications@latest
 
       - name: Générer le projet Capacitor (le site est embarqué tel quel dans l'appli)
         # Contrairement à l'ancienne appli TWA (qui ouvrait l'URL en ligne dans un
@@ -67,7 +67,8 @@ jobs:
           node -e "
             const fs = require('fs');
             const cfg = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
-            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true } });
+            // LocalNotifications : notifications de but (petite icône ballon = android-icons/drawable/ic_stat_ball.xml)
+            cfg.plugins = Object.assign({}, cfg.plugins, { CapacitorHttp: { enabled: true }, LocalNotifications: { smallIcon: 'ic_stat_ball', iconColor: '#14803C' } });
             fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));
           "
           cat capacitor.config.json
