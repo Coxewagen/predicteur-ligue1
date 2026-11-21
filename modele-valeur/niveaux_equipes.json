@@ -1,0 +1,26 @@
+{
+ "etape": 2,
+ "C": 106,
+ "avantageDomicile": 50,
+ "source": "valeurs_equipes.json (valeur du XI type)",
+ "niveaux": {
+  "Paris Saint-Germain": 1747.5,
+  "AS Monaco": 1576.7,
+  "RC Strasbourg": 1537.5,
+  "Olympique Lyonnais": 1553.4,
+  "Stade Rennais": 1560.8,
+  "LOSC Lille": 1563.8,
+  "RC Lens": 1543.3,
+  "Paris FC": 1516.3,
+  "Olympique de Marseille": 1547.1,
+  "OGC Nice": 1488.7,
+  "Toulouse FC": 1476.7,
+  "FC Lorient": 1469.1,
+  "AJ Auxerre": 1423.6,
+  "Stade Brestois": 1450.5,
+  "Angers SCO": 1426.2,
+  "Le Havre AC": 1408.1,
+  "ES Troyes AC": 1372.7,
+  "Le Mans FC": 1337.9
+ }
+}
