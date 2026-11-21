@@ -1,0 +1,115 @@
+{
+ "etape": "4bis",
+ "LAMH": 40,
+ "H": 50,
+ "equipes": {
+  "Paris Saint-Germain": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": -149.5,
+   "bonus": -16.6
+  },
+  "AS Monaco": {
+   "matchsDomicile": 4,
+   "matchsExterieur": 6,
+   "brut": 40.8,
+   "bonus": 4.4
+  },
+  "RC Strasbourg": {
+   "matchsDomicile": 4,
+   "matchsExterieur": 6,
+   "brut": 152.1,
+   "bonus": 16.3
+  },
+  "Olympique Lyonnais": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 109.1,
+   "bonus": 12.1
+  },
+  "Stade Rennais": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 153.4,
+   "bonus": 17
+  },
+  "LOSC Lille": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": -38,
+   "bonus": -4.2
+  },
+  "RC Lens": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 28.4,
+   "bonus": 3.2
+  },
+  "Paris FC": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 104.4,
+   "bonus": 11.6
+  },
+  "Olympique de Marseille": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 2.2,
+   "bonus": 0.2
+  },
+  "OGC Nice": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 77.5,
+   "bonus": 8.6
+  },
+  "Toulouse FC": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": -64.8,
+   "bonus": -7.2
+  },
+  "FC Lorient": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": -85.4,
+   "bonus": -9.5
+  },
+  "AJ Auxerre": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 62.8,
+   "bonus": 7
+  },
+  "Stade Brestois": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": 31.5,
+   "bonus": 3.5
+  },
+  "Angers SCO": {
+   "matchsDomicile": 6,
+   "matchsExterieur": 4,
+   "brut": -32.2,
+   "bonus": -3.4
+  },
+  "Le Havre AC": {
+   "matchsDomicile": 6,
+   "matchsExterieur": 5,
+   "brut": -104,
+   "bonus": -12.5
+  },
+  "ES Troyes AC": {
+   "matchsDomicile": 6,
+   "matchsExterieur": 5,
+   "brut": -77.3,
+   "bonus": -9.3
+  },
+  "Le Mans FC": {
+   "matchsDomicile": 5,
+   "matchsExterieur": 5,
+   "brut": -20.1,
+   "bonus": -2.2
+  }
+ }
+}

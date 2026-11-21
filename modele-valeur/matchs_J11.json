@@ -1,0 +1,94 @@
+{
+ "etape": "4bis",
+ "LAMH": 40,
+ "matchs": [
+  {
+   "match": "OGC Nice - Paris Saint-Germain",
+   "heure": "sam. 17h15",
+   "malusDom": 0,
+   "malusExt": -9.7,
+   "ecartAvant": -189.2,
+   "ecartApres": -179.5,
+   "variation": 9.7,
+   "bonusDomicile": 8.6,
+   "ecartFinal": -170.9
+  },
+  {
+   "match": "AS Monaco - AJ Auxerre",
+   "heure": "sam. 20h45",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": 222,
+   "ecartApres": 222,
+   "variation": 0,
+   "bonusDomicile": 4.4,
+   "ecartFinal": 226.4
+  },
+  {
+   "match": "LOSC Lille - Olympique Lyonnais",
+   "heure": "sam. 20h45",
+   "malusDom": -4.2,
+   "malusExt": -25.6,
+   "ecartAvant": 61.4,
+   "ecartApres": 82.8,
+   "variation": 21.4,
+   "bonusDomicile": -4.2,
+   "ecartFinal": 78.6
+  },
+  {
+   "match": "RC Lens - Toulouse FC",
+   "heure": "sam. 20h45",
+   "malusDom": -6.3,
+   "malusExt": 0,
+   "ecartAvant": 109.7,
+   "ecartApres": 103.4,
+   "variation": -6.3,
+   "bonusDomicile": 3.2,
+   "ecartFinal": 106.6
+  },
+  {
+   "match": "RC Strasbourg - Stade Brestois",
+   "heure": "sam. 20h45",
+   "malusDom": -10.7,
+   "malusExt": -27,
+   "ecartAvant": 101.3,
+   "ecartApres": 117.6,
+   "variation": 16.3,
+   "bonusDomicile": 16.3,
+   "ecartFinal": 133.9
+  },
+  {
+   "match": "Paris FC - Angers SCO",
+   "heure": "dim. 15h00",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": 179.6,
+   "ecartApres": 179.6,
+   "variation": 0,
+   "bonusDomicile": 11.6,
+   "ecartFinal": 191.2
+  },
+  {
+   "match": "FC Lorient - Stade Rennais",
+   "heure": "dim. 17h15",
+   "malusDom": 0,
+   "malusExt": 0,
+   "ecartAvant": -32.5,
+   "ecartApres": -32.5,
+   "variation": 0,
+   "bonusDomicile": -9.5,
+   "ecartFinal": -42
+  },
+  {
+   "match": "Olympique de Marseille - Le Mans FC",
+   "heure": "dim. 20h45",
+   "malusDom": -2.3,
+   "malusExt": -14.7,
+   "ecartAvant": 266.3,
+   "ecartApres": 278.7,
+   "variation": 12.4,
+   "bonusDomicile": 0.2,
+   "ecartFinal": 278.9
+  }
+ ]
+}
