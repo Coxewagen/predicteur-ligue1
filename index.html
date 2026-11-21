@@ -711,7 +711,7 @@
 <script>
 // Dernière mise à jour des données : à quelle journée elles correspondent et quand.
 // Mis à jour automatiquement par update_stats.py, ou manuellement par Claude.
-let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:32:07", note: "" };
+let LAST_UPDATE = { matchday: 10, updatedAt: "2026-11-21T13:36:31", note: "" };
 
 // Historique des résultats, par journée (clé = numéro de journée en texte).
 // Format JSON simple pour que update_stats.py puisse le relire et y ajouter
@@ -4430,7 +4430,7 @@ let LC_OD = lcLoad('l1_odds');      // cotes saisies à la main (clé du match +
 let LC_DAY = 'all';
 try { LC_DAY = localStorage.getItem('l1_day') || 'all'; } catch(e){}
 let lcDeferred = null;
-// Cotes Winamax (1 / N / 2), relevées toutes les 30 min dans cotes.json : affichage seulement, jamais dans le calcul.
+// Cotes Winamax (1 / N / 2) : affichage seulement, jamais utilisées dans le calcul du modèle.
 const LC_ODDS_URL = 'https://raw.githubusercontent.com/Coxewagen/predicteur-ligue1/main/cotes.json';
 let WINAMAX = lcLoad('l1_winamax');
 if(!WINAMAX.odds) WINAMAX = {updatedAt: null, odds: {}};
@@ -4507,15 +4507,67 @@ function lcOddsInfo(){
   const dn = d.toLocaleDateString('fr-FR', {weekday: 'long'});
   el.textContent = 'Cotes Winamax · ' + dn.charAt(0).toUpperCase() + dn.slice(1) + ' ' + d.getDate() + ' à ' + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
 }
+// Lecture directe de winamax.fr dans l'appli Android (module HTTP natif, depuis ton téléphone en France).
+const LC_WX_URL = 'https://www.winamax.fr/paris-sportifs/sports/1/7/4';   // Football > France > Ligue 1
+const LC_WX_NAMES = {'AJ Auxerre':'AJ Auxerre','Auxerre':'AJ Auxerre','AS Monaco':'AS Monaco','Monaco':'AS Monaco','Angers':'Angers SCO','Angers SCO':'Angers SCO','Brest':'Stade Brestois','Stade Brestois':'Stade Brestois','Le Havre':'Le Havre AC','Le Havre AC':'Le Havre AC','Le Mans':'Le Mans FC','Le Mans FC':'Le Mans FC','Lens':'RC Lens','RC Lens':'RC Lens','Lille':'LOSC Lille','LOSC Lille':'LOSC Lille','Lorient':'FC Lorient','FC Lorient':'FC Lorient','Lyon':'Olympique Lyonnais','Olympique Lyonnais':'Olympique Lyonnais','Marseille':'Olympique de Marseille','Olympique de Marseille':'Olympique de Marseille','Nice':'OGC Nice','OGC Nice':'OGC Nice','Paris FC':'Paris FC','PSG':'Paris Saint-Germain','Paris SG':'Paris Saint-Germain','Paris Saint-Germain':'Paris Saint-Germain','Rennes':'Stade Rennais','Stade Rennais':'Stade Rennais','Strasbourg':'RC Strasbourg','RC Strasbourg':'RC Strasbourg','Toulouse':'Toulouse FC','Toulouse FC':'Toulouse FC','Troyes':'ES Troyes AC','ES Troyes AC':'ES Troyes AC'};
+function lcParseWinamax(html){
+  const i = html.indexOf('PRELOADED_STATE');
+  const a = i < 0 ? -1 : html.indexOf('{', i);
+  if(a < 0) return null;
+  let depth = 0, inStr = false, esc = false, end = -1;
+  for(let k = a; k < html.length; k++){
+    const ch = html.charCodeAt(k);
+    if(inStr){ if(esc) esc = false; else if(ch === 92) esc = true; else if(ch === 34) inStr = false; }
+    else if(ch === 34) inStr = true;
+    else if(ch === 123) depth++;
+    else if(ch === 125){ depth--; if(depth === 0){ end = k; break; } }
+  }
+  if(end < 0) return null;
+  const st = JSON.parse(html.slice(a, end + 1));
+  const out = {};
+  Object.keys(st.matches || {}).forEach(function(id){
+    const mt = st.matches[id];
+    if(mt.tournamentId !== 4 || !mt.mainBetId || !mt.competitor1Name || !mt.competitor2Name) return;
+    const bet = st.bets[String(mt.mainBetId)];
+    const home = LC_WX_NAMES[mt.competitor1Name], away = LC_WX_NAMES[mt.competitor2Name];
+    if(!bet || !home || !away) return;
+    const c = [null, null, null];
+    bet.outcomes.forEach(function(oid){
+      const o = st.outcomes[String(oid)] || {}, v = st.odds[String(oid)];
+      if(o.label === 'Match nul') c[1] = v;
+      else if(o.label === mt.competitor1Name || LC_WX_NAMES[o.label] === home) c[0] = v;
+      else if(o.label === mt.competitor2Name || LC_WX_NAMES[o.label] === away) c[2] = v;
+    });
+    if(c.every(function(x){ return typeof x === 'number' && x > 1; })) out[home + '|' + away] = c;
+  });
+  return Object.keys(out).length ? out : null;
+}
+function lcNative(){ try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch(e){ return false; } }
+function lcSetOdds(j){
+  WINAMAX = j; lcSave('l1_winamax', j);
+  const sel = document.getElementById('matchdaySelect');
+  if(sel && sel.value) lcRefresh();
+}
 async function lcFetchOdds(){
+  // 1) appli Android : lecture directe de Winamax
+  if(lcNative()){
+    try {
+      const r = await fetch(LC_WX_URL, {cache: 'no-store', headers: {'Accept': 'text/html', 'Accept-Language': 'fr-FR,fr;q=0.9',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36'}});
+      if(r.ok){
+        const odds = lcParseWinamax(await r.text());
+        if(odds){ lcSetOdds({updatedAt: new Date().toLocaleString('sv-SE', {timeZone: PARIS_TZ}).replace(' ', 'T'), source: 'winamax.fr', odds: odds}); return; }
+      }
+    } catch(e){ /* on retombe sur le dernier relevé */ }
+  }
+  // 2) sinon (navigateur, ou Winamax injoignable) : dernier relevé publié dans cotes.json
   try {
     const r = await fetch(LC_ODDS_URL + '?t=' + Date.now(), {cache: 'no-store'});
     if(!r.ok) return;
     const j = await r.json();
     if(!j || !j.odds || !j.updatedAt) return;
-    WINAMAX = j; lcSave('l1_winamax', j);
-    const sel = document.getElementById('matchdaySelect');
-    if(sel && sel.value) lcRefresh();
+    if(WINAMAX.updatedAt && new Date(WINAMAX.updatedAt) >= new Date(j.updatedAt)) return;   // déjà plus récent en mémoire
+    lcSetOdds(j);
   } catch(e){ /* hors connexion : on garde les dernières cotes mémorisées */ }
 }
 function lcCodInput(k, p, c){
@@ -4652,7 +4704,7 @@ function lcRefresh(){ const sel = document.getElementById('matchdaySelect'); if(
     if(cbtn){ const card = cbtn.closest('.lc-card'); if(!card) return; LC_B[card.dataset.key] = cbtn.dataset.c; lcSave('l1_bets', LC_B); lcRefresh(); }
   });
   lcFetchOdds();
-  setInterval(function(){ if(!document.hidden) lcFetchOdds(); }, 10 * 60 * 1000);
+  setInterval(function(){ if(!document.hidden) lcFetchOdds(); }, 15 * 60 * 1000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) lcFetchOdds(); });
   // Si un re-rendu automatique (scores en direct) tombait pendant une saisie, on le rejoue juste après.
   document.addEventListener('focusout', function(){

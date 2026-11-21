@@ -6,6 +6,8 @@ les cotes domicile / nul / extérieur. Ces cotes ne servent JAMAIS au calcul du 
 Ne casse rien : si la page est illisible, le fichier existant est laissé tel quel.
 
 Usage :  python update_cotes.py [cotes.json] [--depuis-fichier page.html]
+(Winamax refuse les adresses hors de France : à lancer depuis un PC en France, pas depuis GitHub Actions.
+ L’appli Android lit Winamax elle-même ; cotes.json sert de relevé de secours pour le navigateur.)
 """
 import json
 import re
