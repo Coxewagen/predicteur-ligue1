@@ -1,0 +1,158 @@
+{
+ "etape": 5,
+ "note": "appActuelle = predictScoreQuick de index.html (HEAD d9e6cac) le 2026-11-21 ~15h50 ; winamax = cotes.json du 2026-11-21T13:31:08",
+ "matchs": [
+  {
+   "match": "OGC Nice - Paris Saint-Germain",
+   "heure": "sam. 17h15",
+   "nouveau": [
+    16.6,
+    23.3,
+    60.1
+   ],
+   "appActuelle": [
+    28.3,
+    23.2,
+    48.5
+   ],
+   "winamaxSansMarge": [
+    16.7,
+    17.7,
+    65.5
+   ]
+  },
+  {
+   "match": "AS Monaco - AJ Auxerre",
+   "heure": "sam. 20h45",
+   "nouveau": [
+    68.8,
+    19.5,
+    11.6
+   ],
+   "appActuelle": [
+    63.7,
+    21.6,
+    14.8
+   ],
+   "winamaxSansMarge": [
+    67,
+    19.1,
+    13.9
+   ]
+  },
+  {
+   "match": "LOSC Lille - Olympique Lyonnais",
+   "heure": "sam. 20h45",
+   "nouveau": [
+    47.5,
+    26.7,
+    25.8
+   ],
+   "appActuelle": [
+    42.8,
+    33.4,
+    23.8
+   ],
+   "winamaxSansMarge": [
+    41.5,
+    28.8,
+    29.7
+   ]
+  },
+  {
+   "match": "RC Lens - Toulouse FC",
+   "heure": "sam. 20h45",
+   "nouveau": [
+    51.7,
+    25.7,
+    22.6
+   ],
+   "appActuelle": [
+    27.4,
+    24.2,
+    48.4
+   ],
+   "winamaxSansMarge": [
+    44.5,
+    25.8,
+    29.7
+   ]
+  },
+  {
+   "match": "RC Strasbourg - Stade Brestois",
+   "heure": "sam. 20h45",
+   "nouveau": [
+    55.7,
+    24.6,
+    19.7
+   ],
+   "appActuelle": [
+    26.2,
+    21.4,
+    52.4
+   ],
+   "winamaxSansMarge": [
+    42.5,
+    26.7,
+    30.8
+   ]
+  },
+  {
+   "match": "Paris FC - Angers SCO",
+   "heure": "dim. 15h00",
+   "nouveau": [
+    63.9,
+    21.6,
+    14.4
+   ],
+   "appActuelle": [
+    80.6,
+    13.7,
+    5.7
+   ],
+   "winamaxSansMarge": [
+    72.9,
+    16.4,
+    10.6
+   ]
+  },
+  {
+   "match": "FC Lorient - Stade Rennais",
+   "heure": "dim. 17h15",
+   "nouveau": [
+    30.8,
+    27.6,
+    41.6
+   ],
+   "appActuelle": [
+    49.5,
+    24.4,
+    26.1
+   ],
+   "winamaxSansMarge": [
+    33.5,
+    26.9,
+    39.5
+   ]
+  },
+  {
+   "match": "Olympique de Marseille - Le Mans FC",
+   "heure": "dim. 20h45",
+   "nouveau": [
+    75.6,
+    16.2,
+    8.2
+   ],
+   "appActuelle": [
+    87.7,
+    8.1,
+    4.3
+   ],
+   "winamaxSansMarge": [
+    65.8,
+    18.6,
+    15.6
+   ]
+  }
+ ]
+}
