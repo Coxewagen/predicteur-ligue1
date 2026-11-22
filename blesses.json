@@ -1,11 +1,14 @@
 {
- "updatedAt": "2026-11-21T08:45:33Z",
+ "updatedAt": "2026-11-22T08:45:34Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 60,
+ "count": 52,
  "teams": {
+  "Paris Saint-Germain": [
+   "Désiré Doué",
+   "Khvicha Kvaratskhelia"
+  ],
   "RC Strasbourg": [
    "Oso",
-   "Karim Coulibaly",
    "Giovanni Reyna",
    "Jeyland Mitchell",
    "Fábio Baldé",
@@ -16,9 +19,9 @@
    "Estéban Lepaul"
   ],
   "Le Havre AC": [
-   "Joan Tincrès",
    "Daren Mosengo",
    "Sota Nakamura",
+   "Joan Tincrès",
    "Rassoul Ndiaye",
    "Timothée Pembélé",
    "Elias Jelert",
@@ -28,8 +31,7 @@
   ],
   "FC Lorient": [
    "Isaak Touré",
-   "Ibrahima Baldé",
-   "Bandiougou Fadiga"
+   "Ibrahima Baldé"
   ],
   "ES Troyes AC": [
    "Paolo Gozzi",
@@ -42,9 +44,7 @@
    "Maik Nawrocki"
   ],
   "OGC Nice": [
-   "Hicham Boudaoui",
    "Mohamed Abdelmonem",
-   "Ali Abdi",
    "Antoine Mendy",
    "Laurent Abergel",
    "Moïse Bombito"
@@ -53,13 +53,6 @@
    "Aleksandr Golovin",
    "Ansu Fati",
    "Stanis Idumbo"
-  ],
-  "Paris Saint-Germain": [
-   "Maghnes Akliouche",
-   "Ousmane Dembélé",
-   "Marquinhos",
-   "Khvicha Kvaratskhelia",
-   "Nuno Mendes"
   ],
   "Paris FC": [
    "Samir Chergui",
@@ -87,7 +80,6 @@
    "Adil Bourabaa"
   ],
   "LOSC Lille": [
-   "Ayase Ueda",
    "Tiago Santos",
    "Hamza Igamane"
   ],
