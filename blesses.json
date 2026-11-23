@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-11-22T08:45:34Z",
+ "updatedAt": "2026-11-23T08:45:14Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
- "count": 52,
+ "count": 46,
  "teams": {
   "Paris Saint-Germain": [
    "Désiré Doué",
@@ -15,13 +15,12 @@
    "Joaquín Panichelli"
   ],
   "Stade Rennais": [
-   "Przemyslaw Frankowski",
-   "Estéban Lepaul"
+   "Przemyslaw Frankowski"
   ],
   "Le Havre AC": [
+   "Joan Tincrès",
    "Daren Mosengo",
    "Sota Nakamura",
-   "Joan Tincrès",
    "Rassoul Ndiaye",
    "Timothée Pembélé",
    "Elias Jelert",
@@ -30,8 +29,7 @@
    "Stephan Zagadou"
   ],
   "FC Lorient": [
-   "Isaak Touré",
-   "Ibrahima Baldé"
+   "Isaak Touré"
   ],
   "ES Troyes AC": [
    "Paolo Gozzi",
@@ -54,12 +52,6 @@
    "Ansu Fati",
    "Stanis Idumbo"
   ],
-  "Paris FC": [
-   "Samir Chergui",
-   "Adama Camara",
-   "Jonathan Ikoné",
-   "Nhoa Sangui"
-  ],
   "Olympique de Marseille": [
    "Emerson",
    "Derek Cornelius"
@@ -68,9 +60,6 @@
    "Tyler Morton",
    "Pavel Sulc",
    "Mohamed Ouédraogo"
-  ],
-  "Angers SCO": [
-   "Amine El Ouazzani"
   ],
   "Toulouse FC": [
    "Rafik Messali"
@@ -86,6 +75,9 @@
   "Stade Brestois": [
    "Raphaël Le Guen",
    "Brendan Chardonnet"
+  ],
+  "Paris FC": [
+   "Nhoa Sangui"
   ],
   "AJ Auxerre": [
    "Assane Dioussé",
