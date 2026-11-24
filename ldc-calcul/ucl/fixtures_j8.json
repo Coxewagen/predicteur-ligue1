@@ -1,0 +1,164 @@
+[
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "AS Roma",
+  "hid": "104",
+  "a": "Lille",
+  "aid": "166",
+  "neutral": false,
+  "uid": "2049687"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Arsenal",
+  "hid": "359",
+  "a": "Sabah FK",
+  "aid": "21922",
+  "neutral": false,
+  "uid": "2049683"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Atlético Madrid",
+  "hid": "1068",
+  "a": "Fenerbahce",
+  "aid": "436",
+  "neutral": false,
+  "uid": "2049685"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Barcelona",
+  "hid": "83",
+  "a": "Como",
+  "aid": "2572",
+  "neutral": false,
+  "uid": "2049684"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Bayern Munich",
+  "hid": "132",
+  "a": "Real Betis",
+  "aid": "244",
+  "neutral": false,
+  "uid": "2049680"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Borussia Dortmund",
+  "hid": "124",
+  "a": "AEK Athens",
+  "aid": "887",
+  "neutral": false,
+  "uid": "2049686"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Club Brugge",
+  "hid": "570",
+  "a": "Bodo/Glimt",
+  "aid": "2980",
+  "neutral": false,
+  "uid": "2049688"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Feyenoord Rotterdam",
+  "hid": "142",
+  "a": "RB Leipzig",
+  "aid": "11420",
+  "neutral": false,
+  "uid": "2049690"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "LASK Linz",
+  "hid": "4411",
+  "a": "FC Porto",
+  "aid": "437",
+  "neutral": false,
+  "uid": "2049696"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Liverpool",
+  "hid": "364",
+  "a": "Lens",
+  "aid": "175",
+  "neutral": false,
+  "uid": "2049681"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Manchester City",
+  "hid": "382",
+  "a": "Sporting CP",
+  "aid": "2250",
+  "neutral": false,
+  "uid": "2049682"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Napoli",
+  "hid": "114",
+  "a": "Viking FK",
+  "aid": "510",
+  "neutral": false,
+  "uid": "2049691"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "PSV Eindhoven",
+  "hid": "148",
+  "a": "VfB Stuttgart",
+  "aid": "134",
+  "neutral": false,
+  "uid": "2049689"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Paris Saint-Germain",
+  "hid": "160",
+  "a": "Galatasaray",
+  "aid": "432",
+  "neutral": false,
+  "uid": "2049679"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Shakhtar Donetsk",
+  "hid": "493",
+  "a": "Real Madrid",
+  "aid": "86",
+  "neutral": false,
+  "uid": "2049693"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Slavia Prague",
+  "hid": "494",
+  "a": "Aston Villa",
+  "aid": "362",
+  "neutral": false,
+  "uid": "2049694"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Slovan Bratislava",
+  "hid": "521",
+  "a": "Internazionale",
+  "aid": "110",
+  "neutral": false,
+  "uid": "2049695"
+ },
+ {
+  "date": "2027-01-27T20:00Z",
+  "h": "Villarreal",
+  "hid": "102",
+  "a": "Manchester United",
+  "aid": "360",
+  "neutral": false,
+  "uid": "2049692"
+ }
+]

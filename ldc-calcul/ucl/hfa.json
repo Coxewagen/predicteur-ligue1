@@ -1,0 +1,2292 @@
+{
+"LH": {
+"DEN": 32.47176594591828,
+"NOR": 60.86912494344786,
+"RUS": 30.541237588886386,
+"SWE": 26.72770422925866,
+"ROM": -209.40286221637376,
+"POL": 17.339739451960085,
+"D2": 47.647166025116135,
+"B1": 52.37537845423795,
+"AUT": -5.21785226480167,
+"E1": 52.45343380337691,
+"SC0": 60.40049608294942,
+"F2": 42.6297815946966,
+"FIN": 1.2500000000000424,
+"SP2": 70.25185315055506,
+"SP1": 73.40772910043071,
+"T1": 65.58840692037187,
+"N1": 57.57957666978054,
+"F1": 46.482925239133245,
+"E0": 44.746705965608655,
+"P1": 47.9349844844361,
+"I2": 51.454067182760255,
+"D1": 41.631423996198876,
+"I1": 32.73251305435861,
+"E2": 66.09002083850612,
+"G1": 48.07088518949167,
+"SC1": 55.18033576071636,
+"E3": 38.66727148017632,
+"SC2": 51.721898332739094,
+"SC3": 39.806825606242946,
+"EC": 35.21721861720357
+},
+"meanH": 35.8883251742461,
+"team": {
+"Midtjylland": {
+"n": 15,
+"raw": 73,
+"spec": 15
+},
+"Silkeborg": {
+"n": 15,
+"raw": -13,
+"spec": -3
+},
+"Viking": {
+"n": 15,
+"raw": 8,
+"spec": 2
+},
+"Lillestrom": {
+"n": 15,
+"raw": -69,
+"spec": -14
+},
+"Sandefjord": {
+"n": 15,
+"raw": 233,
+"spec": 47
+},
+"Rosenborg": {
+"n": 15,
+"raw": 153,
+"spec": 31
+},
+"Tromso": {
+"n": 15,
+"raw": -162,
+"spec": -32
+},
+"Brann": {
+"n": 15,
+"raw": -109,
+"spec": -22
+},
+"Brondby": {
+"n": 15,
+"raw": 8,
+"spec": 2
+},
+"Hamburg": {
+"n": 51,
+"raw": 61,
+"spec": 28
+},
+"Schalke 04": {
+"n": 50,
+"raw": 87,
+"spec": 39
+},
+"St. Gilloise": {
+"n": 61,
+"raw": 60,
+"spec": 30
+},
+"Anderlecht": {
+"n": 61,
+"raw": 69,
+"spec": 35
+},
+"Hannover": {
+"n": 51,
+"raw": -40,
+"spec": -18
+},
+"Elversberg": {
+"n": 51,
+"raw": -5,
+"spec": -3
+},
+"Kaiserslautern": {
+"n": 51,
+"raw": 66,
+"spec": 30
+},
+"St Pauli": {
+"n": 52,
+"raw": -33,
+"spec": -16
+},
+"Osnabruck": {
+"n": 18,
+"raw": -53,
+"spec": -12
+},
+"Karlsruhe": {
+"n": 51,
+"raw": 66,
+"spec": 30
+},
+"Wehen": {
+"n": 17,
+"raw": -39,
+"spec": -9
+},
+"Magdeburg": {
+"n": 52,
+"raw": -102,
+"spec": -47
+},
+"Eupen": {
+"n": 16,
+"raw": 80,
+"spec": 17
+},
+"Westerlo": {
+"n": 60,
+"raw": -73,
+"spec": -37
+},
+"Charleroi": {
+"n": 58,
+"raw": 10,
+"spec": 5
+},
+"Oud-Heverlee Leuven": {
+"n": 61,
+"raw": 25,
+"spec": 13
+},
+"Fortuna Dusseldorf": {
+"n": 50,
+"raw": -52,
+"spec": -24
+},
+"Hertha": {
+"n": 52,
+"raw": -107,
+"spec": -50
+},
+"Antwerp": {
+"n": 60,
+"raw": -16,
+"spec": -8
+},
+"Cercle Brugge": {
+"n": 57,
+"raw": -110,
+"spec": -54
+},
+"Braunschweig": {
+"n": 51,
+"raw": 54,
+"spec": 25
+},
+"Holstein Kiel": {
+"n": 52,
+"raw": -114,
+"spec": -53
+},
+"Greuther Furth": {
+"n": 52,
+"raw": 57,
+"spec": 26
+},
+"Paderborn": {
+"n": 50,
+"raw": -100,
+"spec": -46
+},
+"Hansa Rostock": {
+"n": 17,
+"raw": 54,
+"spec": 12
+},
+"Nurnberg": {
+"n": 51,
+"raw": 21,
+"spec": 9
+},
+"Gent": {
+"n": 61,
+"raw": -31,
+"spec": -16
+},
+"Kortrijk": {
+"n": 36,
+"raw": -6,
+"spec": -2
+},
+"Club Brugge": {
+"n": 61,
+"raw": 40,
+"spec": 20
+},
+"Mechelen": {
+"n": 60,
+"raw": -10,
+"spec": -5
+},
+"St Truiden": {
+"n": 59,
+"raw": 75,
+"spec": 37
+},
+"Standard": {
+"n": 60,
+"raw": -50,
+"spec": -25
+},
+"Sheffield Weds": {
+"n": 71,
+"raw": -69,
+"spec": -38
+},
+"Southampton": {
+"n": 67,
+"raw": -6,
+"spec": -3
+},
+"Celtic": {
+"n": 56,
+"raw": 26,
+"spec": 13
+},
+"Ross County": {
+"n": 55,
+"raw": 8,
+"spec": 4
+},
+"St Etienne": {
+"n": 55,
+"raw": 30,
+"spec": 14
+},
+"Grenoble": {
+"n": 54,
+"raw": 78,
+"spec": 37
+},
+"Genk": {
+"n": 61,
+"raw": 0,
+"spec": 0
+},
+"Dundee": {
+"n": 56,
+"raw": -22,
+"spec": -11
+},
+"Motherwell": {
+"n": 55,
+"raw": -23,
+"spec": -11
+},
+"Livingston": {
+"n": 39,
+"raw": 74,
+"spec": 29
+},
+"Aberdeen": {
+"n": 56,
+"raw": 45,
+"spec": 22
+},
+"St Johnstone": {
+"n": 55,
+"raw": -39,
+"spec": -19
+},
+"Hearts": {
+"n": 56,
+"raw": 59,
+"spec": 29
+},
+"Blackburn": {
+"n": 71,
+"raw": -93,
+"spec": -50
+},
+"West Brom": {
+"n": 71,
+"raw": 97,
+"spec": 53
+},
+"Bristol City": {
+"n": 71,
+"raw": -14,
+"spec": -8
+},
+"Preston": {
+"n": 71,
+"raw": -3,
+"spec": -2
+},
+"Middlesbrough": {
+"n": 70,
+"raw": -27,
+"spec": -15
+},
+"Millwall": {
+"n": 71,
+"raw": -53,
+"spec": -29
+},
+"Norwich": {
+"n": 71,
+"raw": 36,
+"spec": 19
+},
+"Hull": {
+"n": 69,
+"raw": -107,
+"spec": -57
+},
+"Plymouth": {
+"n": 71,
+"raw": 35,
+"spec": 19
+},
+"Huddersfield": {
+"n": 50,
+"raw": 18,
+"spec": 8
+},
+"Stoke": {
+"n": 70,
+"raw": 17,
+"spec": 9
+},
+"Rotherham": {
+"n": 50,
+"raw": 142,
+"spec": 65
+},
+"Swansea": {
+"n": 71,
+"raw": -21,
+"spec": -11
+},
+"Birmingham": {
+"n": 50,
+"raw": 123,
+"spec": 56
+},
+"Watford": {
+"n": 71,
+"raw": 39,
+"spec": 21
+},
+"QPR": {
+"n": 71,
+"raw": -78,
+"spec": -42
+},
+"Kilmarnock": {
+"n": 55,
+"raw": 69,
+"spec": 33
+},
+"Rangers": {
+"n": 56,
+"raw": -45,
+"spec": -22
+},
+"Ajaccio": {
+"n": 36,
+"raw": 246,
+"spec": 92
+},
+"Rodez": {
+"n": 55,
+"raw": 14,
+"spec": 7
+},
+"Amiens": {
+"n": 53,
+"raw": 13,
+"spec": 6
+},
+"Quevilly Rouen": {
+"n": 19,
+"raw": -101,
+"spec": -24
+},
+"Annecy": {
+"n": 55,
+"raw": -22,
+"spec": -10
+},
+"Guingamp": {
+"n": 55,
+"raw": -44,
+"spec": -21
+},
+"Concarneau": {
+"n": 19,
+"raw": -49,
+"spec": -12
+},
+"Bastia": {
+"n": 52,
+"raw": 47,
+"spec": 22
+},
+"Dunkerque": {
+"n": 55,
+"raw": -62,
+"spec": -30
+},
+"Troyes": {
+"n": 53,
+"raw": 62,
+"spec": 29
+},
+"Laval": {
+"n": 55,
+"raw": -119,
+"spec": -57
+},
+"Angers": {
+"n": 54,
+"raw": 24,
+"spec": 11
+},
+"Paris FC": {
+"n": 54,
+"raw": 29,
+"spec": 14
+},
+"Caen": {
+"n": 36,
+"raw": 58,
+"spec": 22
+},
+"Valenciennes": {
+"n": 18,
+"raw": 71,
+"spec": 16
+},
+"Auxerre": {
+"n": 54,
+"raw": 49,
+"spec": 23
+},
+"Leicester": {
+"n": 67,
+"raw": -51,
+"spec": -27
+},
+"Coventry": {
+"n": 70,
+"raw": 43,
+"spec": 23
+},
+"Leeds": {
+"n": 66,
+"raw": 99,
+"spec": 52
+},
+"Cardiff": {
+"n": 70,
+"raw": -31,
+"spec": -17
+},
+"Hibernian": {
+"n": 56,
+"raw": -55,
+"spec": -27
+},
+"St Mirren": {
+"n": 55,
+"raw": -8,
+"spec": -4
+},
+"Sunderland": {
+"n": 66,
+"raw": 16,
+"spec": 8
+},
+"Ipswich": {
+"n": 66,
+"raw": -12,
+"spec": -6
+},
+"Pau FC": {
+"n": 55,
+"raw": -47,
+"spec": -23
+},
+"Bordeaux": {
+"n": 19,
+"raw": 172,
+"spec": 41
+},
+"Amorebieta": {
+"n": 20,
+"raw": -20,
+"spec": -5
+},
+"Levante": {
+"n": 61,
+"raw": -1,
+"spec": 0
+},
+"Almeria": {
+"n": 62,
+"raw": 63,
+"spec": 32
+},
+"Vallecano": {
+"n": 58,
+"raw": -66,
+"spec": -32
+},
+"Trabzonspor": {
+"n": 51,
+"raw": -16,
+"spec": -7
+},
+"Antalyaspor": {
+"n": 49,
+"raw": 98,
+"spec": 44
+},
+"Volendam": {
+"n": 34,
+"raw": 41,
+"spec": 15
+},
+"Vitesse": {
+"n": 17,
+"raw": -54,
+"spec": -12
+},
+"Nice": {
+"n": 52,
+"raw": 57,
+"spec": 26
+},
+"Lille": {
+"n": 52,
+"raw": 26,
+"spec": 12
+},
+"Burnley": {
+"n": 63,
+"raw": -62,
+"spec": -32
+},
+"Man City": {
+"n": 58,
+"raw": 74,
+"spec": 36
+},
+"Sp Braga": {
+"n": 50,
+"raw": -84,
+"spec": -38
+},
+"Famalicao": {
+"n": 51,
+"raw": 10,
+"spec": 5
+},
+"Valladolid": {
+"n": 60,
+"raw": 54,
+"spec": 27
+},
+"Sp Gijon": {
+"n": 63,
+"raw": 51,
+"spec": 26
+},
+"Sevilla": {
+"n": 58,
+"raw": -73,
+"spec": -36
+},
+"Valencia": {
+"n": 58,
+"raw": 23,
+"spec": 11
+},
+"Arsenal": {
+"n": 58,
+"raw": -3,
+"spec": -2
+},
+"Nottm Forest": {
+"n": 27,
+"raw": -84,
+"spec": -26
+},
+"Bournemouth": {
+"n": 58,
+"raw": -29,
+"spec": -14
+},
+"West Ham": {
+"n": 59,
+"raw": -37,
+"spec": -18
+},
+"Brighton": {
+"n": 58,
+"raw": 61,
+"spec": 30
+},
+"Luton": {
+"n": 67,
+"raw": 71,
+"spec": 37
+},
+"Everton": {
+"n": 57,
+"raw": -60,
+"spec": -29
+},
+"Fulham": {
+"n": 58,
+"raw": 16,
+"spec": 8
+},
+"Sheffield United": {
+"n": 67,
+"raw": -48,
+"spec": -25
+},
+"Crystal Palace": {
+"n": 58,
+"raw": -72,
+"spec": -35
+},
+"PSV Eindhoven": {
+"n": 53,
+"raw": -35,
+"spec": -16
+},
+"Utrecht": {
+"n": 53,
+"raw": -45,
+"spec": -21
+},
+"Gil Vicente": {
+"n": 50,
+"raw": 61,
+"spec": 28
+},
+"Portimonense": {
+"n": 16,
+"raw": -120,
+"spec": -25
+},
+"Marseille": {
+"n": 52,
+"raw": 141,
+"spec": 65
+},
+"Reims": {
+"n": 53,
+"raw": -35,
+"spec": -16
+},
+"Sociedad": {
+"n": 59,
+"raw": -52,
+"spec": -26
+},
+"Girona": {
+"n": 58,
+"raw": -29,
+"spec": -14
+},
+"Konyaspor": {
+"n": 51,
+"raw": -22,
+"spec": -10
+},
+"Istanbulspor": {
+"n": 17,
+"raw": -225,
+"spec": -50
+},
+"Newcastle": {
+"n": 58,
+"raw": 120,
+"spec": 59
+},
+"Aston Villa": {
+"n": 58,
+"raw": 87,
+"spec": 43
+},
+"Heerenveen": {
+"n": 53,
+"raw": 124,
+"spec": 58
+},
+"Waalwijk": {
+"n": 34,
+"raw": 71,
+"spec": 26
+},
+"Santander": {
+"n": 63,
+"raw": 8,
+"spec": 4
+},
+"Eibar": {
+"n": 63,
+"raw": 126,
+"spec": 64
+},
+"Farense": {
+"n": 32,
+"raw": -81,
+"spec": -28
+},
+"Casa Pia": {
+"n": 51,
+"raw": -65,
+"spec": -30
+},
+"Las Palmas": {
+"n": 60,
+"raw": -44,
+"spec": -22
+},
+"Mallorca": {
+"n": 58,
+"raw": 72,
+"spec": 36
+},
+"Ajax": {
+"n": 52,
+"raw": -3,
+"spec": -1
+},
+"Heracles": {
+"n": 51,
+"raw": 108,
+"spec": 49
+},
+"Kayserispor": {
+"n": 49,
+"raw": -5,
+"spec": -2
+},
+"Galatasaray": {
+"n": 50,
+"raw": 13,
+"spec": 6
+},
+"Pendikspor": {
+"n": 17,
+"raw": -80,
+"spec": -18
+},
+"Hatayspor": {
+"n": 33,
+"raw": 35,
+"spec": 13
+},
+"Zwolle": {
+"n": 53,
+"raw": -12,
+"spec": -6
+},
+"Sparta Rotterdam": {
+"n": 53,
+"raw": -119,
+"spec": -56
+},
+"Paris SG": {
+"n": 51,
+"raw": -75,
+"spec": -34
+},
+"Lorient": {
+"n": 52,
+"raw": 99,
+"spec": 46
+},
+"Zaragoza": {
+"n": 62,
+"raw": -110,
+"spec": -56
+},
+"Villarreal B": {
+"n": 20,
+"raw": 195,
+"spec": 49
+},
+"Sp Lisbon": {
+"n": 51,
+"raw": 65,
+"spec": 30
+},
+"Vizela": {
+"n": 16,
+"raw": -88,
+"spec": -18
+},
+"Ath Bilbao": {
+"n": 58,
+"raw": 26,
+"spec": 13
+},
+"Real Madrid": {
+"n": 58,
+"raw": 54,
+"spec": 26
+},
+"Elche": {
+"n": 61,
+"raw": 111,
+"spec": 56
+},
+"Ferrol": {
+"n": 41,
+"raw": -24,
+"spec": -10
+},
+"Nijmegen": {
+"n": 52,
+"raw": -61,
+"spec": -28
+},
+"Excelsior": {
+"n": 35,
+"raw": -50,
+"spec": -18
+},
+"Brest": {
+"n": 52,
+"raw": 76,
+"spec": 35
+},
+"Lens": {
+"n": 52,
+"raw": -3,
+"spec": -1
+},
+"AZ Alkmaar": {
+"n": 53,
+"raw": -28,
+"spec": -13
+},
+"Go Ahead Eagles": {
+"n": 53,
+"raw": 55,
+"spec": 26
+},
+"Feyenoord": {
+"n": 53,
+"raw": -88,
+"spec": -41
+},
+"For Sittard": {
+"n": 53,
+"raw": 52,
+"spec": 24
+},
+"Clermont": {
+"n": 52,
+"raw": -23,
+"spec": -11
+},
+"Monaco": {
+"n": 51,
+"raw": 43,
+"spec": 20
+},
+"Montpellier": {
+"n": 53,
+"raw": -50,
+"spec": -23
+},
+"Le Havre": {
+"n": 52,
+"raw": -87,
+"spec": -41
+},
+"Nantes": {
+"n": 53,
+"raw": -110,
+"spec": -51
+},
+"Toulouse": {
+"n": 52,
+"raw": -139,
+"spec": -65
+},
+"Brentford": {
+"n": 58,
+"raw": 28,
+"spec": 14
+},
+"Tottenham": {
+"n": 57,
+"raw": -85,
+"spec": -41
+},
+"Rio Ave": {
+"n": 51,
+"raw": 10,
+"spec": 5
+},
+"Chaves": {
+"n": 16,
+"raw": -28,
+"spec": -6
+},
+"Almere City": {
+"n": 34,
+"raw": -123,
+"spec": -45
+},
+"Twente": {
+"n": 52,
+"raw": 88,
+"spec": 41
+},
+"Burgos": {
+"n": 63,
+"raw": 55,
+"spec": 28
+},
+"Huesca": {
+"n": 62,
+"raw": -25,
+"spec": -13
+},
+"Celta": {
+"n": 59,
+"raw": -86,
+"spec": -43
+},
+"Osasuna": {
+"n": 58,
+"raw": 37,
+"spec": 18
+},
+"Rennes": {
+"n": 51,
+"raw": 54,
+"spec": 25
+},
+"Metz": {
+"n": 53,
+"raw": -55,
+"spec": -26
+},
+"Chelsea": {
+"n": 58,
+"raw": 20,
+"spec": 10
+},
+"Liverpool": {
+"n": 58,
+"raw": 72,
+"spec": 35
+},
+"Sivasspor": {
+"n": 32,
+"raw": 84,
+"spec": 29
+},
+"Samsunspor": {
+"n": 50,
+"raw": 47,
+"spec": 21
+},
+"Albacete": {
+"n": 63,
+"raw": 11,
+"spec": 5
+},
+"Espanol": {
+"n": 59,
+"raw": 61,
+"spec": 30
+},
+"Cartagena": {
+"n": 41,
+"raw": -95,
+"spec": -39
+},
+"Eldense": {
+"n": 42,
+"raw": -57,
+"spec": -23
+},
+"Villarreal": {
+"n": 57,
+"raw": -63,
+"spec": -31
+},
+"Betis": {
+"n": 58,
+"raw": -1,
+"spec": 0
+},
+"Ad. Demirspor": {
+"n": 32,
+"raw": 15,
+"spec": 5
+},
+"Rizespor": {
+"n": 51,
+"raw": 62,
+"spec": 29
+},
+"Strasbourg": {
+"n": 52,
+"raw": 58,
+"spec": 27
+},
+"Lyon": {
+"n": 52,
+"raw": 13,
+"spec": 6
+},
+"Getafe": {
+"n": 58,
+"raw": -60,
+"spec": -29
+},
+"Barcelona": {
+"n": 58,
+"raw": -11,
+"spec": -5
+},
+"Arouca": {
+"n": 51,
+"raw": -20,
+"spec": -9
+},
+"Estoril": {
+"n": 51,
+"raw": 35,
+"spec": 16
+},
+"Mirandes": {
+"n": 62,
+"raw": 30,
+"spec": 15
+},
+"Alcorcon": {
+"n": 20,
+"raw": -34,
+"spec": -8
+},
+"Cadiz": {
+"n": 62,
+"raw": -16,
+"spec": -8
+},
+"Alaves": {
+"n": 58,
+"raw": 13,
+"spec": 6
+},
+"Moreirense": {
+"n": 50,
+"raw": 61,
+"spec": 28
+},
+"Porto": {
+"n": 51,
+"raw": 44,
+"spec": 20
+},
+"Alanyaspor": {
+"n": 51,
+"raw": 27,
+"spec": 12
+},
+"Buyuksehyr": {
+"n": 51,
+"raw": -59,
+"spec": -27
+},
+"Karagumruk": {
+"n": 34,
+"raw": 138,
+"spec": 50
+},
+"Besiktas": {
+"n": 50,
+"raw": -28,
+"spec": -13
+},
+"Man United": {
+"n": 58,
+"raw": 15,
+"spec": 7
+},
+"Wolves": {
+"n": 59,
+"raw": -10,
+"spec": -5
+},
+"Tenerife": {
+"n": 42,
+"raw": 116,
+"spec": 48
+},
+"Oviedo": {
+"n": 61,
+"raw": 17,
+"spec": 8
+},
+"Ath Madrid": {
+"n": 58,
+"raw": 160,
+"spec": 79
+},
+"Granada": {
+"n": 62,
+"raw": -10,
+"spec": -5
+},
+"Boavista": {
+"n": 32,
+"raw": -111,
+"spec": -39
+},
+"Benfica": {
+"n": 50,
+"raw": 60,
+"spec": 27
+},
+"Bari": {
+"n": 56,
+"raw": 54,
+"spec": 26
+},
+"Palermo": {
+"n": 57,
+"raw": -6,
+"spec": -3
+},
+"Werder Bremen": {
+"n": 51,
+"raw": -43,
+"spec": -20
+},
+"Bayern Munich": {
+"n": 51,
+"raw": 59,
+"spec": 27
+},
+"Augsburg": {
+"n": 51,
+"raw": 48,
+"spec": 22
+},
+"MGladbach": {
+"n": 24,
+"raw": 63,
+"spec": 18
+},
+"Hoffenheim": {
+"n": 51,
+"raw": -51,
+"spec": -23
+},
+"Freiburg": {
+"n": 51,
+"raw": 47,
+"spec": 22
+},
+"Leverkusen": {
+"n": 51,
+"raw": -68,
+"spec": -31
+},
+"RB Leipzig": {
+"n": 51,
+"raw": 78,
+"spec": 36
+},
+"Stuttgart": {
+"n": 51,
+"raw": 37,
+"spec": 17
+},
+"Bochum": {
+"n": 52,
+"raw": 53,
+"spec": 24
+},
+"Wolfsburg": {
+"n": 52,
+"raw": -156,
+"spec": -72
+},
+"Heidenheim": {
+"n": 52,
+"raw": -2,
+"spec": -1
+},
+"Guimaraes": {
+"n": 51,
+"raw": 68,
+"spec": 31
+},
+"Empoli": {
+"n": 58,
+"raw": 4,
+"spec": 2
+},
+"Verona": {
+"n": 58,
+"raw": -54,
+"spec": -26
+},
+"Frosinone": {
+"n": 58,
+"raw": -35,
+"spec": -17
+},
+"Napoli": {
+"n": 58,
+"raw": -15,
+"spec": -7
+},
+"Dortmund": {
+"n": 51,
+"raw": 63,
+"spec": 29
+},
+"FC Koln": {
+"n": 51,
+"raw": -38,
+"spec": -17
+},
+"Cosenza": {
+"n": 37,
+"raw": -57,
+"spec": -22
+},
+"Ascoli": {
+"n": 19,
+"raw": -47,
+"spec": -11
+},
+"Cremonese": {
+"n": 57,
+"raw": -107,
+"spec": -52
+},
+"Catanzaro": {
+"n": 56,
+"raw": -18,
+"spec": -9
+},
+"Ternana": {
+"n": 18,
+"raw": -59,
+"spec": -14
+},
+"Sampdoria": {
+"n": 57,
+"raw": -13,
+"spec": -6
+},
+"Genoa": {
+"n": 58,
+"raw": -9,
+"spec": -5
+},
+"Fiorentina": {
+"n": 58,
+"raw": 54,
+"spec": 27
+},
+"Inter": {
+"n": 58,
+"raw": -30,
+"spec": -15
+},
+"Monza": {
+"n": 58,
+"raw": 1,
+"spec": 0
+},
+"Kasimpasa": {
+"n": 50,
+"raw": -98,
+"spec": -45
+},
+"Leganes": {
+"n": 61,
+"raw": -37,
+"spec": -18
+},
+"Union Berlin": {
+"n": 51,
+"raw": 38,
+"spec": 18
+},
+"Mainz": {
+"n": 51,
+"raw": -57,
+"spec": -26
+},
+"Ein Frankfurt": {
+"n": 51,
+"raw": 37,
+"spec": 17
+},
+"Darmstadt": {
+"n": 51,
+"raw": 42,
+"spec": 19
+},
+"Sudtirol": {
+"n": 57,
+"raw": -46,
+"spec": -22
+},
+"Spezia": {
+"n": 56,
+"raw": 15,
+"spec": 7
+},
+"Roma": {
+"n": 58,
+"raw": 131,
+"spec": 65
+},
+"Salernitana": {
+"n": 38,
+"raw": 48,
+"spec": 19
+},
+"Sassuolo": {
+"n": 58,
+"raw": 38,
+"spec": 19
+},
+"Atalanta": {
+"n": 57,
+"raw": -9,
+"spec": -4
+},
+"Cittadella": {
+"n": 37,
+"raw": -86,
+"spec": -33
+},
+"Reggiana": {
+"n": 56,
+"raw": -20,
+"spec": -10
+},
+"Venezia": {
+"n": 57,
+"raw": 85,
+"spec": 41
+},
+"Como": {
+"n": 56,
+"raw": 10,
+"spec": 5
+},
+"Lecce": {
+"n": 58,
+"raw": 5,
+"spec": 3
+},
+"Lazio": {
+"n": 58,
+"raw": -9,
+"spec": -5
+},
+"Udinese": {
+"n": 58,
+"raw": -109,
+"spec": -54
+},
+"Juventus": {
+"n": 58,
+"raw": 43,
+"spec": 21
+},
+"Torino": {
+"n": 58,
+"raw": 77,
+"spec": 38
+},
+"Cagliari": {
+"n": 58,
+"raw": 56,
+"spec": 27
+},
+"Fenerbahce": {
+"n": 50,
+"raw": -77,
+"spec": -35
+},
+"Bologna": {
+"n": 58,
+"raw": -14,
+"spec": -7
+},
+"Milan": {
+"n": 58,
+"raw": -35,
+"spec": -17
+},
+"Pisa": {
+"n": 56,
+"raw": -6,
+"spec": -3
+},
+"Modena": {
+"n": 56,
+"raw": -65,
+"spec": -31
+},
+"Parma": {
+"n": 57,
+"raw": -48,
+"spec": -23
+},
+"Blackpool": {
+"n": 27,
+"raw": 129,
+"spec": 40
+},
+"Wigan": {
+"n": 27,
+"raw": 88,
+"spec": 27
+},
+"Brescia": {
+"n": 37,
+"raw": -53,
+"spec": -20
+},
+"Lecco": {
+"n": 18,
+"raw": -102,
+"spec": -24
+},
+"Reading": {
+"n": 26,
+"raw": 60,
+"spec": 18
+},
+"Dender": {
+"n": 37,
+"raw": -56,
+"spec": -21
+},
+"Beerschot VA": {
+"n": 18,
+"raw": 376,
+"spec": 87
+},
+"Regensburg": {
+"n": 16,
+"raw": 382,
+"spec": 80
+},
+"Ulm": {
+"n": 16,
+"raw": -53,
+"spec": -11
+},
+"Dundee United": {
+"n": 37,
+"raw": -59,
+"spec": -22
+},
+"Groningen": {
+"n": 36,
+"raw": 72,
+"spec": 27
+},
+"NAC Breda": {
+"n": 34,
+"raw": 125,
+"spec": 45
+},
+"Derby": {
+"n": 48,
+"raw": -19,
+"spec": -8
+},
+"Portsmouth": {
+"n": 48,
+"raw": 35,
+"spec": 15
+},
+"Oxford": {
+"n": 47,
+"raw": 76,
+"spec": 33
+},
+"Willem II": {
+"n": 18,
+"raw": -142,
+"spec": -33
+},
+"AVS": {
+"n": 33,
+"raw": -20,
+"spec": -7
+},
+"Nacional": {
+"n": 35,
+"raw": 62,
+"spec": 23
+},
+"Goztep": {
+"n": 33,
+"raw": 48,
+"spec": 17
+},
+"Santa Clara": {
+"n": 35,
+"raw": 0,
+"spec": 0
+},
+"Eyupspor": {
+"n": 33,
+"raw": -19,
+"spec": -7
+},
+"Cordoba": {
+"n": 43,
+"raw": -60,
+"spec": -25
+},
+"Red Star": {
+"n": 35,
+"raw": -51,
+"spec": -19
+},
+"Castellon": {
+"n": 43,
+"raw": -31,
+"spec": -13
+},
+"Malaga": {
+"n": 43,
+"raw": 65,
+"spec": 27
+},
+"La Coruna": {
+"n": 43,
+"raw": -132,
+"spec": -55
+},
+"Juve Stabia": {
+"n": 38,
+"raw": 53,
+"spec": 20
+},
+"Cesena": {
+"n": 39,
+"raw": -21,
+"spec": -8
+},
+"Carrarese": {
+"n": 39,
+"raw": 136,
+"spec": 53
+},
+"Mantova": {
+"n": 39,
+"raw": 108,
+"spec": 42
+},
+"Bodrumspor": {
+"n": 15,
+"raw": -68,
+"spec": -14
+},
+"Martigues": {
+"n": 17,
+"raw": -213,
+"spec": -47
+},
+"Panetolikos": {
+"n": 27,
+"raw": -172,
+"spec": -53
+},
+"Panathinaikos": {
+"n": 23,
+"raw": 112,
+"spec": 31
+},
+"Asteras Tripolis": {
+"n": 26,
+"raw": 4,
+"spec": 1
+},
+"PAOK": {
+"n": 25,
+"raw": 243,
+"spec": 71
+},
+"Olympiakos": {
+"n": 25,
+"raw": -46,
+"spec": -14
+},
+"AEK": {
+"n": 26,
+"raw": 20,
+"spec": 6
+},
+"Atromitos": {
+"n": 26,
+"raw": -157,
+"spec": -47
+},
+"Levadeiakos": {
+"n": 25,
+"raw": -5,
+"spec": -1
+},
+"Aris": {
+"n": 24,
+"raw": 105,
+"spec": 30
+},
+"Panserraikos": {
+"n": 25,
+"raw": -13,
+"spec": -4
+},
+"Nott'm Forest": {
+"n": 29,
+"raw": -100,
+"spec": -32
+},
+"M'gladbach": {
+"n": 26,
+"raw": 5,
+"spec": 2
+},
+"Waregem": {
+"n": 20,
+"raw": 5,
+"spec": 1
+},
+"RAAL La Louviere": {
+"n": 19,
+"raw": -40,
+"spec": -10
+},
+"Arbroath": {
+"n": 20,
+"raw": 102,
+"spec": 25
+},
+"Ayr": {
+"n": 20,
+"raw": -69,
+"spec": -17
+},
+"AFC Wimbledon": {
+"n": 25,
+"raw": -53,
+"spec": -15
+},
+"Preu\u00dfen M\u00fcnster": {
+"n": 17,
+"raw": -11,
+"spec": -2
+},
+"Peterboro": {
+"n": 25,
+"raw": 18,
+"spec": 5
+},
+"Stevenage": {
+"n": 25,
+"raw": 102,
+"spec": 30
+},
+"Bradford": {
+"n": 25,
+"raw": 112,
+"spec": 33
+},
+"Wycombe": {
+"n": 25,
+"raw": 34,
+"spec": 10
+},
+"Burton": {
+"n": 25,
+"raw": -49,
+"spec": -14
+},
+"Mansfield": {
+"n": 25,
+"raw": -22,
+"spec": -6
+},
+"Doncaster": {
+"n": 25,
+"raw": -49,
+"spec": -14
+},
+"Exeter": {
+"n": 25,
+"raw": 58,
+"spec": 17
+},
+"Leyton Orient": {
+"n": 25,
+"raw": -77,
+"spec": -23
+},
+"Lincoln": {
+"n": 25,
+"raw": 12,
+"spec": 4
+},
+"Barnsley": {
+"n": 25,
+"raw": -76,
+"spec": -22
+},
+"Port Vale": {
+"n": 25,
+"raw": -64,
+"spec": -19
+},
+"Northampton": {
+"n": 25,
+"raw": -7,
+"spec": -2
+},
+"Accrington": {
+"n": 25,
+"raw": 61,
+"spec": 18
+},
+"Gillingham": {
+"n": 25,
+"raw": -15,
+"spec": -5
+},
+"Barnet": {
+"n": 25,
+"raw": -123,
+"spec": -36
+},
+"Fleetwood Town": {
+"n": 25,
+"raw": -42,
+"spec": -12
+},
+"Bristol Rvs": {
+"n": 25,
+"raw": 54,
+"spec": 16
+},
+"Harrogate": {
+"n": 25,
+"raw": -153,
+"spec": -45
+},
+"Cambridge": {
+"n": 25,
+"raw": 103,
+"spec": 30
+},
+"Cheltenham": {
+"n": 25,
+"raw": 40,
+"spec": 12
+},
+"Chesterfield": {
+"n": 25,
+"raw": -56,
+"spec": -16
+},
+"Barrow": {
+"n": 25,
+"raw": -112,
+"spec": -33
+},
+"Colchester": {
+"n": 25,
+"raw": 30,
+"spec": 9
+},
+"Tranmere": {
+"n": 25,
+"raw": -108,
+"spec": -32
+},
+"Grimsby": {
+"n": 25,
+"raw": -21,
+"spec": -6
+},
+"Crawley Town": {
+"n": 25,
+"raw": 10,
+"spec": 3
+},
+"Milton Keynes Dons": {
+"n": 25,
+"raw": -51,
+"spec": -15
+},
+"Oldham": {
+"n": 25,
+"raw": 55,
+"spec": 16
+},
+"Salford": {
+"n": 25,
+"raw": 61,
+"spec": 18
+},
+"Crewe": {
+"n": 25,
+"raw": 64,
+"spec": 19
+},
+"Shrewsbury": {
+"n": 25,
+"raw": 147,
+"spec": 43
+},
+"Bromley": {
+"n": 25,
+"raw": 94,
+"spec": 28
+},
+"Walsall": {
+"n": 25,
+"raw": -157,
+"spec": -46
+},
+"Swindon": {
+"n": 25,
+"raw": 10,
+"spec": 3
+},
+"Airdrie Utd": {
+"n": 20,
+"raw": -97,
+"spec": -24
+},
+"Morton": {
+"n": 20,
+"raw": -9,
+"spec": -2
+},
+"Dunfermline": {
+"n": 20,
+"raw": -51,
+"spec": -13
+},
+"Raith Rvs": {
+"n": 20,
+"raw": 97,
+"spec": 24
+},
+"Queens Park": {
+"n": 20,
+"raw": -79,
+"spec": -20
+},
+"Partick": {
+"n": 20,
+"raw": 176,
+"spec": 44
+},
+"Cove Rangers": {
+"n": 20,
+"raw": -19,
+"spec": -5
+},
+"Queen of Sth": {
+"n": 20,
+"raw": -43,
+"spec": -11
+},
+"Hamilton": {
+"n": 20,
+"raw": 21,
+"spec": 5
+},
+"Montrose": {
+"n": 20,
+"raw": 58,
+"spec": 15
+},
+"Kelty Hearts": {
+"n": 20,
+"raw": -123,
+"spec": -31
+},
+"Inverness C": {
+"n": 20,
+"raw": 59,
+"spec": 15
+},
+"Peterhead": {
+"n": 20,
+"raw": -26,
+"spec": -6
+},
+"East Fife": {
+"n": 20,
+"raw": 32,
+"spec": 8
+},
+"Stenhousemuir": {
+"n": 20,
+"raw": 46,
+"spec": 12
+},
+"Alloa": {
+"n": 20,
+"raw": 26,
+"spec": 7
+},
+"Annan Athletic": {
+"n": 20,
+"raw": 109,
+"spec": 27
+},
+"Elgin": {
+"n": 20,
+"raw": 21,
+"spec": 5
+},
+"Dumbarton": {
+"n": 20,
+"raw": 86,
+"spec": 21
+},
+"Clyde": {
+"n": 20,
+"raw": 70,
+"spec": 17
+},
+"East Kilbride": {
+"n": 20,
+"raw": 43,
+"spec": 11
+},
+"Spartans": {
+"n": 20,
+"raw": -107,
+"spec": -27
+},
+"Edinburgh City": {
+"n": 20,
+"raw": -225,
+"spec": -56
+},
+"Stirling": {
+"n": 20,
+"raw": -35,
+"spec": -9
+},
+"Forfar": {
+"n": 20,
+"raw": 145,
+"spec": 36
+},
+"Stranraer": {
+"n": 20,
+"raw": -69,
+"spec": -17
+},
+"Newport County": {
+"n": 25,
+"raw": -18,
+"spec": -5
+},
+"Notts County": {
+"n": 25,
+"raw": -10,
+"spec": -3
+},
+"Bielefeld": {
+"n": 18,
+"raw": 153,
+"spec": 35
+},
+"Stockport": {
+"n": 25,
+"raw": -79,
+"spec": -23
+},
+"Bolton": {
+"n": 25,
+"raw": 72,
+"spec": 21
+},
+"Dresden": {
+"n": 18,
+"raw": 31,
+"spec": 7
+},
+"Falkirk": {
+"n": 20,
+"raw": -138,
+"spec": -34
+},
+"Gaziantep": {
+"n": 18,
+"raw": -134,
+"spec": -31
+},
+"Charlton": {
+"n": 25,
+"raw": -31,
+"spec": -9
+},
+"Wrexham": {
+"n": 25,
+"raw": -106,
+"spec": -31
+},
+"Le Mans": {
+"n": 18,
+"raw": -19,
+"spec": -4
+},
+"Altrincham": {
+"n": 25,
+"raw": 150,
+"spec": 44
+},
+"Aldershot": {
+"n": 25,
+"raw": -119,
+"spec": -35
+},
+"Boreham Wood": {
+"n": 25,
+"raw": 63,
+"spec": 18
+},
+"Rochdale": {
+"n": 25,
+"raw": 25,
+"spec": 7
+},
+"Brackley Town": {
+"n": 23,
+"raw": 100,
+"spec": 28
+},
+"Eastleigh": {
+"n": 25,
+"raw": 3,
+"spec": 1
+},
+"Braintree Town": {
+"n": 23,
+"raw": 48,
+"spec": 13
+},
+"Halifax": {
+"n": 25,
+"raw": 26,
+"spec": 8
+},
+"Gateshead": {
+"n": 25,
+"raw": -84,
+"spec": -25
+},
+"Southend": {
+"n": 25,
+"raw": 18,
+"spec": 5
+},
+"Solihull": {
+"n": 25,
+"raw": -105,
+"spec": -31
+},
+"Forest Green": {
+"n": 25,
+"raw": 84,
+"spec": 25
+},
+"Tamworth": {
+"n": 25,
+"raw": 87,
+"spec": 26
+},
+"Scunthorpe": {
+"n": 25,
+"raw": -11,
+"spec": -3
+},
+"Wealdstone": {
+"n": 25,
+"raw": 138,
+"spec": 41
+},
+"Truro": {
+"n": 23,
+"raw": 46,
+"spec": 13
+},
+"Woking": {
+"n": 25,
+"raw": -37,
+"spec": -11
+},
+"Carlisle": {
+"n": 25,
+"raw": 16,
+"spec": 5
+},
+"Yeovil": {
+"n": 25,
+"raw": 99,
+"spec": 29
+},
+"Hartlepool": {
+"n": 25,
+"raw": -4,
+"spec": -1
+},
+"York": {
+"n": 25,
+"raw": 20,
+"spec": 6
+},
+"Sutton": {
+"n": 25,
+"raw": -58,
+"spec": -17
+},
+"Genclerbirligi": {
+"n": 18,
+"raw": 116,
+"spec": 27
+},
+"Nancy": {
+"n": 19,
+"raw": -133,
+"spec": -32
+},
+"Telstar": {
+"n": 18,
+"raw": -152,
+"spec": -35
+},
+"Alverca": {
+"n": 19,
+"raw": 116,
+"spec": 28
+},
+"Tondela": {
+"n": 17,
+"raw": -106,
+"spec": -23
+},
+"Estrela": {
+"n": 18,
+"raw": -11,
+"spec": -2
+},
+"Kocaelispor": {
+"n": 18,
+"raw": 22,
+"spec": 5
+},
+"Boulogne": {
+"n": 19,
+"raw": -167,
+"spec": -40
+},
+"Cultural Leonesa": {
+"n": 21,
+"raw": -183,
+"spec": -47
+},
+"Ceuta": {
+"n": 22,
+"raw": 85,
+"spec": 23
+},
+"Boston Utd": {
+"n": 25,
+"raw": -158,
+"spec": -47
+},
+"Sociedad B": {
+"n": 22,
+"raw": -19,
+"spec": -5
+},
+"Andorra": {
+"n": 22,
+"raw": -86,
+"spec": -23
+},
+"Pescara": {
+"n": 19,
+"raw": 26,
+"spec": 6
+},
+"Morecambe": {
+"n": 23,
+"raw": -93,
+"spec": -26
+},
+"Volos NFC": {
+"n": 17,
+"raw": 119,
+"spec": 26
+},
+"Padova": {
+"n": 20,
+"raw": -63,
+"spec": -16
+},
+"Virtus Entella": {
+"n": 20,
+"raw": 278,
+"spec": 70
+},
+"Larisa": {
+"n": 18,
+"raw": -30,
+"spec": -7
+},
+"Avellino": {
+"n": 19,
+"raw": 89,
+"spec": 21
+},
+"Kifisia": {
+"n": 18,
+"raw": -83,
+"spec": -19
+},
+"OFI Crete": {
+"n": 17,
+"raw": 70,
+"spec": 15
+}
+}
+}

@@ -1,0 +1,542 @@
+{
+ "2026-11-03 Galatasaray - VfB Stuttgart": {
+  "date": "2026-11-03T17:45Z",
+  "h": "Galatasaray",
+  "a": "VfB Stuttgart",
+  "p": [
+   0.41306990744296973,
+   0.2370148143532287,
+   0.34991527820380164
+  ],
+  "p_sans_abs": [
+   0.3761,
+   0.238,
+   0.386
+  ],
+  "abs_h": 0,
+  "abs_a": -30,
+  "prono": "Galatasaray ou nul",
+  "prob": 0.6501,
+  "type": "dc",
+  "cotes": [
+   1.86,
+   4.1,
+   3.0
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   2,
+   0
+  ]
+ },
+ "2026-11-03 Shakhtar Donetsk - Sporting CP": {
+  "date": "2026-11-03T17:45Z",
+  "h": "Shakhtar Donetsk",
+  "a": "Sporting CP",
+  "p": [
+   0.2889523135753057,
+   0.23077203350323947,
+   0.48027565292145485
+  ],
+  "p_sans_abs": [
+   0.2803,
+   0.2292,
+   0.4905
+  ],
+  "abs_h": -5,
+  "abs_a": -13,
+  "prono": "Sporting CP ou nul",
+  "prob": 0.711,
+  "type": "dc",
+  "cotes": [
+   3.2,
+   3.7,
+   1.9
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   0,
+   1
+  ]
+ },
+ "2026-11-03 Atlético Madrid - Bayern Munich": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Atlético Madrid",
+  "a": "Bayern Munich",
+  "p": [
+   0.35925130423059376,
+   0.23765551838678253,
+   0.4030931773826236
+  ],
+  "p_sans_abs": [
+   0.3321,
+   0.2361,
+   0.4317
+  ],
+  "abs_h": -6,
+  "abs_a": -29,
+  "prono": "Bayern Munich ou nul",
+  "prob": 0.6407,
+  "type": "dc",
+  "cotes": [
+   2.7,
+   3.7,
+   2.15
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   0,
+   2
+  ]
+ },
+ "2026-11-03 Barcelona - Aston Villa": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Barcelona",
+  "a": "Aston Villa",
+  "p": [
+   0.6234995584871783,
+   0.1960660416626408,
+   0.180434399850181
+  ],
+  "p_sans_abs": [
+   0.6172,
+   0.1981,
+   0.1847
+  ],
+  "abs_h": -10,
+  "abs_a": -15,
+  "prono": "Victoire Barcelona",
+  "prob": 0.6235,
+  "type": "win",
+  "cotes": [
+   1.2,
+   7.0,
+   7.25
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   3,
+   0
+  ]
+ },
+ "2026-11-03 Bodo/Glimt - Lille": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Bodo/Glimt",
+  "a": "Lille",
+  "p": [
+   0.3115170858067342,
+   0.234029721219014,
+   0.454453192974252
+  ],
+  "p_sans_abs": [
+   0.2948,
+   0.2317,
+   0.4735
+  ],
+  "abs_h": -10,
+  "abs_a": -25,
+  "prono": "Lille ou nul",
+  "prob": 0.6885,
+  "type": "dc",
+  "cotes": [
+   1.56,
+   4.1,
+   4.3
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   0,
+   0
+  ]
+ },
+ "2026-11-03 Feyenoord Rotterdam - Internazionale": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Feyenoord Rotterdam",
+  "a": "Internazionale",
+  "p": [
+   0.23928699455028907,
+   0.2196114160690228,
+   0.5411015893806881
+  ],
+  "p_sans_abs": [
+   0.2237,
+   0.2148,
+   0.5615
+  ],
+  "abs_h": -4,
+  "abs_a": -20,
+  "prono": "Internazionale ou nul",
+  "prob": 0.7607,
+  "type": "dc",
+  "cotes": [
+   3.35,
+   3.85,
+   1.82
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   0,
+   3
+  ]
+ },
+ "2026-11-03 LASK Linz - Slovan Bratislava": {
+  "date": "2026-11-03T20:00Z",
+  "h": "LASK Linz",
+  "a": "Slovan Bratislava",
+  "p": [
+   0.41913956822605025,
+   0.2366559447140656,
+   0.34420448705988405
+  ],
+  "p_sans_abs": [
+   0.4191,
+   0.2367,
+   0.3442
+  ],
+  "abs_h": 0,
+  "abs_a": 0,
+  "prono": "LASK Linz ou nul",
+  "prob": 0.6558,
+  "type": "dc",
+  "cotes": [
+   1.29,
+   5.7,
+   6.5
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   4,
+   0
+  ]
+ },
+ "2026-11-03 Manchester United - AS Roma": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Manchester United",
+  "a": "AS Roma",
+  "p": [
+   0.4165351199112002,
+   0.23681673358542354,
+   0.34664814650337605
+  ],
+  "p_sans_abs": [
+   0.3868,
+   0.2379,
+   0.3753
+  ],
+  "abs_h": -3,
+  "abs_a": -27,
+  "prono": "Manchester United ou nul",
+  "prob": 0.6534,
+  "type": "dc",
+  "cotes": [
+   2.05,
+   3.9,
+   2.75
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   3,
+   2
+  ]
+ },
+ "2026-11-03 Villarreal - Paris Saint-Germain": {
+  "date": "2026-11-03T20:00Z",
+  "h": "Villarreal",
+  "a": "Paris Saint-Germain",
+  "p": [
+   0.20997329000075957,
+   0.21008825752323415,
+   0.5799384524760064
+  ],
+  "p_sans_abs": [
+   0.226,
+   0.2156,
+   0.5584
+  ],
+  "abs_h": -38,
+  "abs_a": -21,
+  "prono": "Paris Saint-Germain ou nul",
+  "prob": 0.79,
+  "type": "dc",
+  "cotes": [
+   4.0,
+   4.4,
+   1.6
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   0,
+   6
+  ]
+ },
+ "2026-11-04 AEK Athens - Real Madrid": {
+  "date": "2026-11-04T17:45Z",
+  "h": "AEK Athens",
+  "a": "Real Madrid",
+  "p": [
+   0.11865376209459227,
+   0.16188344588830547,
+   0.7194627920171026
+  ],
+  "p_sans_abs": [
+   0.108,
+   0.1539,
+   0.7381
+  ],
+  "abs_h": -8,
+  "abs_a": -25,
+  "prono": "Victoire Real Madrid",
+  "prob": 0.7195,
+  "type": "win",
+  "cotes": [
+   11.0,
+   7.5,
+   1.14
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   2,
+   3
+  ]
+ },
+ "2026-11-04 Fenerbahce - Liverpool": {
+  "date": "2026-11-04T17:45Z",
+  "h": "Fenerbahce",
+  "a": "Liverpool",
+  "p": [
+   0.1750692560489418,
+   0.19538139389384956,
+   0.6295493500572087
+  ],
+  "p_sans_abs": [
+   0.1559,
+   0.1855,
+   0.6586
+  ],
+  "abs_h": -12,
+  "abs_a": -36,
+  "prono": "Victoire Liverpool",
+  "prob": 0.6295,
+  "type": "win",
+  "cotes": [
+   4.75,
+   4.75,
+   1.44
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   3,
+   2
+  ]
+ },
+ "2026-11-04 Borussia Dortmund - Real Betis": {
+  "date": "2026-11-04T20:00Z",
+  "h": "Borussia Dortmund",
+  "a": "Real Betis",
+  "p": [
+   0.5343813139639808,
+   0.22010677153239375,
+   0.24551191450362564
+  ],
+  "p_sans_abs": [
+   0.5292,
+   0.2212,
+   0.2496
+  ],
+  "abs_h": -6,
+  "abs_a": -10,
+  "prono": "Borussia Dortmund ou nul",
+  "prob": 0.7545,
+  "type": "dc",
+  "cotes": [
+   1.58,
+   4.25,
+   4.25
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   2,
+   1
+  ]
+ },
+ "2026-11-04 FC Porto - Napoli": {
+  "date": "2026-11-04T20:00Z",
+  "h": "FC Porto",
+  "a": "Napoli",
+  "p": [
+   0.4655740369089051,
+   0.23213650212310555,
+   0.30228946096798937
+  ],
+  "p_sans_abs": [
+   0.4363,
+   0.2353,
+   0.3284
+  ],
+  "abs_h": -5,
+  "abs_a": -28,
+  "prono": "FC Porto ou nul",
+  "prob": 0.6977,
+  "type": "dc",
+  "cotes": [
+   1.8,
+   3.45,
+   3.7
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   4,
+   1
+  ]
+ },
+ "2026-11-04 Lens - Como": {
+  "date": "2026-11-04T20:00Z",
+  "h": "Lens",
+  "a": "Como",
+  "p": [
+   0.351104203616209,
+   0.23733143963169753,
+   0.4115643567520936
+  ],
+  "p_sans_abs": [
+   0.3452,
+   0.237,
+   0.4178
+  ],
+  "abs_h": -12,
+  "abs_a": -17,
+  "prono": "Como ou nul",
+  "prob": 0.6489,
+  "type": "dc",
+  "cotes": [
+   3.45,
+   3.7,
+   1.8
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   1,
+   9
+  ]
+ },
+ "2026-11-04 PSV Eindhoven - Club Brugge": {
+  "date": "2026-11-04T20:00Z",
+  "h": "PSV Eindhoven",
+  "a": "Club Brugge",
+  "p": [
+   0.4427287038287854,
+   0.2347440123294406,
+   0.32252728384177415
+  ],
+  "p_sans_abs": [
+   0.4516,
+   0.2338,
+   0.3145
+  ],
+  "abs_h": -10,
+  "abs_a": -3,
+  "prono": "PSV Eindhoven ou nul",
+  "prob": 0.6775,
+  "type": "dc",
+  "cotes": [
+   1.82,
+   4.1,
+   3.0
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   1,
+   2
+  ]
+ },
+ "2026-11-04 RB Leipzig - Manchester City": {
+  "date": "2026-11-04T20:00Z",
+  "h": "RB Leipzig",
+  "a": "Manchester City",
+  "p": [
+   0.22486175030065353,
+   0.21522252270306627,
+   0.5599157269962804
+  ],
+  "p_sans_abs": [
+   0.2201,
+   0.2136,
+   0.5663
+  ],
+  "abs_h": -5,
+  "abs_a": -10,
+  "prono": "Manchester City ou nul",
+  "prob": 0.7751,
+  "type": "dc",
+  "cotes": [
+   4.8,
+   5.0,
+   1.44
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   2,
+   3
+  ]
+ },
+ "2026-11-04 Slavia Prague - Arsenal": {
+  "date": "2026-11-04T20:00Z",
+  "h": "Slavia Prague",
+  "a": "Arsenal",
+  "p": [
+   0.08082037468476785,
+   0.13019662148156366,
+   0.7889830038336687
+  ],
+  "p_sans_abs": [
+   0.0828,
+   0.1321,
+   0.7851
+  ],
+  "abs_h": -18,
+  "abs_a": -14,
+  "prono": "Victoire Arsenal",
+  "prob": 0.789,
+  "type": "win",
+  "cotes": [
+   12.0,
+   6.5,
+   1.15
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   1,
+   2
+  ]
+ },
+ "2026-11-04 Viking FK - Sabah FK": {
+  "date": "2026-11-04T20:00Z",
+  "h": "Viking FK",
+  "a": "Sabah FK",
+  "p": [
+   0.537898352714914,
+   0.21933250053031628,
+   0.24276914675476963
+  ],
+  "p_sans_abs": [
+   0.556,
+   0.2151,
+   0.2289
+  ],
+  "abs_h": -15,
+  "abs_a": -1,
+  "prono": "Viking FK ou nul",
+  "prob": 0.7572,
+  "type": "dc",
+  "cotes": [
+   1.34,
+   5.1,
+   5.8
+  ],
+  "enregistre": "2026-11-04T23:15",
+  "score": [
+   4,
+   1
+  ]
+ }
+}

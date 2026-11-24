@@ -1,0 +1,164 @@
+[
+ {
+  "date": "2026-11-24T17:45Z",
+  "h": "Bodo/Glimt",
+  "hid": "2980",
+  "a": "LASK Linz",
+  "aid": "4411",
+  "neutral": false,
+  "uid": "2049629"
+ },
+ {
+  "date": "2026-11-24T17:45Z",
+  "h": "Galatasaray",
+  "hid": "432",
+  "a": "Aston Villa",
+  "aid": "362",
+  "neutral": false,
+  "uid": "2049631"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Arsenal",
+  "hid": "359",
+  "a": "Borussia Dortmund",
+  "aid": "124",
+  "neutral": false,
+  "uid": "2049627"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Como",
+  "hid": "2572",
+  "a": "AEK Athens",
+  "aid": "887",
+  "neutral": false,
+  "uid": "2049633"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Feyenoord Rotterdam",
+  "hid": "142",
+  "a": "FC Porto",
+  "aid": "437",
+  "neutral": false,
+  "uid": "2049628"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Manchester City",
+  "hid": "382",
+  "a": "Napoli",
+  "aid": "114",
+  "neutral": false,
+  "uid": "2049626"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "RB Leipzig",
+  "hid": "11420",
+  "a": "Lens",
+  "aid": "175",
+  "neutral": false,
+  "uid": "2049630"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Real Madrid",
+  "hid": "86",
+  "a": "PSV Eindhoven",
+  "aid": "148",
+  "neutral": false,
+  "uid": "2049625"
+ },
+ {
+  "date": "2026-11-24T20:00Z",
+  "h": "Slovan Bratislava",
+  "hid": "521",
+  "a": "Real Betis",
+  "aid": "244",
+  "neutral": false,
+  "uid": "2049632"
+ },
+ {
+  "date": "2026-11-25T17:45Z",
+  "h": "Sabah FK",
+  "hid": "21922",
+  "a": "Barcelona",
+  "aid": "83",
+  "neutral": false,
+  "uid": "2049642"
+ },
+ {
+  "date": "2026-11-25T17:45Z",
+  "h": "Slavia Prague",
+  "hid": "494",
+  "a": "Villarreal",
+  "aid": "102",
+  "neutral": false,
+  "uid": "2049641"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Atlético Madrid",
+  "hid": "1068",
+  "a": "Viking FK",
+  "aid": "510",
+  "neutral": false,
+  "uid": "2049636"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Club Brugge",
+  "hid": "570",
+  "a": "Liverpool",
+  "aid": "364",
+  "neutral": false,
+  "uid": "2049638"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Internazionale",
+  "hid": "110",
+  "a": "VfB Stuttgart",
+  "aid": "134",
+  "neutral": false,
+  "uid": "2049635"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Lille",
+  "hid": "166",
+  "a": "Bayern Munich",
+  "aid": "132",
+  "neutral": false,
+  "uid": "2049639"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Paris Saint-Germain",
+  "hid": "160",
+  "a": "AS Roma",
+  "aid": "104",
+  "neutral": false,
+  "uid": "2049634"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Shakhtar Donetsk",
+  "hid": "493",
+  "a": "Fenerbahce",
+  "aid": "436",
+  "neutral": false,
+  "uid": "2049640"
+ },
+ {
+  "date": "2026-11-25T20:00Z",
+  "h": "Sporting CP",
+  "hid": "2250",
+  "a": "Manchester United",
+  "aid": "360",
+  "neutral": false,
+  "uid": "2049637"
+ }
+]
