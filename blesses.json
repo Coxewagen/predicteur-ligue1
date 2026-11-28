@@ -1,8 +1,14 @@
 {
- "updatedAt": "2026-11-23T08:45:14Z",
+ "updatedAt": "2026-11-28T08:45:01Z",
  "source": "Transfermarkt (joueurs blessés Ligue 1)",
  "count": 46,
  "teams": {
+  "RC Lens": [
+   "Michaël Cuisance",
+   "Ruben Aguilar",
+   "Odsonne Édouard",
+   "Maik Nawrocki"
+  ],
   "Paris Saint-Germain": [
    "Désiré Doué",
    "Khvicha Kvaratskhelia"
@@ -34,12 +40,6 @@
   "ES Troyes AC": [
    "Paolo Gozzi",
    "Yacouba Koné"
-  ],
-  "RC Lens": [
-   "Andrija Bulatovic",
-   "Franjo Ivanović",
-   "Odsonne Édouard",
-   "Maik Nawrocki"
   ],
   "OGC Nice": [
    "Mohamed Abdelmonem",
